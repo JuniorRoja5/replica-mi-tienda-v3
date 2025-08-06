@@ -4940,7 +4940,7 @@ function closeAllOverlays() {
 
 // Function to initialize clean state on page load
 function initializeCleanState() {
-    // COMENTADO: Esta función causa problemas con los event listeners
+    // COMMENTED: This function causes problems with event listeners
     // closeAllOverlays();
     
     // Agregar event listener para la tecla Escape SOLAMENTE
