@@ -4,7 +4,17 @@ let appState = {
         name: 'Trading Sharks',
         username: 'tradingsharks',
         bio: 'Aquí le cambia la vida 🔥📈',
-        avatar_url: ''
+        avatar_url: '',
+        social_links: {
+            tiktok: '',
+            instagram: '',
+            youtube: '',
+            twitter: '',
+            facebook: '',
+            linkedin: '',
+            discord: '',
+            spotify: ''
+        }
     },
     products: [
         {
