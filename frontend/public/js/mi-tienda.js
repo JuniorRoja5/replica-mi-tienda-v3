@@ -341,8 +341,21 @@ function showProfileOverlay() {
     document.getElementById('overlayUsernameInput').value = appState.profile.username;
     document.getElementById('overlayBioInput').value = appState.profile.bio;
     
+    // Llenar redes sociales (solo username)
+    document.getElementById('overlayTiktok').value = appState.profile.social_links.tiktok || '';
+    document.getElementById('overlayInstagram').value = appState.profile.social_links.instagram || '';
+    document.getElementById('overlayYoutube').value = appState.profile.social_links.youtube || '';
+    document.getElementById('overlayTwitter').value = appState.profile.social_links.twitter || '';
+    document.getElementById('overlayFacebook').value = appState.profile.social_links.facebook || '';
+    document.getElementById('overlayLinkedin').value = appState.profile.social_links.linkedin || '';
+    document.getElementById('overlayDiscord').value = appState.profile.social_links.discord || '';
+    document.getElementById('overlaySpotify').value = appState.profile.social_links.spotify || '';
+    
     // Actualizar contador de bio
     document.getElementById('overlayBioCounter').textContent = appState.profile.bio.length;
+    
+    // Actualizar vista previa del avatar
+    updateAvatarPreview();
     
     // Mostrar la vista superpuesta
     document.getElementById('profileOverlay').style.display = 'block';
