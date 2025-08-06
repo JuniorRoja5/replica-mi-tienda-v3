@@ -4938,7 +4938,7 @@ function closeAllOverlays() {
     console.log('Todos los overlays cerrados y estado limpiado');
 }
 
-// Función para inicializar el estado limpio al cargar la página
+// Function to initialize clean state on page load
 function initializeCleanState() {
     // COMENTADO: Esta función causa problemas con los event listeners
     // closeAllOverlays();
