@@ -1382,7 +1382,7 @@ function updatePreviewWithProduct() {
     const profileName = appState.profile.name || 'Tu Nombre';
     const profileAvatar = appState.profile.avatar || '';
     
-    // Crear una versión temporal del producto para preview
+    // Create a temporary version of the product for preview
     const tempProduct = {
         id: productFormData.id || 'preview',
         type: 'product',
