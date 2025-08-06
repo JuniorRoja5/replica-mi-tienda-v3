@@ -1259,7 +1259,7 @@ function updatePreviewWithProduct() {
             </div>
 
             <!-- Contenido del producto -->
-            <div style="padding: 2rem 1.5rem; padding-bottom: 120px;">
+            <div style="padding: 2rem 1.5rem; padding-bottom: 80px;">
                 <!-- Imagen del producto -->
                 ${tempProduct.image_url ? `
                     <div style="width: 100%; height: 200px; border-radius: 1rem; overflow: hidden; margin-bottom: 2rem; background: #2a2a2a; display: flex; align-items: center; justify-content: center;">
@@ -1318,39 +1318,35 @@ function updatePreviewWithProduct() {
                         ${reviewsHTML}
                     </div>
                 ` : ''}
-            </div>
 
-            <!-- Botón de compra fijo -->
-            <div style="
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background: rgba(26, 26, 26, 0.95);
-                backdrop-filter: blur(10px);
-                border-top: 1px solid #333;
-                padding: 1rem;
-                z-index: 100;
-            ">
-                <button style="
-                    width: 100%;
-                    background: #8b5cf6;
-                    border: none;
-                    color: white;
-                    font-size: 1rem;
-                    font-weight: 600;
-                    padding: 0.875rem;
-                    border-radius: 0.5rem;
-                    cursor: pointer;
-                    transition: all 0.2s ease;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 0.5rem;
+                <!-- Botón de compra integrado (no fixed) -->
+                <div style="
+                    background: rgba(26, 26, 26, 0.95);
+                    border-top: 1px solid #333;
+                    border-radius: 0.75rem;
+                    padding: 1rem;
+                    margin-top: 2rem;
                 ">
-                    <i class="bi bi-cart-plus"></i>
-                    <span>${tempProduct.button_text || (tempProduct.price > 0 ? `Comprar por $${displayPrice}` : 'Obtener Gratis')}</span>
-                </button>
+                    <button style="
+                        width: 100%;
+                        background: #8b5cf6;
+                        border: none;
+                        color: white;
+                        font-size: 1rem;
+                        font-weight: 600;
+                        padding: 0.875rem;
+                        border-radius: 0.5rem;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 0.5rem;
+                    " onclick="handleProductPurchase()">
+                        <i class="bi bi-cart-plus"></i>
+                        <span>${tempProduct.button_text || (tempProduct.price > 0 ? `Comprar por $${displayPrice}` : 'Obtener Gratis')}</span>
+                    </button>
+                </div>
             </div>
         </div>
     `;
