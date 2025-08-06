@@ -5011,7 +5011,7 @@ function copyPublicLink() {
     const linkInput = document.getElementById('publicLinkInput');
     
     try {
-        // Seleccionar el texto
+        // Select the text
         linkInput.select();
         linkInput.setSelectionRange(0, 99999); // Para dispositivos móviles
         
