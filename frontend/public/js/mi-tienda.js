@@ -257,29 +257,10 @@ function updatePreview() {
                 }
             </div>
             <h3 class="preview-name">${appState.profile.name}</h3>
+            ${appState.profile.username ? `<p class="preview-username">@${appState.profile.username}</p>` : ''}
             <p class="preview-bio">${appState.profile.bio}</p>
             <div class="preview-social" id="previewSocial">
-                <div class="preview-social-icon tiktok">
-                    <i class="bi bi-tiktok"></i>
-                </div>
-                <div class="preview-social-icon spotify">
-                    <i class="bi bi-spotify"></i>
-                </div>
-                <div class="preview-social-icon instagram">
-                    <i class="bi bi-instagram"></i>
-                </div>
-                <div class="preview-social-icon youtube">
-                    <i class="bi bi-youtube"></i>
-                </div>
-                <div class="preview-social-icon link">
-                    <i class="bi bi-link-45deg"></i>
-                </div>
-                <div class="preview-social-icon discord">
-                    <i class="bi bi-discord"></i>
-                </div>
-                <div class="preview-social-icon twitter">
-                    <i class="bi bi-twitter"></i>
-                </div>
+                ${generateSocialIcons()}
             </div>
         </div>
     `;
