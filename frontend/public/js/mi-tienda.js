@@ -1114,7 +1114,7 @@ function updateTabNavigation() {
             nextBtn.style.display = 'none';
             createBtn.style.display = 'block';
             
-            // Verificar si estamos en modo edición
+            // Check if we are in edit mode
             if (productFormData.id) {
                 createBtn.innerHTML = '<i class="bi bi-check-circle"></i> Actualizar Producto';
                 createBtn.onclick = function() {
