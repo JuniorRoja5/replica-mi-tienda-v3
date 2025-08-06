@@ -505,15 +505,35 @@
 
             // Purchase button
             const purchaseBtn = document.getElementById('purchaseButtonText');
-            if (productData.button_text) {
-                purchaseBtn.textContent = productData.button_text;
-            } else if (productData.price > 0) {
-                const displayPrice = productData.has_discount && productData.discount_price > 0 
-                    ? productData.discount_price 
-                    : productData.price;
-                purchaseBtn.textContent = `Comprar por $${displayPrice}`;
+            const purchaseButton = document.getElementById('purchaseButton');
+            
+            if (productData.type === 'consultation') {
+                // For consultations, update button text and icon
+                if (productData.button_text) {
+                    purchaseBtn.textContent = productData.button_text;
+                } else {
+                    purchaseBtn.textContent = 'Agendar llamada';
+                }
+                purchaseButton.innerHTML = `
+                    <i class="bi bi-calendar-plus"></i>
+                    <span id="purchaseButtonText">${purchaseBtn.textContent}</span>
+                `;
             } else {
-                purchaseBtn.textContent = 'Obtener Gratis';
+                // For regular products
+                if (productData.button_text) {
+                    purchaseBtn.textContent = productData.button_text;
+                } else if (productData.price > 0) {
+                    const displayPrice = productData.has_discount && productData.discount_price > 0 
+                        ? productData.discount_price 
+                        : productData.price;
+                    purchaseBtn.textContent = `Comprar por $${displayPrice}`;
+                } else {
+                    purchaseBtn.textContent = 'Obtener Gratis';
+                }
+                purchaseButton.innerHTML = `
+                    <i class="bi bi-cart-plus"></i>
+                    <span id="purchaseButtonText">${purchaseBtn.textContent}</span>
+                `;
             }
         }
 
