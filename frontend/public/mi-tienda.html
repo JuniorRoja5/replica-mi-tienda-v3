@@ -38,9 +38,9 @@
             min-height: 100vh;
         }
 
-        /* Panel izquierdo */
+        /* Panel izquierdo - Ajustado para ser más estrecho */
         .left-panel {
-            flex: 1;
+            flex: 0 0 45%;
             background: white;
             border-right: 1px solid #dee2e6;
             overflow-y: auto;
@@ -325,9 +325,9 @@
             border-color: #f5c2c7;
         }
 
-        /* Panel derecho - Vista previa */
+        /* Panel derecho - Ajustado para ser más grande */
         .right-panel {
-            flex: 0 0 400px;
+            flex: 0 0 55%;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
@@ -340,8 +340,8 @@
         }
 
         .phone-frame {
-            width: 320px;
-            height: 640px;
+            width: 380px;
+            height: 760px;
             background: #2d3748;
             border-radius: 2.5rem;
             padding: 0.75rem;
@@ -354,7 +354,7 @@
             top: 0.5rem;
             left: 50%;
             transform: translateX(-50%);
-            width: 120px;
+            width: 140px;
             height: 4px;
             background: #4a5568;
             border-radius: 2px;
@@ -529,15 +529,204 @@
             opacity: 0.8;
         }
 
+        /* Modal personalizado para tipos de producto */
+        .product-type-modal .modal-dialog {
+            max-width: 600px;
+        }
+
+        .product-type-option {
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .product-type-option:hover {
+            background: #e9ecef;
+            border-color: #dee2e6;
+            transform: translateY(-2px);
+        }
+
+        .product-type-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .product-type-icon.link-icon {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+        }
+
+        .product-type-icon.product-icon {
+            background: linear-gradient(135deg, #e91e63, #ad1457);
+        }
+
+        .product-type-details h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #212529;
+            margin: 0 0 0.5rem;
+        }
+
+        .product-type-details p {
+            color: #6c757d;
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        /* Modal para crear link */
+        .link-form-container {
+            max-width: 800px;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #212529;
+        }
+
+        .auto-extract-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .auto-extract-notice i {
+            color: #856404;
+            font-size: 1.2rem;
+        }
+
+        .auto-extract-notice span {
+            color: #856404;
+            font-size: 0.9rem;
+        }
+
+        .image-upload-section {
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+        }
+
+        .image-preview-container {
+            width: 120px;
+            height: 120px;
+            border: 2px dashed #dee2e6;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            margin-bottom: 1rem;
+        }
+
+        .image-preview-icon {
+            color: #6c757d;
+            font-size: 2rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #28a745;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            color: white;
+        }
+
         /* Responsive */
         @media (max-width: 1200px) {
-            .right-panel {
-                flex: 0 0 350px;
+            .left-panel {
+                flex: 0 0 50%;
             }
-            
+            .right-panel {
+                flex: 0 0 50%;
+            }
             .phone-frame {
-                width: 280px;
-                height: 560px;
+                width: 320px;
+                height: 640px;
             }
         }
 
@@ -546,64 +735,28 @@
                 flex-direction: column;
             }
             
-            .right-panel {
+            .left-panel, .right-panel {
                 flex: none;
+            }
+            
+            .right-panel {
                 min-height: 50vh;
             }
         }
 
         @media (max-width: 768px) {
-            .profile-header {
-                padding: 1.5rem;
-            }
-            
-            .products-section {
+            .profile-header, .products-section {
                 padding: 1.5rem;
             }
             
             .phone-frame {
-                width: 240px;
-                height: 480px;
+                width: 280px;
+                height: 560px;
             }
             
             .right-panel {
                 padding: 1rem;
             }
-        }
-
-        /* Modales */
-        .modal-backdrop {
-            background-color: rgba(0, 0, 0, 0.6);
-        }
-
-        .btn-close-white {
-            filter: brightness(0) invert(1);
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.3s ease;
-        }
-
-        /* Notificaciones */
-        .toast {
-            border: none;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .toast-success {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-        }
-
-        .toast-error {
-            background: linear-gradient(135deg, #dc3545, #fd7e14);
-            color: white;
         }
     </style>
 </head>
@@ -662,92 +815,7 @@
                 </div>
 
                 <div class="products-list" id="productsList">
-                    <!-- Productos de ejemplo -->
-                    <div class="product-item" data-id="1" data-type="link">
-                        <div class="drag-handle">
-                            <i class="bi bi-grip-vertical"></i>
-                        </div>
-                        <div class="product-icon link">
-                            <i class="bi bi-link-45deg"></i>
-                        </div>
-                        <div class="product-info">
-                            <h4 class="product-title">🔥NAGA - Acción GRATUITA de hasta 100 USD</h4>
-                            <p class="product-url">https://bit.ly/naga-TradingSharks</p>
-                            <span class="product-type link">Link</span>
-                        </div>
-                        <div class="product-status">
-                            <div class="status-indicator active"></div>
-                            <span class="status-text">Jivo</span>
-                        </div>
-                        <div class="product-actions">
-                            <button class="btn-action edit" onclick="editProduct(1)">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <button class="btn-action delete" onclick="deleteProduct(1)">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="product-item" data-id="2" data-type="product">
-                        <div class="drag-handle">
-                            <i class="bi bi-grip-vertical"></i>
-                        </div>
-                        <div class="product-icon product">
-                            <i class="bi bi-play-btn"></i>
-                        </div>
-                        <div class="product-info">
-                            <h4 class="product-title">Guía completa para invertir en video</h4>
-                            <p class="product-url">Guía completa de la A a la Z para aprender a invertir y lograr la libertad financiera</p>
-                            <span class="product-type product">Producto</span>
-                        </div>
-                        <div class="product-status">
-                            <div class="status-indicator active"></div>
-                            <span class="status-text">Jivo</span>
-                        </div>
-                        <div class="product-price">
-                            $ 49.99
-                            <div class="product-sales">0 ventas</div>
-                        </div>
-                        <div class="product-actions">
-                            <button class="btn-action edit" onclick="editProduct(2)">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <button class="btn-action delete" onclick="deleteProduct(2)">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="product-item" data-id="3" data-type="product">
-                        <div class="drag-handle">
-                            <i class="bi bi-grip-vertical"></i>
-                        </div>
-                        <div class="product-icon product">
-                            <i class="bi bi-book"></i>
-                        </div>
-                        <div class="product-info">
-                            <h4 class="product-title">Guía completa para invertir</h4>
-                            <p class="product-url">Guía paso a paso de la A a la Z de cómo invertir y ganar interés compuesto</p>
-                            <span class="product-type product">Producto</span>
-                        </div>
-                        <div class="product-status">
-                            <div class="status-indicator active"></div>
-                            <span class="status-text">Jivo</span>
-                        </div>
-                        <div class="product-price">
-                            $ 149
-                            <div class="product-sales">3 ventas</div>
-                        </div>
-                        <div class="product-actions">
-                            <button class="btn-action edit" onclick="editProduct(3)">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <button class="btn-action delete" onclick="deleteProduct(3)">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </div>
-                    </div>
+                    <!-- Productos se cargarán dinámicamente -->
                 </div>
             </div>
         </div>
@@ -760,72 +828,7 @@
                         <div class="phone-notch"></div>
                         <div class="phone-screen">
                             <div class="preview-content" id="previewContent">
-                                <div class="preview-header">
-                                    <div class="preview-avatar" id="previewAvatar">
-                                        👤
-                                    </div>
-                                    <h3 class="preview-name" id="previewName">Trading Sharks</h3>
-                                    <p class="preview-bio" id="previewBio">Aquí le cambia la vida 🔥📈</p>
-                                    <div class="preview-social" id="previewSocial">
-                                        <div class="preview-social-icon tiktok">
-                                            <i class="bi bi-tiktok"></i>
-                                        </div>
-                                        <div class="preview-social-icon spotify">
-                                            <i class="bi bi-spotify"></i>
-                                        </div>
-                                        <div class="preview-social-icon instagram">
-                                            <i class="bi bi-instagram"></i>
-                                        </div>
-                                        <div class="preview-social-icon youtube">
-                                            <i class="bi bi-youtube"></i>
-                                        </div>
-                                        <div class="preview-social-icon link">
-                                            <i class="bi bi-link-45deg"></i>
-                                        </div>
-                                        <div class="preview-social-icon discord">
-                                            <i class="bi bi-discord"></i>
-                                        </div>
-                                        <div class="preview-social-icon twitter">
-                                            <i class="bi bi-twitter"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="preview-products" id="previewProducts">
-                                    <div class="preview-product">
-                                        <div class="preview-product-content">
-                                            <div class="preview-product-icon link">
-                                                <i class="bi bi-link-45deg"></i>
-                                            </div>
-                                            <div class="preview-product-info">
-                                                <h4>🔥NAGA - Acción GRATUITA de hasta 100 USD</h4>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="preview-product">
-                                        <div class="preview-product-content">
-                                            <div class="preview-product-icon product">
-                                                <i class="bi bi-play-btn"></i>
-                                            </div>
-                                            <div class="preview-product-info">
-                                                <h4>Guía completa para invertir en video</h4>
-                                                <p>Guía completa de la A a la Z para aprender a invertir y lograr la libertad financiera</p>
-                                            </div>
-                                            <div class="preview-product-price">$49.99</div>
-                                        </div>
-                                    </div>
-                                    <div class="preview-product">
-                                        <div class="preview-product-content">
-                                            <div class="preview-product-icon product">
-                                                <i class="bi bi-book"></i>
-                                            </div>
-                                            <div class="preview-product-info">
-                                                <h4>Guía completa para invertir</h4>
-                                                <p>Guía paso a paso de la A a la Z de cómo invertir y ganar interés compuesto</p>
-                                            </div>
-                                            <div class="preview-product-price">$149</div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <!-- Vista previa se cargará dinámicamente -->
                             </div>
                         </div>
                     </div>
@@ -833,6 +836,112 @@
                 <div class="preview-info">
                     <p>Vista previa en tiempo real</p>
                     <p class="small">Los cambios se reflejan automáticamente</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para seleccionar tipo de producto -->
+    <div class="modal fade product-type-modal" id="productTypeModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">¿Qué quieres crear?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="product-type-option" onclick="selectProductType('link')">
+                        <div class="product-type-icon link-icon">
+                            <i class="bi bi-link-45deg"></i>
+                        </div>
+                        <div class="product-type-details">
+                            <h3>Un link externo</h3>
+                            <p>Dirige a tus seguidores a cualquier sitio web.</p>
+                        </div>
+                    </div>
+
+                    <div class="product-type-option" onclick="selectProductType('product')">
+                        <div class="product-type-icon product-icon">
+                            <i class="bi bi-bag-fill"></i>
+                        </div>
+                        <div class="product-type-details">
+                            <h3>Un producto digital</h3>
+                            <p>Vende tus creaciones y recibe pagos directos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para crear link externo -->
+    <div class="modal fade" id="linkFormModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Crear Nuevo Link</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="linkForm">
+                        <div class="form-section">
+                            <h4>URL del Link</h4>
+                            <input type="url" class="form-control form-control-lg" id="linkUrl" 
+                                   placeholder="https://ejemplo.com/..." required>
+                            
+                            <div class="auto-extract-notice">
+                                <i class="bi bi-lightbulb-fill"></i>
+                                <span>La imagen y título se extraerán automáticamente del enlace</span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-section">
+                                    <h4>Imagen del Link</h4>
+                                    <div class="image-upload-section">
+                                        <div class="image-preview-container" id="linkImagePreview">
+                                            <i class="bi bi-image image-preview-icon"></i>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-outline-secondary">
+                                                <i class="bi bi-upload"></i> Subir Imagen
+                                            </button>
+                                            <button type="button" class="btn btn-outline-primary">
+                                                <i class="bi bi-search"></i> Buscar en Biblioteca
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-section">
+                                    <h4>Título del Link</h4>
+                                    <input type="text" class="form-control" id="linkTitle" 
+                                           placeholder="Se extraerá automáticamente del enlace">
+                                    <small class="form-text text-muted">Puedes editarlo manualmente si lo deseas</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span>Link está activo</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="linkActive" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="action-buttons">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="button" class="btn btn-gradient" onclick="saveLinkProduct()">
+                            Crear Link
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -876,26 +985,6 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <h6>Redes Sociales</h6>
-                        <div class="row" id="socialInputs">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">TikTok</label>
-                                <input type="url" class="form-control" placeholder="https://tiktok.com/@usuario">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Instagram</label>
-                                <input type="url" class="form-control" placeholder="https://instagram.com/usuario">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">YouTube</label>
-                                <input type="url" class="form-control" placeholder="https://youtube.com/c/usuario">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Twitter</label>
-                                <input type="url" class="form-control" placeholder="https://twitter.com/usuario">
-                            </div>
-                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -906,131 +995,12 @@
         </div>
     </div>
 
-    <!-- Modal para crear/editar producto -->
-    <div class="modal fade" id="createModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">¿Qué quieres crear?</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" id="modalBody">
-                    <!-- Selector de tipo de producto -->
-                    <div id="typeSelector">
-                        <div class="row g-4">
-                            <div class="col-md-6">
-                                <div class="card h-100 border-primary product-type-card" onclick="selectType('link')">
-                                    <div class="card-body text-center">
-                                        <div class="mb-3">
-                                            <i class="bi bi-link-45deg text-primary" style="font-size: 3rem;"></i>
-                                        </div>
-                                        <h5 class="card-title">Enlace Externo</h5>
-                                        <p class="card-text">Dirige a tus seguidores a cualquier sitio web o aplicación externa.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card h-100 border-success product-type-card" onclick="selectType('digital_product')">
-                                    <div class="card-body text-center">
-                                        <div class="mb-3">
-                                            <i class="bi bi-box-seam text-success" style="font-size: 3rem;"></i>
-                                        </div>
-                                        <h5 class="card-title">Producto Digital</h5>
-                                        <p class="card-text">Vende archivos digitales, PDFs, cursos, plantillas y más.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card h-100 border-warning product-type-card" onclick="selectType('consultation')">
-                                    <div class="card-body text-center">
-                                        <div class="mb-3">
-                                            <i class="bi bi-telephone text-warning" style="font-size: 3rem;"></i>
-                                        </div>
-                                        <h5 class="card-title">Llamada de Consultoría</h5>
-                                        <p class="card-text">Ofrece sesiones de coaching 1 a 1 con agendamiento automático.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card h-100 border-info product-type-card" onclick="selectType('course')">
-                                    <div class="card-body text-center">
-                                        <div class="mb-3">
-                                            <i class="bi bi-mortarboard text-info" style="font-size: 3rem;"></i>
-                                        </div>
-                                        <h5 class="card-title">Curso Digital</h5>
-                                        <p class="card-text">Crea y vende cursos online con lecciones y material.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Formulario del producto -->
-                    <div id="productForm" style="display: none;">
-                        <form id="productFormElement">
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <div class="mb-3">
-                                        <label class="form-label">Título</label>
-                                        <input type="text" class="form-control" id="productTitle" required>
-                                        <div class="form-text">
-                                            <span id="titleCounter">0</span>/80 caracteres
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Descripción</label>
-                                        <textarea class="form-control" id="productDescription" rows="3"></textarea>
-                                    </div>
-                                    <div class="mb-3" id="urlField">
-                                        <label class="form-label">URL del enlace</label>
-                                        <input type="url" class="form-control" id="productUrl" placeholder="https://ejemplo.com">
-                                    </div>
-                                    <div class="mb-3" id="priceField" style="display: none;">
-                                        <label class="form-label">Precio ($)</label>
-                                        <input type="number" class="form-control" id="productPrice" min="0" step="0.01">
-                                    </div>
-                                    <div class="mb-3" id="fileField" style="display: none;">
-                                        <label class="form-label">Archivo del producto</label>
-                                        <input type="file" class="form-control" id="productFile">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label class="form-label">Imagen</label>
-                                        <input type="file" class="form-control" id="productImage" accept="image/*">
-                                        <div class="mt-2">
-                                            <div id="imagePreview" class="border rounded p-3 text-center" style="min-height: 150px; display: flex; align-items: center; justify-content: center; background: #f8f9fa;">
-                                                <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <input type="hidden" id="productType">
-                            <input type="hidden" id="productId">
-                        </form>
-                    </div>
-                </div>
-                <div class="modal-footer" id="modalFooter">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="saveBtn" onclick="saveProduct()" style="display: none;">Guardar Producto</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Toast Container -->
     <div class="toast-container position-fixed top-0 end-0 p-3">
-        <div id="successToast" class="toast toast-success" role="alert">
-            <div class="toast-body d-flex align-items-center">
+        <div id="successToast" class="toast" role="alert">
+            <div class="toast-body bg-success text-white d-flex align-items-center">
                 <i class="bi bi-check-circle me-2"></i>
                 <span id="successMessage">Operación completada exitosamente</span>
-            </div>
-        </div>
-        <div id="errorToast" class="toast toast-error" role="alert">
-            <div class="toast-body d-flex align-items-center">
-                <i class="bi bi-exclamation-triangle me-2"></i>
-                <span id="errorMessage">Ha ocurrido un error</span>
             </div>
         </div>
     </div>
