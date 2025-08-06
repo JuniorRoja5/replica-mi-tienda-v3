@@ -293,6 +293,12 @@ function initializeDragAndDrop() {
     }
 }
 
+/* === RENDER DE PRODUCTOS ===
+ * INTEGRACIÓN LARAVEL: Esta función debe recibir productos de la API
+ * Route recomendada: GET /api/products
+ * Controller: ProductController@index 
+ * Debe incluir: user_id, type, title, price, url, is_active, sort_order
+ */
 function renderProducts() {
     const productsList = document.getElementById('productsList');
     if (!productsList) return;
