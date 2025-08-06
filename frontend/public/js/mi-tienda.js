@@ -828,7 +828,7 @@ let courseFormData = {
         { id: 'name', label: 'Nombre completo', type: 'text', required: true },
         { id: 'email', label: 'Correo electrónico', type: 'email', required: true }
     ],
-    // CONFIGURACIONES ESPECÍFICAS DE CURSO
+    // COURSE-SPECIFIC CONFIGURATIONS
     course_content: {
         header_image_url: '',
         title: '',
