@@ -2494,7 +2494,7 @@ function updateConsultationTabNavigation() {
 }
 
 function setupConsultationFormListeners() {
-    // Event listeners para actualización en tiempo real
+    // Event listeners for real-time update
     const titleInput = document.getElementById('consultationTitle');
     const subtitleInput = document.getElementById('consultationSubtitle');
     const descriptionInput = document.getElementById('consultationDescription');
