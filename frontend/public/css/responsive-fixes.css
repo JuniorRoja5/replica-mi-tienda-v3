@@ -107,29 +107,61 @@
         height: 32px !important;
     }
 }
-    
-    /* Fix product type cards */
+
+/* PRODUCT TYPE CARDS MOBILE FIX */
+@media (max-width: 768px) {
     .product-type-card {
         margin-bottom: 0.75rem !important;
         padding: 1rem !important;
+        border-radius: 0.75rem !important;
+        background: white !important;
+        border: 1px solid #dee2e6 !important;
+        cursor: pointer !important;
+    }
+    
+    .product-type-card:hover {
+        background: #f8f9fa !important;
+        transform: none !important;
     }
     
     .product-type-card h4 {
         font-size: 1rem !important;
         line-height: 1.2 !important;
         word-wrap: break-word !important;
+        margin-bottom: 0.5rem !important;
     }
     
     .product-type-card p {
         font-size: 0.85rem !important;
         line-height: 1.3 !important;
         word-wrap: break-word !important;
+        color: #666 !important;
+        margin-bottom: 0 !important;
     }
     
-    /* Fix product items in main list */
+    .product-type-icon-wrapper {
+        width: 48px !important;
+        height: 48px !important;
+        border-radius: 0.75rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .product-type-icon-wrapper i {
+        font-size: 1.5rem !important;
+        color: white !important;
+    }
+}
+
+/* GENERAL MOBILE LAYOUT FIXES */
+@media (max-width: 768px) {
+    /* Fix main product list */
     .product-item {
         flex-direction: column !important;
         padding: 1rem !important;
+        margin-bottom: 1rem !important;
     }
     
     .product-info {
@@ -149,7 +181,7 @@
         justify-content: center !important;
     }
     
-    /* Fix iframe preview */
+    /* Fix preview container */
     .preview-container {
         margin-top: 2rem !important;
         width: 100% !important;
@@ -160,12 +192,30 @@
         margin: 0 auto !important;
     }
     
-    /* Fix form tabs navigation */
+    /* Fix iframe preview */
+    .preview-iframe, #previewIframe {
+        width: 100% !important;
+        height: auto !important;
+        aspect-ratio: 9/16 !important;
+        border-radius: 1.5rem !important;
+        max-height: 60vh !important;
+    }
+}
+
+/* TAB NAVIGATION MOBILE FIX */
+@media (max-width: 768px) {
     .nav-tabs {
         overflow-x: auto !important;
         white-space: nowrap !important;
         scrollbar-width: none !important;
         -ms-overflow-style: none !important;
+        border-bottom: 1px solid #dee2e6 !important;
+        margin: 0 !important;
+        padding: 0 1rem !important;
+        background: white !important;
+        position: sticky !important;
+        top: 80px !important;
+        z-index: 5 !important;
     }
     
     .nav-tabs::-webkit-scrollbar {
@@ -178,26 +228,37 @@
     
     .nav-tabs .nav-link {
         font-size: 0.85rem !important;
-        padding: 0.5rem 0.75rem !important;
+        padding: 0.75rem 1rem !important;
         white-space: nowrap !important;
+        border: none !important;
+        border-bottom: 2px solid transparent !important;
     }
     
-    /* Fix form inputs */
+    .nav-tabs .nav-link.active {
+        background: white !important;
+        border-bottom: 2px solid #0d6efd !important;
+        color: #0d6efd !important;
+    }
+}
+
+/* FORM INPUTS MOBILE FIX */
+@media (max-width: 768px) {
     .form-control, .form-select {
         font-size: 1rem !important; /* Prevent zoom on iOS */
+        padding: 0.75rem !important;
+        border-radius: 0.5rem !important;
     }
     
-    /* Fix buttons */
     .btn {
         font-size: 0.9rem !important;
-        padding: 0.5rem 1rem !important;
+        padding: 0.75rem 1.5rem !important;
+        border-radius: 0.5rem !important;
     }
     
-    /* Fix headers */
-    .overlay-header h3 {
-        font-size: 1.25rem !important;
-        line-height: 1.2 !important;
-        word-wrap: break-word !important;
+    .form-label {
+        font-weight: 600 !important;
+        margin-bottom: 0.5rem !important;
+        font-size: 0.9rem !important;
     }
 }
 
