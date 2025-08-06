@@ -1272,14 +1272,12 @@ function updatePreviewWithProduct() {
             <div style="
                 position: fixed;
                 bottom: 0;
-                left: 50%;
-                transform: translateX(-50%);
-                max-width: 380px;
-                width: 100%;
+                left: 0;
+                right: 0;
                 background: rgba(26, 26, 26, 0.95);
                 backdrop-filter: blur(10px);
                 border-top: 1px solid #333;
-                padding: 1.5rem;
+                padding: 1rem;
                 z-index: 100;
             ">
                 <button style="
@@ -1287,10 +1285,10 @@ function updatePreviewWithProduct() {
                     background: #8b5cf6;
                     border: none;
                     color: white;
-                    font-size: 1.1rem;
+                    font-size: 1rem;
                     font-weight: 600;
-                    padding: 1rem;
-                    border-radius: 0.75rem;
+                    padding: 0.875rem;
+                    border-radius: 0.5rem;
                     cursor: pointer;
                     transition: all 0.2s ease;
                     display: flex;
