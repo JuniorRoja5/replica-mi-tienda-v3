@@ -3588,8 +3588,8 @@ function resetCourseForm() {
     document.getElementById('courseIsActive').checked = true;
     
     // Course content
-    document.getElementById('coursePageTitle').value = '';
-    document.getElementById('coursePageDescription').value = '';
+    document.getElementById('courseContentTitle').value = '';
+    document.getElementById('courseContentDescription').value = '';
     
     // Resetear imagen
     document.getElementById('courseImagePreview').innerHTML = `
