@@ -4950,7 +4950,7 @@ function initializeCleanState() {
         }
     });
     
-    // COMENTADO: Este listener interfiere con los clicks normales
+    // COMMENTED: This listener interferes with normal clicks
     // // Agregar event listener para clics fuera de los modals
     // document.addEventListener('click', function(e) {
     //     if (e.target.classList.contains('profile-overlay') || e.target.classList.contains('overlay')) {
