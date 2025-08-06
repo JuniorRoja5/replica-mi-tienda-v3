@@ -3708,7 +3708,7 @@ function resetCourseForm() {
 }
 
 function setupCourseFormListeners() {
-    // Títulos con actualización en tiempo real
+    // Titles with real-time update
     const titleInput = document.getElementById('courseTitle');
     const subtitleInput = document.getElementById('courseSubtitle');
     const descriptionInput = document.getElementById('courseDescription');
