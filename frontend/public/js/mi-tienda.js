@@ -445,6 +445,13 @@ function handleProductClick(productId, productType) {
         
         // NOTA: En Laravel backend, esto sería una ruta como /u/{username}/course/{id} o /courses/{id}
         window.open(courseUrl, '_blank');
+    } else if (productType === 'membership') {
+        // Navigate to membership page
+        const username = appState.profile.username || 'user';
+        const membershipUrl = `public-product.html?membership=${product.id}&u=${username}`;
+        
+        // NOTA: En Laravel backend, esto sería una ruta como /u/{username}/membership/{id} o /memberships/{id}
+        window.open(membershipUrl, '_blank');
     }
 }
 
