@@ -1085,6 +1085,61 @@
         </div>
     </div>
 
+    <!-- Vista superpuesta para selección de tipo de producto digital -->
+    <div class="product-type-overlay" id="productTypeOverlay" style="display: none;">
+        <div class="overlay-header">
+            <h3>Elige el tipo de producto</h3>
+            <button class="btn-close-overlay" onclick="closeProductTypeOverlay()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="overlay-content">
+            <p class="overlay-subtitle">Selecciona qué tipo de producto digital quieres crear</p>
+            
+            <div class="product-types-grid">
+                <div class="product-type-card" onclick="selectDigitalProductType('digital_product')">
+                    <div class="product-type-icon-wrapper purple">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                    <div class="product-type-content">
+                        <h4>Producto Digital</h4>
+                        <p>Vende archivos digitales como PDFs, guías, plantillas, e-books o contenido exclusivo</p>
+                    </div>
+                </div>
+
+                <div class="product-type-card" onclick="selectDigitalProductType('consultation')">
+                    <div class="product-type-icon-wrapper green">
+                        <i class="bi bi-telephone"></i>
+                    </div>
+                    <div class="product-type-content">
+                        <h4>Llamada de Consultoría</h4>
+                        <p>Ofrece sesiones 1 a 1 de coaching, mentoría o consultoría con agendamiento automático</p>
+                    </div>
+                </div>
+
+                <div class="product-type-card" onclick="selectDigitalProductType('course')">
+                    <div class="product-type-icon-wrapper orange">
+                        <i class="bi bi-mortarboard"></i>
+                    </div>
+                    <div class="product-type-content">
+                        <h4>Curso Digital</h4>
+                        <p>Crea y vende un curso digital con lecciones, material descargable y seguimiento</p>
+                    </div>
+                </div>
+
+                <div class="product-type-card" onclick="selectDigitalProductType('membership')">
+                    <div class="product-type-icon-wrapper blue">
+                        <i class="bi bi-crown"></i>
+                    </div>
+                    <div class="product-type-content">
+                        <h4>Membresía Recurrente</h4>
+                        <p>Ofrece acceso exclusivo con pagos mensuales, semestrales o anuales recurrentes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Vista superpuesta para edición de perfil en tiempo real -->
     <div class="profile-overlay" id="profileOverlay" style="display: none;">
         <div class="overlay-header">
