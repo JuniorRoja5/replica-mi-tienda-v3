@@ -396,13 +396,15 @@
                 const appData = JSON.parse(storedData);
                 profileData = appData.profile;
 
-                // Find the product
-                const product = appData.products.find(p => p.id.toString() === productId);
+                // Find the product - convert both to string for comparison
+                const product = appData.products.find(p => p.id.toString() === productId.toString());
                 if (!product) {
+                    console.log('Product not found. Available products:', appData.products.map(p => ({id: p.id, title: p.title})));
                     showError('Producto no encontrado');
                     return;
                 }
 
+                console.log('Product found:', product);
                 productData = product;
                 displayProduct();
 
