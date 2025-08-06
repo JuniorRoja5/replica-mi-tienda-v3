@@ -668,6 +668,12 @@ function showProductFormOverlay() {
 function closeProductFormOverlay() {
     document.getElementById('productFormOverlay').style.display = 'none';
     removeProductFormListeners();
+    
+    // Limpiar datos temporales de preview
+    localStorage.removeItem('tempProductPreview');
+    
+    // Volver al preview normal del perfil
+    updatePreview();
 }
 
 function resetProductForm() {
