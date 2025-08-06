@@ -106,8 +106,8 @@ function initializeApp() {
         if (event.data.type === 'productClick') {
             handleProductClickFromIframe(event.data.productId, event.data.productType);
         } else if (event.data.type === 'openPurchaseModal') {
-            // El usuario final hace clic en "comprar" desde el preview (vista pública)
-            // Esto simula lo que pasaría en https://dominio/u/usuario
+            // The end user clicks "buy" from the preview (public view)
+            // This simulates what would happen at https://domain/u/user
             handlePurchaseFromPublicView(event.data.product);
         }
     });
