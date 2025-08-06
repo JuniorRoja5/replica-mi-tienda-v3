@@ -4407,6 +4407,7 @@ function setupMembershipFormListeners() {
     hasDiscountInput.addEventListener('change', function() {
         membershipFormData.has_discount = this.checked;
         document.getElementById('membershipDiscountPrice').style.display = this.checked ? 'block' : 'none';
+        document.getElementById('membershipDiscountPriceGroup').style.display = this.checked ? 'block' : 'none';
         updatePreviewWithMembership();
     });
     
