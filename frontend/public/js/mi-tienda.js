@@ -4429,6 +4429,7 @@ function setupMembershipFormListeners() {
     hasEndDateInput.addEventListener('change', function() {
         membershipFormData.billing_settings.has_end_date = this.checked;
         document.getElementById('membershipEndAfterMonths').style.display = this.checked ? 'block' : 'none';
+        document.getElementById('membershipEndAfterGroup').style.display = this.checked ? 'block' : 'none';
         updatePreviewWithMembership();
     });
     
