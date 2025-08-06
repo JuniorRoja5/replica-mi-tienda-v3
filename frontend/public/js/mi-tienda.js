@@ -841,6 +841,8 @@ function selectDigitalProductType(productType) {
         showConsultationFormOverlay();
     } else if (productType === 'course') {
         showCourseFormOverlay();
+    } else if (productType === 'membership') {
+        showMembershipFormOverlay();
     } else {
         // Para otros tipos, mostrar mensaje temporal
         const typeNames = {
