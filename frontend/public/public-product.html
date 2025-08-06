@@ -455,7 +455,12 @@
             document.getElementById('productContainer').style.display = 'block';
 
             // Set page title
-            const pageTitle = productData.type === 'consultation' ? productData.title + ' - Consultoría' : productData.title;
+            let pageTitle = productData.title;
+            if (productData.type === 'consultation') {
+                pageTitle += ' - Consultoría';
+            } else if (productData.type === 'course') {
+                pageTitle += ' - Curso Digital';
+            }
             document.getElementById('pageTitle').textContent = pageTitle;
             document.title = pageTitle;
 
