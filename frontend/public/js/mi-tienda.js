@@ -118,6 +118,11 @@ function handleProductClickFromIframe(productId, productType) {
         const username = appState.profile.username || 'user';
         // NOTA: En Laravel backend, esto será una ruta como /u/{username}/course/{id} o /courses/{id}
         window.open(`public-product.html?course=${product.id}&u=${username}`, '_blank');
+    } else if (productType === 'membership') {
+        // Navegar a la página de membresía
+        const username = appState.profile.username || 'user';
+        // NOTA: En Laravel backend, esto será una ruta como /u/{username}/membership/{id} o /memberships/{id}
+        window.open(`public-product.html?membership=${product.id}&u=${username}`, '_blank');
     }
 }
 
