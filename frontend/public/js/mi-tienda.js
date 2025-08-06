@@ -305,6 +305,35 @@ function updatePreview() {
     previewContent.innerHTML = previewHeader + previewProducts;
 }
 
+function generateSocialIcons() {
+    const socialConfig = {
+        tiktok: { icon: 'tiktok', color: '#000000', baseUrl: 'https://tiktok.com/@' },
+        instagram: { icon: 'instagram', color: '#E4405F', baseUrl: 'https://instagram.com/' },
+        youtube: { icon: 'youtube', color: '#FF0000', baseUrl: 'https://youtube.com/@' },
+        twitter: { icon: 'twitter', color: '#1DA1F2', baseUrl: 'https://x.com/' },
+        facebook: { icon: 'facebook', color: '#1877F2', baseUrl: 'https://facebook.com/' },
+        linkedin: { icon: 'linkedin', color: '#0A66C2', baseUrl: 'https://linkedin.com/in/' },
+        discord: { icon: 'discord', color: '#5865F2', baseUrl: 'https://discord.com/users/' },
+        spotify: { icon: 'spotify', color: '#1DB954', baseUrl: 'https://open.spotify.com/user/' }
+    };
+    
+    let socialIcons = '';
+    
+    Object.keys(socialConfig).forEach(platform => {
+        const username = appState.profile.social_links[platform];
+        if (username && username.trim()) {
+            const config = socialConfig[platform];
+            socialIcons += `
+                <a href="${config.baseUrl}${username}" target="_blank" class="preview-social-icon ${platform}" style="background-color: ${config.color};">
+                    <i class="bi bi-${config.icon}"></i>
+                </a>
+            `;
+        }
+    });
+    
+    return socialIcons;
+}
+
 function truncateText(text, maxLength) {
     if (!text || text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
