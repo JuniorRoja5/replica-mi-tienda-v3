@@ -4633,7 +4633,7 @@ function updatePreviewWithMembership() {
     const username = appState.profile.username || 'usuario';
     const profileName = appState.profile.name || 'Tu Nombre';
     
-    // Crear una versión temporal de la membresía para preview
+    // Create a temporary version of the membership for preview
     const tempMembership = {
         id: membershipFormData.id || 'preview',
         type: 'membership',
