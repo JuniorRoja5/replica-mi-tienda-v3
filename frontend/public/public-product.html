@@ -545,6 +545,39 @@
                     <i class="bi bi-play-circle"></i>
                     <span id="purchaseButtonText">${purchaseBtn.textContent}</span>
                 `;
+            } else if (productData.type === 'membership') {
+                // For memberships, update button text and icon
+                if (productData.button_text) {
+                    purchaseBtn.textContent = productData.button_text;
+                } else if (productData.price > 0) {
+                    const displayPrice = productData.has_discount && productData.discount_price > 0 
+                        ? productData.discount_price 
+                        : productData.price;
+                    
+                    // Get frequency text
+                    const getFrequencyText = (frequency) => {
+                        const frequencies = {
+                            'daily': 'día',
+                            'weekly': 'semana', 
+                            'monthly': 'mes',
+                            'quarterly': 'trimestre',
+                            'semi_annually': 'semestre',
+                            'annually': 'año'
+                        };
+                        return frequencies[frequency] || 'mes';
+                    };
+                    
+                    const frequencyText = productData.billing_settings ? 
+                        getFrequencyText(productData.billing_settings.frequency) : 'mes';
+                    
+                    purchaseBtn.textContent = `Subscribirse por $${displayPrice}/${frequencyText}`;
+                } else {
+                    purchaseBtn.textContent = 'Subscribirse Gratis';
+                }
+                purchaseButton.innerHTML = `
+                    <i class="bi bi-crown"></i>
+                    <span id="purchaseButtonText">${purchaseBtn.textContent}</span>
+                `;
             } else {
                 // For regular products
                 if (productData.button_text) {
