@@ -4488,7 +4488,7 @@ function setupMembershipFormListeners() {
         updatePreviewWithMembership();
     });
     
-    // Navegación de tabs
+    // Tab navigation
     document.querySelectorAll('#membershipTabs button').forEach(tab => {
         tab.addEventListener('click', function() {
             const tabName = this.getAttribute('data-tab');
