@@ -1342,7 +1342,7 @@ function updatePreviewWithProduct() {
                         align-items: center;
                         justify-content: center;
                         gap: 0.5rem;
-                    " onclick="handleProductPurchase()">
+                    " onclick="parent.postMessage({type: 'openPurchaseModal', product: ${JSON.stringify(tempProduct).replace(/"/g, '&quot;')}}, '*')">
                         <i class="bi bi-cart-plus"></i>
                         <span>${tempProduct.button_text || (tempProduct.price > 0 ? `Comprar por $${displayPrice}` : 'Obtener Gratis')}</span>
                     </button>
