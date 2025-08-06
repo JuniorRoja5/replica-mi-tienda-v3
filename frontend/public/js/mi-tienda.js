@@ -116,6 +116,12 @@ function setupEventListeners() {
     if (avatarInput) {
         avatarInput.addEventListener('change', handleAvatarUpload);
     }
+    
+    // Link image upload
+    const linkImageInput = document.getElementById('linkImageInput');
+    if (linkImageInput) {
+        linkImageInput.addEventListener('change', handleLinkImageUpload);
+    }
 }
 
 function initializeDragAndDrop() {
