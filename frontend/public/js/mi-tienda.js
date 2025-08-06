@@ -320,6 +320,21 @@ function updatePreview() {
     previewContent.innerHTML = previewHeader + previewProducts;
 }
 
+// Handle product clicks in preview
+function handleProductClick(productId, productType) {
+    const product = appState.products.find(p => p.id === productId);
+    if (!product) return;
+    
+    if (productType === 'link') {
+        // Open link in new tab
+        window.open(product.url, '_blank');
+    } else if (productType === 'product') {
+        // Handle product click - could open a modal, redirect, etc.
+        console.log('Product clicked:', product);
+        showToast(`Clicked on product: ${product.title}`, 'info');
+    }
+}
+
 function generateSocialIcons() {
     const socialConfig = {
         tiktok: { icon: 'tiktok', color: '#000000', baseUrl: 'https://tiktok.com/@' },
