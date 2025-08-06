@@ -5037,7 +5037,7 @@ function copyPublicLink() {
     }
 }
 
-// Actualizar el enlace público cuando cambie el username
+// Update public link when username changes
 function updatePublicLink() {
     const username = document.getElementById('profileUsername').textContent.replace('@', '');
     const publicLinkInput = document.getElementById('publicLinkInput');
