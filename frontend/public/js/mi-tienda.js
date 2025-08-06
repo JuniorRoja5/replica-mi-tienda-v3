@@ -1077,7 +1077,7 @@ function removeProductFormListeners() {
 function showTab(tabName) {
     currentProductTab = tabName;
     
-    // Actualizar navegación de tabs
+    // Update tab navigation
     document.querySelectorAll('#productTabs .nav-link').forEach(tab => {
         tab.classList.remove('active');
     });
