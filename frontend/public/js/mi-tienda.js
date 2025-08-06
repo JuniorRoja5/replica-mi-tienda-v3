@@ -353,7 +353,29 @@ function selectProductType(type) {
     }, 300);
 }
 
-// Función para extraer metadatos de URL
+function showLinkFormModal() {
+    // Resetear formulario
+    document.getElementById('linkForm').reset();
+    document.getElementById('linkImagePreview').innerHTML = '<i class="bi bi-image image-preview-icon"></i>';
+    document.getElementById('linkActive').checked = true;
+    document.getElementById('linkTitle').placeholder = 'Se extraerá automáticamente del enlace';
+    
+    const modal = new bootstrap.Modal(document.getElementById('linkFormModal'));
+    
+    // Setup URL change listener after modal is shown
+    modal._element.addEventListener('shown.bs.modal', function() {
+        const urlInput = document.getElementById('linkUrl');
+        
+        // Remove existing listeners
+        const newUrlInput = urlInput.cloneNode(true);
+        urlInput.parentNode.replaceChild(newUrlInput, urlInput);
+        
+        // Add new listener
+        newUrlInput.addEventListener('input', debounce(handleUrlChange, 1000));
+    });
+    
+    modal.show();
+}
 async function extractMetadataFromUrl(url) {
     try {
         // Validar URL
