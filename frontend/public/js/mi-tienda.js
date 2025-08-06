@@ -677,6 +677,34 @@ function handleAvatarUpload(event) {
     reader.readAsDataURL(file);
 }
 
+function handleLinkImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Validar que sea una imagen
+    if (!file.type.startsWith('image/')) {
+        showToast('Por favor selecciona un archivo de imagen válido', 'error');
+        return;
+    }
+    
+    // Validar tamaño (máximo 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        showToast('La imagen es demasiado grande. Máximo 5MB', 'error');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const imagePreview = document.getElementById('linkImagePreview');
+        imagePreview.innerHTML = `
+            <img src="${e.target.result}" alt="Imagen personalizada" 
+                 style="max-width: 100%; max-height: 100px; object-fit: cover; border-radius: 4px;">
+        `;
+        showToast('¡Imagen subida correctamente!', 'success');
+    };
+    reader.readAsDataURL(file);
+}
+
 function showToast(message, type = 'success') {
     const toast = document.getElementById('successToast');
     const messageElement = document.getElementById('successMessage');
