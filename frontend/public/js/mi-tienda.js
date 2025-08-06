@@ -426,6 +426,13 @@ function handleProductClick(productId, productType) {
         
         // NOTA: En Laravel backend, esto sería una ruta como /products/{slug} o /p/{id}
         window.open(productUrl, '_blank');
+    } else if (productType === 'consultation') {
+        // Navigate to consultation page for booking
+        const username = appState.profile.username || 'user';
+        const consultationUrl = `public-product.html?c=${product.id}&u=${username}`;
+        
+        // NOTA: En Laravel backend, esto sería una ruta como /u/{username}/c/{id} o /consultation/{id}
+        window.open(consultationUrl, '_blank');
     }
 }
 
