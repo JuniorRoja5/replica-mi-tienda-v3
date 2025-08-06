@@ -620,6 +620,32 @@ Esta funcionalidad incluirá el sistema de agendamiento
 completo basado en la configuración de disponibilidad.`;
 
                     alert(consultationInfo);
+                } else if (productData.type === 'course') {
+                    // Para cursos, mostrar sistema de inscripción/acceso
+                    const courseInfo = `🎓 FUNCIONALIDAD DE CURSO DIGITAL
+                    
+Curso: ${productData.title}
+${productData.price > 0 ? `Precio: $${productData.price}` : 'Curso gratuito'}
+                    
+🔧 EN DESARROLLO:
+✅ Plataforma de aprendizaje integrada
+✅ Reproducción de videos por módulos
+✅ Progreso de lecciones 
+✅ Descarga de materiales
+✅ Certificado de finalización
+✅ Acceso de por vida/limitado
+
+📋 INTEGRACIÓN LARAVEL:
+• POST /api/courses/{id}/enroll
+• GET /api/courses/{id}/content
+• POST /api/courses/{id}/progress
+• POST /api/courses/{id}/complete
+• Email: Acceso al curso y certificado
+
+Esta funcionalidad incluirá la plataforma de aprendizaje
+completa con seguimiento de progreso y contenido multimedia.`;
+
+                    alert(courseInfo);
                 } else {
                     // Para productos digitales, sistema de compras
                     const displayPrice = productData.has_discount && productData.discount_price > 0 
@@ -650,9 +676,10 @@ sistema de compras de la página principal.`;
                     alert(purchaseInfo);
                 }
                 
-                // TODO: Redirigir o abrir modal de compras/agendamiento
+                // TODO: Redirigir o abrir modal específico según tipo
                 // window.opener.showPurchaseModal(productData);
                 // window.opener.showBookingCalendar(productData);
+                // window.opener.showCourseEnrollment(productData);
             }
         }
 
