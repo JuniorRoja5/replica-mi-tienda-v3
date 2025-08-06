@@ -484,6 +484,9 @@ function removeOverlayListeners() {
     const bioInput = document.getElementById('overlayBioInput');
     const avatarInput = document.getElementById('overlayAvatarInput');
     
+    // Redes sociales
+    const socialInputIds = ['overlayTiktok', 'overlayInstagram', 'overlayYoutube', 'overlayTwitter', 'overlayFacebook', 'overlayLinkedin', 'overlayDiscord', 'overlaySpotify'];
+    
     if (nameInput && nameInput._handleNameChange) {
         nameInput.removeEventListener('input', nameInput._handleNameChange);
     }
@@ -496,6 +499,14 @@ function removeOverlayListeners() {
     if (avatarInput && avatarInput._handleAvatarChange) {
         avatarInput.removeEventListener('change', avatarInput._handleAvatarChange);
     }
+    
+    // Remover listeners de redes sociales
+    socialInputIds.forEach(inputId => {
+        const input = document.getElementById(inputId);
+        if (input && input._socialHandler) {
+            input.removeEventListener('input', input._socialHandler);
+        }
+    });
 }
 
 function saveOverlayProfile() {
