@@ -726,7 +726,7 @@ function saveOverlayProfile() {
 }
 
 function showCreateModal() {
-    // Mostrar modal de selección de tipo de producto
+    // Show product type selection modal
     const modal = new bootstrap.Modal(document.getElementById('productTypeModal'));
     modal.show();
 }
