@@ -948,6 +948,69 @@
         </div>
     </div>
 
+    <!-- Vista superpuesta para edición de perfil en tiempo real -->
+    <div class="profile-overlay" id="profileOverlay" style="display: none;">
+        <div class="overlay-header">
+            <h3>Editar Perfil</h3>
+            <button class="btn-close-overlay" onclick="closeProfileOverlay()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="overlay-content">
+            <form id="overlayProfileForm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Avatar</label>
+                            <input type="file" class="form-control" id="overlayAvatarInput" accept="image/*">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="overlayNameInput" value="">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text">@</span>
+                                <input type="text" class="form-control" id="overlayUsernameInput" value="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Bio</label>
+                            <textarea class="form-control" id="overlayBioInput" rows="4"></textarea>
+                            <div class="form-text">
+                                <span id="overlayBioCounter">0</span>/160 caracteres
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h6>Redes Sociales</h6>
+                            <div class="social-inputs" id="overlaySocialInputs">
+                                <div class="mb-2">
+                                    <label class="form-label">TikTok</label>
+                                    <input type="url" class="form-control" id="overlayTiktok" placeholder="https://tiktok.com/@usuario">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Instagram</label>
+                                    <input type="url" class="form-control" id="overlayInstagram" placeholder="https://instagram.com/usuario">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">YouTube</label>
+                                    <input type="url" class="form-control" id="overlayYoutube" placeholder="https://youtube.com/c/usuario">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="overlay-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeProfileOverlay()">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="saveOverlayProfile()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal para editar perfil -->
     <div class="modal fade" id="profileModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
