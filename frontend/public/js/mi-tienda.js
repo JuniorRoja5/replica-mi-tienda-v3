@@ -3823,7 +3823,7 @@ function showCourseTab(tabName) {
     });
     document.getElementById(`${tabName}-course-panel`).style.display = 'block';
     
-    // Actualizar botones de navegación
+    // Update navigation buttons
     updateCourseTabNavigation();
 }
 
