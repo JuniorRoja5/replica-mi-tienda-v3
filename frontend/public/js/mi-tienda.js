@@ -117,9 +117,54 @@ function loadFromStorage() {
 
 function saveToStorage() {
     try {
-        localStorage.setItem('miTiendaData', JSON.stringify(appState));
+        // NOTA: En Laravel backend, esto se reemplazará por llamadas API a la base de datos
+        // Laravel manejará la persistencia de datos sin limitaciones de localStorage
+        const dataToSave = {
+            profile: appState.profile,
+            products: appState.products.map(product => {
+                // Reducir el tamaño de las imágenes en base64 si son muy grandes
+                const productCopy = { ...product };
+                if (productCopy.image_url && productCopy.image_url.startsWith('data:image') && productCopy.image_url.length > 50000) {
+                    console.warn('Imagen demasiado grande para localStorage, se omitirá en el guardado');
+                    productCopy.image_url = ''; // Remover imagen grande temporalmente
+                }
+                return productCopy;
+            })
+        };
+        
+        localStorage.setItem('miTiendaData', JSON.stringify(dataToSave));
+        console.log('Datos guardados en localStorage');
     } catch (error) {
         console.error('Error al guardar datos:', error);
+        
+        if (error.name === 'QuotaExceededError') {
+            // Manejar error de cuota excedida
+            console.warn('LocalStorage lleno, limpiando datos temporales...');
+            
+            // Limpiar datos temporales
+            localStorage.removeItem('tempProductPreview');
+            
+            // Intentar guardar sin imágenes grandes
+            try {
+                const minimalData = {
+                    profile: {
+                        ...appState.profile,
+                        avatar: '' // Remover avatar temporalmente
+                    },
+                    products: appState.products.map(product => ({
+                        ...product,
+                        image_url: '' // Remover imágenes temporalmente
+                    }))
+                };
+                localStorage.setItem('miTiendaData', JSON.stringify(minimalData));
+                showToast('Datos guardados (imágenes omitidas por espacio limitado)', 'warning');
+            } catch (secondError) {
+                console.error('Error al guardar datos mínimos:', secondError);
+                showToast('Error: Espacio insuficiente. Los datos no se guardaron.', 'error');
+            }
+        } else {
+            showToast('Error al guardar datos', 'error');
+        }
     }
 }
 
