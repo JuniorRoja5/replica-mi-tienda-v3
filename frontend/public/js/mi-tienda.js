@@ -5032,7 +5032,7 @@ function copyPublicLink() {
             showToast('Link copied!', 'success');
         });
     } catch (err) {
-        // Fallback adicional
+        // Additional fallback
         showToast('Por favor, selecciona y copia el enlace manualmente', 'info');
     }
 }
