@@ -5027,7 +5027,7 @@ function copyPublicLink() {
                 linkInput.style.borderColor = '#E5E7EB';
             }, 1000);
         }).catch(() => {
-            // Fallback para navegadores antiguos
+            // Fallback for old browsers
             document.execCommand('copy');
             showToast('¡Enlace copiado!', 'success');
         });
