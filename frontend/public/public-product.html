@@ -374,13 +374,14 @@
 
         function loadProductData() {
             try {
-                // Get product ID from URL parameters
+                // Get product ID from URL parameters (supports both 'p' for product and 'c' for consultation)
                 const urlParams = new URLSearchParams(window.location.search);
-                const productId = urlParams.get('p');
+                const productId = urlParams.get('p') || urlParams.get('c');
+                const isConsultation = !!urlParams.get('c');
                 const username = urlParams.get('u');
                 const isPreview = urlParams.get('preview') === 'true';
 
-                console.log('Loading product:', productId, 'for user:', username, 'preview:', isPreview);
+                console.log('Loading', isConsultation ? 'consultation' : 'product', ':', productId, 'for user:', username, 'preview:', isPreview);
 
                 if (!productId) {
                     showError('Parámetros de URL inválidos');
