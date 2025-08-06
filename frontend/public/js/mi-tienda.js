@@ -677,7 +677,7 @@ function closeProductTypeOverlay() {
     document.getElementById('productTypeOverlay').style.display = 'none';
 }
 
-// Estado para el formulario de producto
+// Estado para el formulario de producto Y consultoría
 let currentProductTab = 'datos';
 let productFormData = {
     title: '',
@@ -697,6 +697,43 @@ let productFormData = {
     ]
 };
 
+// Estado específico para consultoría (nuevo)
+let consultationFormData = {
+    title: '',
+    subtitle: '',
+    description: '',
+    price: '',
+    discount_price: '',
+    has_discount: false,
+    image_url: '',
+    button_text: 'Agendar llamada',
+    is_active: true,
+    reviews: [],
+    custom_fields: [
+        { id: 'name', label: 'Nombre completo', type: 'text', required: true },
+        { id: 'email', label: 'Correo electrónico', type: 'email', required: true }
+    ],
+    // CONFIGURACIONES ESPECÍFICAS DE CONSULTORÍA
+    availability_settings: {
+        call_method: 'google_meet', // google_meet, zoom, custom
+        custom_call_link: '',
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        duration: 30, // minutos
+        notice_period: { value: 12, unit: 'hours' },
+        buffer_time: { before: 15, after: 15 },
+        booking_window: 60, // días
+        weekly_availability: [
+            { day: 'sunday', name: 'Domingo', enabled: false, intervals: [] },
+            { day: 'monday', name: 'Lunes', enabled: true, intervals: [{ from: '09:00', to: '17:00' }] },
+            { day: 'tuesday', name: 'Martes', enabled: true, intervals: [{ from: '09:00', to: '17:00' }] },
+            { day: 'wednesday', name: 'Miércoles', enabled: true, intervals: [{ from: '09:00', to: '17:00' }] },
+            { day: 'thursday', name: 'Jueves', enabled: true, intervals: [{ from: '09:00', to: '17:00' }] },
+            { day: 'friday', name: 'Viernes', enabled: true, intervals: [{ from: '09:00', to: '17:00' }] },
+            { day: 'saturday', name: 'Sábado', enabled: false, intervals: [] }
+        ]
+    }
+};
+
 function selectDigitalProductType(productType) {
     // Cerrar la vista superpuesta de selección de tipo
     closeProductTypeOverlay();
@@ -704,10 +741,11 @@ function selectDigitalProductType(productType) {
     // Mostrar el formulario específico según el tipo
     if (productType === 'digital_product') {
         showProductFormOverlay();
+    } else if (productType === 'consultation') {
+        showConsultationFormOverlay();
     } else {
         // Para otros tipos, mostrar mensaje temporal
         const typeNames = {
-            consultation: 'Llamada de Consultoría',
             course: 'Curso Digital',
             membership: 'Membresía Recurrente'
         };
