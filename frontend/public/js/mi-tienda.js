@@ -807,6 +807,29 @@ let courseFormData = {
     }
 };
 
+// Estado global para formulario de membresía recurrente
+let membershipFormData = {
+    title: '',
+    subtitle: '',
+    description: '',
+    price: '',
+    discount_price: '',
+    has_discount: false,
+    image_url: '',
+    button_text: 'Subscribirse',
+    is_active: true,
+    reviews: [],
+    custom_fields: [
+        { id: 'name', label: 'Nombre completo', type: 'text', required: true },
+        { id: 'email', label: 'Correo electrónico', type: 'email', required: true }
+    ],
+    billing_settings: {
+        frequency: 'monthly',
+        has_end_date: false,
+        end_after_months: 12
+    }
+};
+
 function selectDigitalProductType(productType) {
     // Cerrar la vista superpuesta de selección de tipo
     closeProductTypeOverlay();
