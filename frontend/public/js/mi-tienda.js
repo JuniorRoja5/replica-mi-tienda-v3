@@ -4651,7 +4651,7 @@ function updatePreviewWithMembership() {
         billing_settings: membershipFormData.billing_settings || {}
     };
     
-    // Mostrar la página de membresía en lugar del perfil general
+    // Show membership page instead of general profile
     const displayPrice = tempMembership.has_discount && tempMembership.discount_price > 0 
         ? tempMembership.discount_price 
         : tempMembership.price;
