@@ -1032,7 +1032,14 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="form-label">Avatar</label>
-                            <input type="file" class="form-control" id="overlayAvatarInput" accept="image/*">
+                            <div class="avatar-upload-section">
+                                <div class="avatar-preview-container">
+                                    <div class="avatar-preview-overlay" id="avatarPreviewOverlay">
+                                        <div class="avatar-placeholder">👤</div>
+                                    </div>
+                                </div>
+                                <input type="file" class="form-control mt-2" id="overlayAvatarInput" accept="image/*">
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Nombre</label>
