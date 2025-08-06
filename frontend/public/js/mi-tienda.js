@@ -3811,7 +3811,7 @@ function removeCourseFormListeners() {
 function showCourseTab(tabName) {
     currentCourseTab = tabName;
     
-    // Actualizar navegación de tabs
+    // Update tab navigation
     document.querySelectorAll('#courseTabs .nav-link').forEach(tab => {
         tab.classList.remove('active');
     });
