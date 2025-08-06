@@ -182,6 +182,17 @@ Route::get('/mi-tienda', function() {
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 ```
 
+### **CSS Personalizado**
+- **Ubicación**: Embebido en HTML (entre `<style>...</style>`)
+- **Tamaño**: ~50KB (~1,200 líneas de CSS)
+- **Características**:
+  - Variables CSS modernas (`:root`)
+  - Flexbox layout responsivo
+  - Mobile-first approach
+  - Sistema de colores coherente
+  - Animaciones y transiciones suaves
+  - Compatibilidad con Bootstrap 5
+
 ### **Compatibilidad**
 - ✅ **Laravel**: 8.x, 9.x, 10.x, 11.x
 - ✅ **PHP**: 7.4+, 8.x
