@@ -630,7 +630,7 @@ function setupOverlayListeners() {
         updatePreview();
     };
     
-    // Avatar - actualización en tiempo real
+    // Avatar - real-time update
     const handleAvatarChange = function(event) {
         const file = event.target.files[0];
         if (!file) return;
