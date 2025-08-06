@@ -847,9 +847,7 @@ function selectDigitalProductType(productType) {
     closeProductTypeOverlay();
     
     // Mostrar el formulario específico según el tipo
-    if (productType === 'link') {
-        showLinkFormModal();
-    } else if (productType === 'digital_product') {
+    if (productType === 'digital_product') {
         showProductFormOverlay();
     } else if (productType === 'consultation') {
         showConsultationFormOverlay();
