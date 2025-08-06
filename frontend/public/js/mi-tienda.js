@@ -4951,7 +4951,7 @@ function initializeCleanState() {
     });
     
     // COMMENTED: This listener interferes with normal clicks
-    // // Agregar event listener para clics fuera de los modals
+    // // Add event listener for clicks outside modals
     // document.addEventListener('click', function(e) {
     //     if (e.target.classList.contains('profile-overlay') || e.target.classList.contains('overlay')) {
     //         closeAllOverlays();
