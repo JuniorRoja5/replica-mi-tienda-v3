@@ -292,7 +292,10 @@ function updatePreview() {
                     <div class="preview-product">
                         <div class="preview-product-content">
                             <div class="preview-product-icon ${product.type}">
-                                <i class="bi bi-${getProductIcon(product.type)}"></i>
+                                ${product.image_url && product.type === 'link' ? 
+                                    `<img src="${product.image_url}" alt="${product.title}" style="width: 100%; height: 100%; object-fit: contain; border-radius: 0.5rem;">` :
+                                    `<i class="bi bi-${getProductIcon(product.type)}"></i>`
+                                }
                             </div>
                             <div class="preview-product-info">
                                 <h4>${truncateText(product.title, 35)}</h4>
