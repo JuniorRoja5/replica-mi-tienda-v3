@@ -2,7 +2,89 @@
    RESPONSIVE FIXES FOR MI TIENDA
    ================================= */
 
-/* CRITICAL MOBILE MODAL FIXES */
+/* CRITICAL MOBILE FIXES FOR CUSTOM OVERLAYS */
+@media (max-width: 768px) {
+    /* Fix the specific product-type-overlay used in this app */
+    .product-type-overlay {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 9999 !important;
+        background: rgba(0, 0, 0, 0.85) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        padding: 1rem !important;
+        overflow-y: auto !important;
+    }
+    
+    /* Style the overlay header specifically */
+    .product-type-overlay .overlay-header {
+        width: 100% !important;
+        max-width: 400px !important;
+        background: white !important;
+        border-radius: 1rem 1rem 0 0 !important;
+        padding: 1rem !important;
+        position: relative !important;
+        margin-top: 2rem !important;
+    }
+    
+    .product-type-overlay .overlay-header h3 {
+        font-size: 1.25rem !important;
+        margin: 0 !important;
+        text-align: center !important;
+        color: #333 !important;
+    }
+    
+    /* Style the close button */
+    .product-type-overlay .btn-close-overlay {
+        position: absolute !important;
+        top: 1rem !important;
+        right: 1rem !important;
+        background: rgba(0, 0, 0, 0.1) !important;
+        border: none !important;
+        border-radius: 50% !important;
+        width: 32px !important;
+        height: 32px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        z-index: 10 !important;
+    }
+    
+    /* Style the overlay content */
+    .product-type-overlay .overlay-content {
+        width: 100% !important;
+        max-width: 400px !important;
+        background: white !important;
+        border-radius: 0 0 1rem 1rem !important;
+        padding: 1rem !important;
+        max-height: 70vh !important;
+        overflow-y: auto !important;
+    }
+    
+    /* Style the subtitle */
+    .product-type-overlay .overlay-subtitle {
+        text-align: center !important;
+        color: #666 !important;
+        font-size: 0.9rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    /* Fix the product types grid */
+    .product-types-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+}
+
+/* CRITICAL MOBILE MODAL FIXES FOR ALL OTHER OVERLAYS */
 @media (max-width: 768px) {
     /* Reset and fix ALL modal/overlay positioning */
     .modal,
@@ -10,7 +92,7 @@
     .profile-overlay,
     [id*="modal"],
     [id*="Modal"], 
-    [id*="overlay"],
+    [id*="overlay"]:not(.product-type-overlay),
     [id*="Overlay"] {
         position: fixed !important;
         top: 0 !important;
@@ -32,6 +114,7 @@
     .modal[style*="display: none"],
     .overlay[style*="display: none"],
     .profile-overlay[style*="display: none"],
+    .product-type-overlay[style*="display: none"],
     [id*="modal"][style*="display: none"],
     [id*="Modal"][style*="display: none"],
     [id*="overlay"][style*="display: none"],
@@ -42,7 +125,7 @@
     /* Modal content containers */
     .modal-dialog,
     .modal-content,
-    .overlay-content {
+    .overlay-content:not(.product-type-overlay .overlay-content) {
         width: 95% !important;
         max-width: 95% !important;
         max-height: 90vh !important;
@@ -63,7 +146,7 @@
     
     /* Headers */
     .modal-header,
-    .overlay-header {
+    .overlay-header:not(.product-type-overlay .overlay-header) {
         position: sticky !important;
         top: 0 !important;
         background: white !important;
@@ -75,7 +158,7 @@
     
     /* Body content */
     .modal-body,
-    .overlay-content > div:not(.overlay-header):not(.overlay-footer) {
+    .overlay-content:not(.product-type-overlay .overlay-content) > div:not(.overlay-header):not(.overlay-footer) {
         padding: 1rem !important;
         overflow-y: auto !important;
         max-height: calc(90vh - 140px) !important;
@@ -95,7 +178,7 @@
     
     /* Close buttons */
     .btn-close,
-    .btn-close-overlay {
+    .btn-close-overlay:not(.product-type-overlay .btn-close-overlay) {
         position: absolute !important;
         top: 1rem !important;
         right: 1rem !important;
