@@ -1465,6 +1465,142 @@
         </div>
     </div>
 
+    <!-- Modal de Compra -->
+    <div class="modal fade" id="purchaseModal" tabindex="-1" style="display: none;">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content" style="background: rgba(20, 20, 30, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 1rem;">
+                <!-- Header -->
+                <div class="modal-header border-0" style="padding: 2rem 2rem 1rem 2rem;">
+                    <h5 class="modal-title text-white fw-bold fs-4">Completar Compra</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                
+                <!-- Body -->
+                <div class="modal-body" style="padding: 0 2rem 2rem 2rem;">
+                    <!-- Formulario de Compra -->
+                    <div id="purchaseForm">
+                        <!-- Resumen del Producto -->
+                        <div class="mb-4" style="background: rgba(255,255,255,0.05); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.1);">
+                            <div class="d-flex gap-3">
+                                <div class="flex-shrink-0" style="width: 80px; height: 80px; background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                                    <div id="productImageSummary">
+                                        <i class="bi bi-box-seam text-white" style="font-size: 2rem;"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-fill">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h6 class="text-white fw-semibold mb-1" id="productTitleSummary">Producto Digital</h6>
+                                        <span class="badge" style="background: rgba(139, 92, 246, 0.2); color: #c4b5fd; font-size: 0.75rem;">
+                                            Producto Digital
+                                        </span>
+                                    </div>
+                                    <p class="text-muted small mb-2 lh-sm" id="productDescriptionSummary">
+                                        Descripción del producto
+                                    </p>
+                                    <div class="fs-3 fw-bold text-white" id="productPriceSummary">
+                                        $0.00
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Formulario del Cliente -->
+                        <form id="customerForm">
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold">
+                                        <i class="bi bi-person me-2"></i>Nombre Completo
+                                    </label>
+                                    <input type="text" class="form-control" id="customerName" required
+                                           style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 0.5rem;"
+                                           placeholder="Tu nombre completo">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-white fw-semibold">
+                                        <i class="bi bi-envelope me-2"></i>Correo Electrónico
+                                    </label>
+                                    <input type="email" class="form-control" id="customerEmail" required
+                                           style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 0.5rem;"
+                                           placeholder="tu@email.com">
+                                </div>
+                            </div>
+
+                            <!-- Campos Personalizados del Producto -->
+                            <div id="customFieldsContainer" class="mb-4">
+                                <!-- Se llenarán dinámicamente -->
+                            </div>
+
+                            <!-- Información de Pago -->
+                            <div class="mb-4" style="background: rgba(255,255,255,0.05); border-radius: 0.75rem; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.1);">
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <i class="bi bi-credit-card text-white" style="font-size: 1.25rem;"></i>
+                                    <h6 class="text-white fw-semibold mb-0">Método de Pago</h6>
+                                </div>
+                                <div class="text-muted small">
+                                    <!-- TODO: Laravel Backend Integration -->
+                                    <!-- Aquí se integrará Stripe Elements para procesar pagos reales -->
+                                    <!-- Stripe.js se cargará dinámicamente y se montarán los elementos de pago -->
+                                    <!-- Endpoint API: POST /api/payments/create-intent -->
+                                    🔒 Pago seguro procesado con encriptación SSL
+                                </div>
+                            </div>
+
+                            <!-- Aviso de Seguridad -->
+                            <div class="d-flex align-items-center gap-2 mb-4 text-muted small">
+                                <i class="bi bi-shield-lock"></i>
+                                <span>Checkout seguro y protegido</span>
+                            </div>
+
+                            <!-- Botón de Compra -->
+                            <button type="submit" class="btn w-100 py-3 fw-semibold" id="purchaseSubmitBtn"
+                                    style="background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%); border: none; color: white; border-radius: 0.75rem; font-size: 1.1rem;">
+                                <i class="bi bi-credit-card me-2"></i>
+                                <span id="purchaseButtonText">Pagar Ahora $0.00</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Estado de Procesamiento -->
+                    <div id="processingState" style="display: none;" class="text-center py-5">
+                        <div class="mb-4">
+                            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                                <span class="visually-hidden">Procesando...</span>
+                            </div>
+                        </div>
+                        <h5 class="text-white mb-2">Procesando tu compra...</h5>
+                        <p class="text-muted">
+                            <!-- TODO: Laravel Backend -->
+                            <!-- Aquí se procesará el pago real con Stripe -->
+                            <!-- Se validará el webhook de confirmación -->
+                            Por favor espera mientras procesamos tu pago de forma segura
+                        </p>
+                    </div>
+
+                    <!-- Estado de Éxito -->
+                    <div id="successState" style="display: none;" class="text-center py-5">
+                        <div class="mb-4">
+                            <div class="d-inline-flex align-items-center justify-content-center" 
+                                 style="width: 80px; height: 80px; background: rgba(34, 197, 94, 0.2); border-radius: 50%;">
+                                <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                            </div>
+                        </div>
+                        <h4 class="text-white fw-bold mb-3">¡Compra Completada!</h4>
+                        <p class="text-muted mb-4">
+                            <!-- TODO: Laravel Backend -->
+                            <!-- El enlace de descarga se enviará automáticamente por email -->
+                            <!-- Sistema de entrega: POST /api/orders/deliver -->
+                            Tu compra ha sido procesada exitosamente.<br>
+                            Recibirás un email con el enlace de descarga.
+                        </p>
+                        <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">
+                            Cerrar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Vista superpuesta para crear producto digital -->
     <div class="profile-overlay" id="productFormOverlay" style="display: none;">
         <div class="overlay-header">
