@@ -378,22 +378,36 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const productId = urlParams.get('p');
                 const username = urlParams.get('u');
+                const isPreview = urlParams.get('preview') === 'true';
 
-                console.log('Loading product:', productId, 'for user:', username);
+                console.log('Loading product:', productId, 'for user:', username, 'preview:', isPreview);
 
                 if (!productId) {
                     showError('Parámetros de URL inválidos');
                     return;
                 }
 
-                // Load from localStorage (in a real app, this would be from API)
-                const storedData = localStorage.getItem('miTiendaData');
-                if (!storedData) {
-                    showError('Datos no encontrados');
-                    return;
+                // If it's a preview, try to load from temporary storage first
+                let appData = null;
+                if (isPreview) {
+                    const tempData = localStorage.getItem('tempProductPreview');
+                    if (tempData) {
+                        appData = JSON.parse(tempData);
+                        console.log('Loading from temporary preview data');
+                    }
                 }
 
-                const appData = JSON.parse(storedData);
+                // If no preview data or not preview mode, load from main storage
+                if (!appData) {
+                    const storedData = localStorage.getItem('miTiendaData');
+                    if (!storedData) {
+                        showError('Datos no encontrados');
+                        return;
+                    }
+                    appData = JSON.parse(storedData);
+                    console.log('Loading from main storage');
+                }
+
                 profileData = appData.profile;
 
                 // Find the product - convert both to string for comparison
