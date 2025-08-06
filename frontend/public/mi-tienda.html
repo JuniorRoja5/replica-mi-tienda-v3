@@ -1254,7 +1254,7 @@
 
         <!-- Panel Derecho - Vista Previa -->
         <div class="right-panel">
-            <div>
+            <div class="mockup-container">
                 <div class="phone-mockup">
                     <div class="phone-frame">
                         <div class="phone-notch"></div>
@@ -1268,6 +1268,20 @@
                 <div class="preview-info">
                     <p>Vista previa en tiempo real</p>
                     <p class="small">Los cambios se reflejan automáticamente</p>
+                </div>
+                
+                <!-- Campo "Tu enlace público" -->
+                <div class="public-link-section">
+                    <div class="public-link-label">Tu enlace público</div>
+                    <input 
+                        type="text" 
+                        class="public-link-input" 
+                        id="publicLinkInput" 
+                        value="https://clickmy.link/u/tradingsharks" 
+                        readonly 
+                        onclick="copyPublicLink()"
+                        title="Haz clic para copiar"
+                    >
                 </div>
             </div>
         </div>
