@@ -558,20 +558,569 @@ function closeProductTypeOverlay() {
     document.getElementById('productTypeOverlay').style.display = 'none';
 }
 
+// Estado para el formulario de producto
+let currentProductTab = 'datos';
+let productFormData = {
+    title: '',
+    subtitle: '',
+    description: '',
+    price: '',
+    discount_price: '',
+    has_discount: false,
+    image_url: '',
+    file_url: '',
+    button_text: 'Comprar ahora',
+    is_active: true,
+    reviews: [],
+    custom_fields: [
+        { id: 'name', label: 'Nombre completo', type: 'text', required: true },
+        { id: 'email', label: 'Correo electrónico', type: 'email', required: true }
+    ]
+};
+
 function selectDigitalProductType(productType) {
-    // Cerrar la vista superpuesta
+    // Cerrar la vista superpuesta de selección de tipo
     closeProductTypeOverlay();
     
-    // Aquí se abriría el formulario específico para cada tipo de producto
-    // Por ahora solo mostramos una notificación
-    const typeNames = {
-        digital_product: 'Producto Digital',
-        consultation: 'Llamada de Consultoría',
-        course: 'Curso Digital',
-        membership: 'Membresía Recurrente'
+    // Mostrar el formulario específico según el tipo
+    if (productType === 'digital_product') {
+        showProductFormOverlay();
+    } else {
+        // Para otros tipos, mostrar mensaje temporal
+        const typeNames = {
+            consultation: 'Llamada de Consultoría',
+            course: 'Curso Digital',
+            membership: 'Membresía Recurrente'
+        };
+        showToast(`Creando ${typeNames[productType]}... (próximamente)`, 'info');
+    }
+}
+
+function showProductFormOverlay() {
+    // Resetear formulario
+    resetProductForm();
+    
+    // Mostrar el overlay
+    document.getElementById('productFormOverlay').style.display = 'block';
+    
+    // Configurar tab inicial
+    currentProductTab = 'datos';
+    showTab('datos');
+    
+    // Configurar event listeners
+    setupProductFormListeners();
+}
+
+function closeProductFormOverlay() {
+    document.getElementById('productFormOverlay').style.display = 'none';
+    removeProductFormListeners();
+}
+
+function resetProductForm() {
+    productFormData = {
+        title: '',
+        subtitle: '',
+        description: '',
+        price: '',
+        discount_price: '',
+        has_discount: false,
+        image_url: '',
+        file_url: '',
+        button_text: 'Comprar ahora',
+        is_active: true,
+        reviews: [],
+        custom_fields: [
+            { id: 'name', label: 'Nombre completo', type: 'text', required: true },
+            { id: 'email', label: 'Correo electrónico', type: 'email', required: true }
+        ]
     };
     
-    showToast(`Creando ${typeNames[productType]}... (próximamente)`, 'info');
+    // Limpiar formularios
+    document.getElementById('productTitle').value = '';
+    document.getElementById('productSubtitle').value = '';
+    document.getElementById('productDescription').value = '';
+    document.getElementById('productPrice').value = '';
+    document.getElementById('discountPrice').value = '';
+    document.getElementById('hasDiscount').checked = false;
+    document.getElementById('buttonText').value = 'Comprar ahora';
+    document.getElementById('isActive').checked = true;
+    
+    // Resetear imagen
+    document.getElementById('productImagePreview').innerHTML = `
+        <div class="product-image-placeholder">
+            <i class="bi bi-box-seam"></i>
+        </div>
+    `;
+    
+    // Resetear archivo
+    document.getElementById('fileUploadArea').style.display = 'block';
+    document.getElementById('fileUploadSuccess').style.display = 'none';
+    
+    // Resetear contadores
+    document.getElementById('titleCounter').textContent = '0';
+    document.getElementById('subtitleCounter').textContent = '0';
+    
+    // Resetear reseñas
+    document.getElementById('reviewsList').innerHTML = `
+        <div class="text-muted text-center py-3">
+            <i class="bi bi-star display-6"></i>
+            <p>No hay reseñas aún. Agrega algunas para aumentar la confianza.</p>
+        </div>
+    `;
+}
+
+function setupProductFormListeners() {
+    // Títulos con actualización en tiempo real
+    const titleInput = document.getElementById('productTitle');
+    const subtitleInput = document.getElementById('productSubtitle');
+    const descriptionInput = document.getElementById('productDescription');
+    const priceInput = document.getElementById('productPrice');
+    const discountPriceInput = document.getElementById('discountPrice');
+    const hasDiscountInput = document.getElementById('hasDiscount');
+    const buttonTextInput = document.getElementById('buttonText');
+    const isActiveInput = document.getElementById('isActive');
+    
+    // Event listeners para actualización en tiempo real
+    titleInput.addEventListener('input', function() {
+        productFormData.title = this.value;
+        document.getElementById('titleCounter').textContent = this.value.length;
+        updatePreviewWithProduct();
+    });
+    
+    subtitleInput.addEventListener('input', function() {
+        productFormData.subtitle = this.value;
+        document.getElementById('subtitleCounter').textContent = this.value.length;
+        updatePreviewWithProduct();
+    });
+    
+    descriptionInput.addEventListener('input', function() {
+        productFormData.description = this.value;
+        updatePreviewWithProduct();
+    });
+    
+    priceInput.addEventListener('input', function() {
+        productFormData.price = this.value;
+        updatePreviewWithProduct();
+    });
+    
+    discountPriceInput.addEventListener('input', function() {
+        productFormData.discount_price = this.value;
+        updatePreviewWithProduct();
+    });
+    
+    hasDiscountInput.addEventListener('change', function() {
+        productFormData.has_discount = this.checked;
+        document.getElementById('discountPrice').style.display = this.checked ? 'block' : 'none';
+        updatePreviewWithProduct();
+    });
+    
+    buttonTextInput.addEventListener('input', function() {
+        productFormData.button_text = this.value;
+        updatePreviewWithProduct();
+    });
+    
+    isActiveInput.addEventListener('change', function() {
+        productFormData.is_active = this.checked;
+        updatePreviewWithProduct();
+    });
+    
+    // Navegación de tabs
+    document.querySelectorAll('#productTabs button').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabName = this.getAttribute('data-tab');
+            showTab(tabName);
+        });
+    });
+    
+    // Upload de imagen
+    document.getElementById('productImageInput').addEventListener('change', handleProductImageUpload);
+    
+    // Upload de archivo
+    document.getElementById('productFileInput').addEventListener('change', handleProductFileUpload);
+}
+
+function removeProductFormListeners() {
+    // Remover listeners si es necesario
+    const titleInput = document.getElementById('productTitle');
+    const subtitleInput = document.getElementById('productSubtitle');
+    
+    if (titleInput) {
+        const newTitleInput = titleInput.cloneNode(true);
+        titleInput.parentNode.replaceChild(newTitleInput, titleInput);
+    }
+    
+    if (subtitleInput) {
+        const newSubtitleInput = subtitleInput.cloneNode(true);
+        subtitleInput.parentNode.replaceChild(newSubtitleInput, subtitleInput);
+    }
+}
+
+function showTab(tabName) {
+    currentProductTab = tabName;
+    
+    // Actualizar navegación de tabs
+    document.querySelectorAll('#productTabs .nav-link').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.getElementById(`${tabName}-tab`).classList.add('active');
+    
+    // Mostrar panel correspondiente
+    document.querySelectorAll('.tab-content-panel').forEach(panel => {
+        panel.style.display = 'none';
+    });
+    document.getElementById(`${tabName}-panel`).style.display = 'block';
+    
+    // Actualizar botones de navegación
+    updateTabNavigation();
+}
+
+function updateTabNavigation() {
+    const prevBtn = document.getElementById('prevTabBtn');
+    const nextBtn = document.getElementById('nextTabBtn');
+    const createBtn = document.getElementById('createProductBtn');
+    
+    switch(currentProductTab) {
+        case 'datos':
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'block';
+            createBtn.style.display = 'none';
+            break;
+        case 'contenido':
+            prevBtn.style.display = 'block';
+            nextBtn.style.display = 'block';
+            createBtn.style.display = 'none';
+            break;
+        case 'opciones':
+            prevBtn.style.display = 'block';
+            nextBtn.style.display = 'none';
+            createBtn.style.display = 'block';
+            break;
+    }
+}
+
+function nextTab() {
+    switch(currentProductTab) {
+        case 'datos':
+            showTab('contenido');
+            break;
+        case 'contenido':
+            showTab('opciones');
+            break;
+    }
+}
+
+function previousTab() {
+    switch(currentProductTab) {
+        case 'contenido':
+            showTab('datos');
+            break;
+        case 'opciones':
+            showTab('contenido');
+            break;
+    }
+}
+
+function handleProductImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Validar que sea una imagen
+    if (!file.type.startsWith('image/')) {
+        showToast('Por favor selecciona un archivo de imagen válido', 'error');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        productFormData.image_url = e.target.result;
+        document.getElementById('productImagePreview').innerHTML = `
+            <img src="${e.target.result}" alt="Imagen del producto">
+        `;
+        updatePreviewWithProduct();
+        showToast('¡Imagen subida correctamente!', 'success');
+    };
+    reader.readAsDataURL(file);
+}
+
+function handleProductFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Simular subida de archivo
+    productFormData.file_url = file.name; // En producción sería una URL real
+    
+    // Mostrar archivo subido
+    document.getElementById('fileUploadArea').style.display = 'none';
+    document.getElementById('fileUploadSuccess').style.display = 'block';
+    document.getElementById('uploadedFileName').textContent = file.name;
+    
+    showToast('¡Archivo subido correctamente!', 'success');
+}
+
+function removeUploadedFile() {
+    productFormData.file_url = '';
+    document.getElementById('fileUploadArea').style.display = 'block';
+    document.getElementById('fileUploadSuccess').style.display = 'none';
+    document.getElementById('productFileInput').value = '';
+}
+
+function generateAIDescription() {
+    const title = productFormData.title || 'producto digital';
+    const description = `Este ${title.toLowerCase()} le enseñará todo lo que necesita saber para alcanzar sus metas. Es la guía ideal si usted está buscando:
+
+**Beneficios principales:**
+- Alcanzar sus sueños y objetivos
+- Encontrar propósito en su trabajo
+- Mejorar sus finanzas personales  
+- Ser más feliz y productivo
+
+**Lo que aprenderá:**
+- Estrategias probadas y efectivas
+- Herramientas prácticas para implementar
+- Casos de estudio reales
+- Plantillas y recursos adicionales
+
+¡Empiece hoy mismo y transforme su vida!`;
+
+    document.getElementById('productDescription').value = description;
+    productFormData.description = description;
+    updatePreviewWithProduct();
+    showToast('¡Descripción generada con IA!', 'success');
+}
+
+function addReview() {
+    const newReview = {
+        id: Date.now(),
+        customer_name: '',
+        rating: 5,
+        comment: ''
+    };
+    
+    productFormData.reviews.push(newReview);
+    renderReviews();
+}
+
+function renderReviews() {
+    const reviewsList = document.getElementById('reviewsList');
+    
+    if (productFormData.reviews.length === 0) {
+        reviewsList.innerHTML = `
+            <div class="text-muted text-center py-3">
+                <i class="bi bi-star display-6"></i>
+                <p>No hay reseñas aún. Agrega algunas para aumentar la confianza.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    reviewsList.innerHTML = productFormData.reviews.map((review, index) => `
+        <div class="review-item">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <input type="text" class="form-control form-control-sm" 
+                       placeholder="Nombre del cliente" 
+                       value="${review.customer_name}"
+                       onchange="updateReview(${index}, 'customer_name', this.value)">
+                <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="removeReview(${index})">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+            <div class="mb-2">
+                <div class="review-stars">
+                    ${[1,2,3,4,5].map(star => `
+                        <i class="bi bi-star${star <= review.rating ? '-fill' : ''}" 
+                           onclick="updateReview(${index}, 'rating', ${star})" 
+                           style="cursor: pointer;"></i>
+                    `).join('')}
+                </div>
+            </div>
+            <textarea class="form-control form-control-sm" 
+                      placeholder="Comentario de la reseña..." 
+                      rows="2"
+                      onchange="updateReview(${index}, 'comment', this.value)">${review.comment}</textarea>
+        </div>
+    `).join('');
+}
+
+function updateReview(index, field, value) {
+    if (productFormData.reviews[index]) {
+        productFormData.reviews[index][field] = value;
+        updatePreviewWithProduct();
+    }
+}
+
+function removeReview(index) {
+    productFormData.reviews.splice(index, 1);
+    renderReviews();
+    updatePreviewWithProduct();
+}
+
+function addCustomField() {
+    const newField = {
+        id: Date.now(),
+        label: '',
+        type: 'text',
+        required: false
+    };
+    
+    productFormData.custom_fields.push(newField);
+    renderCustomFields();
+}
+
+function renderCustomFields() {
+    const customFieldsList = document.getElementById('customFieldsList');
+    
+    customFieldsList.innerHTML = productFormData.custom_fields.map((field, index) => {
+        if (field.id === 'name' || field.id === 'email') {
+            // Campos por defecto (readonly)
+            return `
+                <div class="custom-field-item mb-2">
+                    <div class="d-flex gap-2 align-items-center">
+                        <input type="text" class="form-control" value="${field.label}" readonly>
+                        <select class="form-select" disabled style="max-width: 120px;">
+                            <option>${field.type === 'email' ? 'Email' : 'Texto'}</option>
+                        </select>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" checked disabled>
+                            <label class="form-check-label small">Obligatorio</label>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            // Campos personalizados
+            return `
+                <div class="custom-field-item mb-2">
+                    <div class="d-flex gap-2 align-items-center">
+                        <input type="text" class="form-control" placeholder="Etiqueta del campo" 
+                               value="${field.label}"
+                               onchange="updateCustomField(${index}, 'label', this.value)">
+                        <select class="form-select" style="max-width: 120px;" 
+                                onchange="updateCustomField(${index}, 'type', this.value)">
+                            <option value="text" ${field.type === 'text' ? 'selected' : ''}>Texto</option>
+                            <option value="email" ${field.type === 'email' ? 'selected' : ''}>Email</option>
+                            <option value="tel" ${field.type === 'tel' ? 'selected' : ''}>Teléfono</option>
+                        </select>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" 
+                                   ${field.required ? 'checked' : ''}
+                                   onchange="updateCustomField(${index}, 'required', this.checked)">
+                            <label class="form-check-label small">Obligatorio</label>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeCustomField(${index})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+    }).join('');
+}
+
+function updateCustomField(index, field, value) {
+    if (productFormData.custom_fields[index]) {
+        productFormData.custom_fields[index][field] = value;
+    }
+}
+
+function removeCustomField(index) {
+    // No permitir remover campos por defecto
+    if (productFormData.custom_fields[index].id === 'name' || productFormData.custom_fields[index].id === 'email') {
+        return;
+    }
+    
+    productFormData.custom_fields.splice(index, 1);
+    renderCustomFields();
+}
+
+function updatePreviewWithProduct() {
+    // Crear preview temporal del producto
+    const tempProduct = {
+        id: 'preview',
+        type: 'product',
+        title: productFormData.title || 'Nuevo Producto Digital',
+        description: productFormData.description || 'Descripción del producto...',
+        price: parseFloat(productFormData.price) || 0,
+        discount_price: productFormData.has_discount ? (parseFloat(productFormData.discount_price) || 0) : 0,
+        has_discount: productFormData.has_discount,
+        image_url: productFormData.image_url,
+        status: productFormData.is_active ? 'active' : 'inactive',
+        sales: 0,
+        sort_order: appState.products.length + 1
+    };
+    
+    // Añadir temporalmente a los productos para el preview
+    const tempProducts = [...appState.products, tempProduct];
+    const originalProducts = appState.products;
+    appState.products = tempProducts;
+    
+    // Actualizar preview
+    updatePreview();
+    
+    // Restaurar productos originales
+    appState.products = originalProducts;
+}
+
+function saveAsDraft() {
+    if (!productFormData.title.trim()) {
+        showToast('El título es obligatorio', 'error');
+        return;
+    }
+    
+    const draftProduct = createProductFromForm();
+    draftProduct.is_active = false;
+    
+    appState.products.push(draftProduct);
+    saveToStorage();
+    renderProducts();
+    updatePreview();
+    
+    closeProductFormOverlay();
+    showToast('¡Borrador guardado correctamente!', 'success');
+}
+
+function createProduct() {
+    if (!productFormData.title.trim()) {
+        showToast('El título es obligatorio', 'error');
+        return;
+    }
+    
+    if (!productFormData.price || parseFloat(productFormData.price) <= 0) {
+        showToast('El precio debe ser mayor a 0', 'error');
+        return;
+    }
+    
+    const newProduct = createProductFromForm();
+    
+    appState.products.push(newProduct);
+    saveToStorage();
+    renderProducts();
+    updatePreview();
+    
+    closeProductFormOverlay();
+    showToast('¡Producto creado correctamente!', 'success');
+}
+
+function createProductFromForm() {
+    return {
+        id: Date.now(),
+        type: 'product',
+        title: productFormData.title.trim(),
+        subtitle: productFormData.subtitle.trim(),
+        description: productFormData.description.trim(),
+        price: parseFloat(productFormData.price) || 0,
+        discount_price: productFormData.has_discount ? (parseFloat(productFormData.discount_price) || 0) : 0,
+        has_discount: productFormData.has_discount,
+        image_url: productFormData.image_url,
+        file_url: productFormData.file_url,
+        button_text: productFormData.button_text,
+        is_active: productFormData.is_active,
+        reviews: [...productFormData.reviews],
+        custom_fields: [...productFormData.custom_fields],
+        status: productFormData.is_active ? 'active' : 'inactive',
+        sales: 0,
+        sort_order: appState.products.length + 1,
+        created_at: new Date().toISOString()
+    };
 }
 
 function showLinkFormModal() {
