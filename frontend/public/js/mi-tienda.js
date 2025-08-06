@@ -4943,7 +4943,7 @@ function initializeCleanState() {
     // COMMENTED: This function causes problems with event listeners
     // closeAllOverlays();
     
-    // Agregar event listener para la tecla Escape SOLAMENTE
+    // Add event listener for Escape key ONLY
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeAllOverlays();
