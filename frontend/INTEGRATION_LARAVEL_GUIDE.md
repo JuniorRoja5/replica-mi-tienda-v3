@@ -70,6 +70,124 @@ cp frontend/public/js/mi-tienda.js public/js/mi-tienda.js
 
 ---
 
+## 🎨 Gestión del CSS y Styling
+
+### **📍 Estado Actual:**
+El CSS está **embebido dentro de los archivos HTML** por razones de performance y simplicidad.
+
+### **📂 Ubicación del CSS:**
+```html
+<!-- mi-tienda.html -->
+<style>
+    /* === VARIABLES CSS === */
+    :root {
+        --primary-color: #0d6efd;
+        --success-color: #198754;
+        --danger-color: #dc3545;
+    }
+    
+    /* === LAYOUT PRINCIPAL === */
+    .main-container { display: flex; min-height: 100vh; }
+    .left-panel { flex: 0 0 45%; background: white; }
+    .right-panel { flex: 0 0 55%; background: #F3F4F6; }
+    
+    /* ... ~1200 líneas de CSS ... */
+</style>
+```
+
+### **🔄 Opciones de Integración:**
+
+#### **OPCIÓN 1: Mantener CSS Embebido (Recomendado)**
+**✅ Pros:**
+- Mejor performance (menos peticiones HTTP)
+- Configuración cero
+- Todo autocontenido
+
+**❌ Contras:**  
+- HTML más pesado (~50KB adicionales)
+- CSS no cacheable independientemente
+
+**Implementación:**
+```php
+<!-- mi-tienda.blade.php - Sin cambios -->
+<style>
+    /* Todo el CSS queda aquí */
+</style>
+```
+
+#### **OPCIÓN 2: Extraer CSS a Archivo Separado**
+**✅ Pros:**
+- HTML más limpio
+- CSS cacheable por separado  
+- Reutilizable en múltiples vistas
+
+**❌ Contras:**
+- Petición HTTP adicional
+- Configuración Laravel adicional
+
+**Implementación:**
+```bash
+# 1. Extraer CSS
+mkdir -p public/css
+# Copiar contenido entre <style>...</style> a:
+public/css/mi-tienda.css
+```
+
+```php
+<!-- mi-tienda.blade.php -->
+@push('styles')
+<link href="{{ asset('css/mi-tienda.css') }}" rel="stylesheet">
+@endpush
+<!-- Remover la etiqueta <style> completa -->
+```
+
+### **🎨 Personalización y Theming**
+
+#### **Variables CSS Principales:**
+```css
+:root {
+    --primary-color: #0d6efd;    /* Botones principales */
+    --success-color: #198754;    /* Estados exitosos */
+    --danger-color: #dc3545;     /* Botones eliminar */
+}
+
+/* Background principal */
+.right-panel {
+    background: #F3F4F6;    /* Gris claro personalizado */
+}
+```
+
+#### **Para Theming Dinámico:**
+```php
+<!-- Opción: Variables desde config Laravel -->
+<style>
+:root {
+    --primary-color: {{ config('app.theme.primary', '#0d6efd') }};
+    --success-color: {{ config('app.theme.success', '#198754') }};
+    --danger-color: {{ config('app.theme.danger', '#dc3545') }};
+}
+</style>
+```
+
+### **📱 Responsividad**
+
+El CSS incluye **media queries** completas:
+```css
+/* Mobile First approach ya implementado */
+@media (max-width: 768px) {
+    .main-container { flex-direction: column; }
+    .left-panel, .right-panel { flex: none; }
+    .phone-frame { transform: scale(0.8); }
+}
+
+@media (max-width: 576px) {
+    .profile-header { padding: 1rem; }
+    .products-section { padding: 1rem; }
+}
+```
+
+---
+
 ## 🏗️ Estructura HTML/CSS Recomendada
 
 ### **Layout Principal (mi-tienda.blade.php):**
