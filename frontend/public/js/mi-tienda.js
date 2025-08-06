@@ -205,6 +205,9 @@ function updateProfileUI() {
         const avatarElement = document.getElementById('profileAvatar');
         avatarElement.innerHTML = `<img src="${appState.profile.avatar_url}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
     }
+    
+    // Actualizar el enlace público
+    updatePublicLink();
 }
 
 function setupEventListeners() {
