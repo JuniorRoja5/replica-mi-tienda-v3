@@ -4,16 +4,7 @@ let appState = {
         name: 'Trading Sharks',
         username: 'tradingsharks',
         bio: 'Aquí le cambia la vida 🔥📈',
-        avatar_url: '',
-        social_links: {
-            tiktok: '',
-            spotify: '',
-            instagram: '',
-            youtube: '',
-            link: '',
-            discord: '',
-            twitter: ''
-        }
+        avatar_url: ''
     },
     products: [
         {
@@ -26,11 +17,11 @@ let appState = {
             image_url: '',
             status: 'active',
             sales: 0,
-            sort_order: 1
+            sort_order: 3
         },
         {
             id: 2,
-            type: 'digital_product',
+            type: 'product',
             title: 'Guía completa para invertir en video',
             description: 'Guía completa de la A a la Z para aprender a invertir y lograr la libertad financiera',
             url: '',
@@ -38,11 +29,11 @@ let appState = {
             image_url: '',
             status: 'active',
             sales: 0,
-            sort_order: 2
+            sort_order: 1
         },
         {
             id: 3,
-            type: 'digital_product',
+            type: 'product',
             title: 'Guía completa para invertir',
             description: 'Guía paso a paso de la A a la Z de cómo invertir y ganar interés compuesto',
             url: '',
@@ -50,7 +41,7 @@ let appState = {
             image_url: '',
             status: 'active',
             sales: 3,
-            sort_order: 3
+            sort_order: 2
         }
     ]
 };
@@ -69,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeApp() {
-    console.log('Mi Tienda - Aplicación inicializada');
+    console.log('Mi Tienda v2.0 - Aplicación inicializada');
     renderProducts();
 }
 
@@ -81,15 +72,7 @@ function loadFromStorage() {
             appState = { ...appState, ...parsedData };
             
             // Actualizar interfaz con datos guardados
-            document.getElementById('profileName').textContent = appState.profile.name;
-            document.getElementById('profileUsername').textContent = '@' + appState.profile.username;
-            document.getElementById('profileBio').textContent = appState.profile.bio;
-            
-            if (appState.profile.avatar_url) {
-                const avatarElement = document.getElementById('profileAvatar');
-                avatarElement.innerHTML = `<img src="${appState.profile.avatar_url}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-            }
-            
+            updateProfileUI();
             renderProducts();
             updatePreview();
         } catch (error) {
@@ -106,6 +89,17 @@ function saveToStorage() {
     }
 }
 
+function updateProfileUI() {
+    document.getElementById('profileName').textContent = appState.profile.name;
+    document.getElementById('profileUsername').textContent = '@' + appState.profile.username;
+    document.getElementById('profileBio').textContent = appState.profile.bio;
+    
+    if (appState.profile.avatar_url) {
+        const avatarElement = document.getElementById('profileAvatar');
+        avatarElement.innerHTML = `<img src="${appState.profile.avatar_url}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+    }
+}
+
 function setupEventListeners() {
     // Bio counter
     const bioInput = document.getElementById('bioInput');
@@ -117,22 +111,6 @@ function setupEventListeners() {
         });
     }
 
-    // Title counter
-    const titleInput = document.getElementById('productTitle');
-    const titleCounter = document.getElementById('titleCounter');
-    
-    if (titleInput && titleCounter) {
-        titleInput.addEventListener('input', function() {
-            titleCounter.textContent = this.value.length;
-        });
-    }
-    
-    // Image preview
-    const productImage = document.getElementById('productImage');
-    if (productImage) {
-        productImage.addEventListener('change', handleImagePreview);
-    }
-    
     // Avatar preview
     const avatarInput = document.getElementById('avatarInput');
     if (avatarInput) {
@@ -150,8 +128,7 @@ function initializeDragAndDrop() {
             ghostClass: 'sortable-ghost',
             chosenClass: 'sortable-chosen',
             onEnd: function(evt) {
-                // Actualizar orden en el estado
-                const productId = parseInt(evt.item.dataset.id);
+                // Reordenar productos en el estado
                 const oldIndex = evt.oldIndex;
                 const newIndex = evt.newIndex;
                 
@@ -166,7 +143,7 @@ function initializeDragAndDrop() {
                 
                 saveToStorage();
                 updatePreview();
-                showToast('¡Orden actualizado correctamente!', 'success');
+                showToast('¡Orden actualizado correctamente!');
             }
         });
     }
@@ -231,7 +208,7 @@ function renderProducts() {
 function getProductIcon(type) {
     const icons = {
         link: 'link-45deg',
-        digital_product: 'box-seam',
+        product: 'play-btn',
         consultation: 'telephone',
         course: 'mortarboard',
         membership: 'crown'
@@ -241,8 +218,8 @@ function getProductIcon(type) {
 
 function getProductTypeLabel(type) {
     const labels = {
-        link: 'Link',
-        digital_product: 'Producto',
+        link: 'LINK',
+        product: 'PRODUCTO',
         consultation: 'Consultoría',
         course: 'Curso',
         membership: 'Membresía'
@@ -251,54 +228,85 @@ function getProductTypeLabel(type) {
 }
 
 function updatePreview() {
-    // Actualizar información del perfil
-    document.getElementById('previewName').textContent = appState.profile.name;
-    document.getElementById('previewBio').textContent = appState.profile.bio;
-    
-    // Actualizar avatar en vista previa
-    const previewAvatar = document.getElementById('previewAvatar');
-    if (appState.profile.avatar_url) {
-        previewAvatar.innerHTML = `<img src="${appState.profile.avatar_url}" alt="Avatar">`;
-    } else {
-        previewAvatar.innerHTML = '👤';
-    }
-    
-    // Actualizar productos en vista previa
-    const previewProducts = document.getElementById('previewProducts');
-    if (!previewProducts) return;
-    
+    const previewContent = document.getElementById('previewContent');
+    if (!previewContent) return;
+
+    // Crear header de vista previa
+    const previewHeader = `
+        <div class="preview-header">
+            <div class="preview-avatar" id="previewAvatar">
+                ${appState.profile.avatar_url ? 
+                    `<img src="${appState.profile.avatar_url}" alt="Avatar">` : 
+                    '👤'
+                }
+            </div>
+            <h3 class="preview-name">${appState.profile.name}</h3>
+            <p class="preview-bio">${appState.profile.bio}</p>
+            <div class="preview-social" id="previewSocial">
+                <div class="preview-social-icon tiktok">
+                    <i class="bi bi-tiktok"></i>
+                </div>
+                <div class="preview-social-icon spotify">
+                    <i class="bi bi-spotify"></i>
+                </div>
+                <div class="preview-social-icon instagram">
+                    <i class="bi bi-instagram"></i>
+                </div>
+                <div class="preview-social-icon youtube">
+                    <i class="bi bi-youtube"></i>
+                </div>
+                <div class="preview-social-icon link">
+                    <i class="bi bi-link-45deg"></i>
+                </div>
+                <div class="preview-social-icon discord">
+                    <i class="bi bi-discord"></i>
+                </div>
+                <div class="preview-social-icon twitter">
+                    <i class="bi bi-twitter"></i>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Crear vista previa de productos
+    let previewProducts = '';
     if (appState.products.length === 0) {
-        previewProducts.innerHTML = `
+        previewProducts = `
             <div class="text-center" style="padding: 2rem; color: #666;">
                 <i class="bi bi-box" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
                 <p>No hay productos disponibles</p>
             </div>
         `;
-        return;
-    }
-    
-    const sortedProducts = [...appState.products].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
-    
-    previewProducts.innerHTML = sortedProducts.map(product => `
-        <div class="preview-product">
-            <div class="preview-product-content">
-                <div class="preview-product-icon ${product.type}">
-                    <i class="bi bi-${getProductIcon(product.type)}"></i>
-                </div>
-                <div class="preview-product-info">
-                    <h4>${truncateText(product.title, 35)}</h4>
-                    ${product.description ? `<p>${truncateText(product.description, 50)}</p>` : ''}
-                </div>
-                ${product.type !== 'link' && product.price > 0 ? `
-                    <div class="preview-product-price">$${product.price}</div>
-                ` : ''}
+    } else {
+        const sortedProducts = [...appState.products].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+        
+        previewProducts = `
+            <div class="preview-products">
+                ${sortedProducts.map(product => `
+                    <div class="preview-product">
+                        <div class="preview-product-content">
+                            <div class="preview-product-icon ${product.type}">
+                                <i class="bi bi-${getProductIcon(product.type)}"></i>
+                            </div>
+                            <div class="preview-product-info">
+                                <h4>${truncateText(product.title, 35)}</h4>
+                                ${product.description && product.type !== 'link' ? `<p>${truncateText(product.description, 50)}</p>` : ''}
+                            </div>
+                            ${product.type !== 'link' && product.price > 0 ? `
+                                <div class="preview-product-price">$${product.price}</div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('')}
             </div>
-        </div>
-    `).join('');
+        `;
+    }
+
+    previewContent.innerHTML = previewHeader + previewProducts;
 }
 
 function truncateText(text, maxLength) {
-    if (text.length <= maxLength) return text;
+    if (!text || text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
 }
 
@@ -309,83 +317,103 @@ function showProfileModal() {
     document.getElementById('usernameInput').value = appState.profile.username;
     document.getElementById('bioInput').value = appState.profile.bio;
     
+    // Actualizar contador de bio
+    document.getElementById('bioCounter').textContent = appState.profile.bio.length;
+    
     const modal = new bootstrap.Modal(document.getElementById('profileModal'));
     modal.show();
 }
 
 function showCreateModal() {
-    isEditing = false;
-    editingId = null;
-    
-    // Resetear modal
-    document.getElementById('modalTitle').textContent = '¿Qué quieres crear?';
-    document.getElementById('typeSelector').style.display = 'block';
-    document.getElementById('productForm').style.display = 'none';
-    document.getElementById('saveBtn').style.display = 'none';
-    
-    // Limpiar formulario
-    document.getElementById('productFormElement').reset();
-    document.getElementById('imagePreview').innerHTML = '<i class="bi bi-image text-muted" style="font-size: 3rem;"></i>';
-    
-    const modal = new bootstrap.Modal(document.getElementById('createModal'));
+    // Mostrar modal de selección de tipo de producto
+    const modal = new bootstrap.Modal(document.getElementById('productTypeModal'));
     modal.show();
 }
 
-function selectType(type) {
-    document.getElementById('productType').value = type;
+function selectProductType(type) {
+    // Cerrar modal de selección
+    const typeModal = bootstrap.Modal.getInstance(document.getElementById('productTypeModal'));
+    typeModal.hide();
     
-    // Ocultar selector y mostrar formulario
-    document.getElementById('typeSelector').style.display = 'none';
-    document.getElementById('productForm').style.display = 'block';
-    document.getElementById('saveBtn').style.display = 'inline-block';
+    // Esperar a que se cierre completamente antes de abrir el siguiente
+    setTimeout(() => {
+        if (type === 'link') {
+            showLinkFormModal();
+        } else if (type === 'product') {
+            // Aquí iría el modal para producto digital
+            console.log('Modalidad de producto digital aún no implementada');
+            showToast('Funcionalidad de producto digital próximamente', 'info');
+        }
+    }, 300);
+}
+
+function showLinkFormModal() {
+    // Resetear formulario
+    document.getElementById('linkForm').reset();
+    document.getElementById('linkImagePreview').innerHTML = '<i class="bi bi-image image-preview-icon"></i>';
+    document.getElementById('linkActive').checked = true;
     
-    // Actualizar título del modal
-    const typeLabels = {
-        link: 'Crear Enlace Externo',
-        digital_product: 'Crear Producto Digital',
-        consultation: 'Crear Consultoría',
-        course: 'Crear Curso Digital'
-    };
-    document.getElementById('modalTitle').textContent = typeLabels[type] || 'Crear Producto';
+    const modal = new bootstrap.Modal(document.getElementById('linkFormModal'));
+    modal.show();
+}
+
+function saveLinkProduct() {
+    const url = document.getElementById('linkUrl').value.trim();
+    const title = document.getElementById('linkTitle').value.trim() || extractTitleFromUrl(url);
+    const isActive = document.getElementById('linkActive').checked;
     
-    // Mostrar/ocultar campos según el tipo
-    const urlField = document.getElementById('urlField');
-    const priceField = document.getElementById('priceField');
-    const fileField = document.getElementById('fileField');
-    
-    if (type === 'link') {
-        urlField.style.display = 'block';
-        priceField.style.display = 'none';
-        fileField.style.display = 'none';
-    } else {
-        urlField.style.display = 'none';
-        priceField.style.display = 'block';
-        fileField.style.display = 'block';
+    if (!url) {
+        showToast('La URL es obligatoria', 'error');
+        return;
     }
     
-    // Establecer placeholders según el tipo
-    const placeholders = {
-        link: {
-            title: 'Ej: Mi canal de YouTube',
-            description: 'Descripción del enlace (opcional)'
-        },
-        digital_product: {
-            title: 'Ej: Guía de Marketing Digital',
-            description: 'Descripción detallada del producto'
-        },
-        consultation: {
-            title: 'Ej: Consultoría Personalizada 1 a 1',
-            description: 'Descripción de la sesión de consultoría'
-        },
-        course: {
-            title: 'Ej: Curso Completo de Trading',
-            description: 'Descripción del curso y lo que aprenderán'
-        }
+    if (!isValidUrl(url)) {
+        showToast('Por favor ingresa una URL válida', 'error');
+        return;
+    }
+    
+    const newProduct = {
+        id: Date.now(),
+        type: 'link',
+        title: title || 'Nuevo enlace',
+        description: '',
+        url: url,
+        price: 0,
+        image_url: '',
+        status: isActive ? 'active' : 'inactive',
+        sales: 0,
+        sort_order: appState.products.length + 1
     };
     
-    if (placeholders[type]) {
-        document.getElementById('productTitle').placeholder = placeholders[type].title;
-        document.getElementById('productDescription').placeholder = placeholders[type].description;
+    appState.products.push(newProduct);
+    
+    saveToStorage();
+    renderProducts();
+    updatePreview();
+    
+    // Cerrar modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('linkFormModal'));
+    modal.hide();
+    
+    showToast('¡Link creado correctamente!', 'success');
+}
+
+function extractTitleFromUrl(url) {
+    try {
+        const urlObj = new URL(url);
+        const domain = urlObj.hostname.replace('www.', '');
+        return `Enlace a ${domain}`;
+    } catch {
+        return 'Nuevo enlace';
+    }
+}
+
+function isValidUrl(string) {
+    try {
+        new URL(string);
+        return true;
+    } catch (_) {
+        return false;
     }
 }
 
@@ -393,31 +421,9 @@ function editProduct(id) {
     const product = appState.products.find(p => p.id === id);
     if (!product) return;
     
-    isEditing = true;
-    editingId = id;
-    
-    // Configurar modal para edición
-    selectType(product.type);
-    
-    // Llenar formulario con datos del producto
-    document.getElementById('productId').value = product.id;
-    document.getElementById('productTitle').value = product.title;
-    document.getElementById('productDescription').value = product.description || '';
-    document.getElementById('productUrl').value = product.url || '';
-    document.getElementById('productPrice').value = product.price || '';
-    
-    // Actualizar preview de imagen si existe
-    if (product.image_url) {
-        document.getElementById('imagePreview').innerHTML = `
-            <img src="${product.image_url}" alt="Preview" style="max-width: 100%; max-height: 150px; object-fit: cover; border-radius: 4px;">
-        `;
-    }
-    
-    // Actualizar título del modal
-    document.getElementById('modalTitle').textContent = `Editar ${getProductTypeLabel(product.type)}`;
-    
-    const modal = new bootstrap.Modal(document.getElementById('createModal'));
-    modal.show();
+    console.log('Editando producto:', product);
+    // Funcionalidad de edición pendiente
+    showToast('Funcionalidad de edición próximamente', 'info');
 }
 
 function deleteProduct(id) {
@@ -437,7 +443,6 @@ function deleteProduct(id) {
 }
 
 function saveProfile() {
-    // Obtener datos del formulario
     const name = document.getElementById('nameInput').value.trim();
     const username = document.getElementById('usernameInput').value.trim();
     const bio = document.getElementById('bioInput').value.trim();
@@ -453,9 +458,7 @@ function saveProfile() {
     appState.profile.bio = bio;
     
     // Actualizar interfaz
-    document.getElementById('profileName').textContent = name;
-    document.getElementById('profileUsername').textContent = '@' + username;
-    document.getElementById('profileBio').textContent = bio;
+    updateProfileUI();
     
     saveToStorage();
     updatePreview();
@@ -467,81 +470,6 @@ function saveProfile() {
     showToast('Perfil actualizado correctamente', 'success');
 }
 
-function saveProduct() {
-    const form = document.getElementById('productFormElement');
-    if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-    }
-    
-    const type = document.getElementById('productType').value;
-    const title = document.getElementById('productTitle').value.trim();
-    const description = document.getElementById('productDescription').value.trim();
-    const url = document.getElementById('productUrl').value.trim();
-    const price = parseFloat(document.getElementById('productPrice').value) || 0;
-    
-    if (!title) {
-        showToast('El título es obligatorio', 'error');
-        return;
-    }
-    
-    if (type === 'link' && !url) {
-        showToast('La URL es obligatoria para los enlaces', 'error');
-        return;
-    }
-    
-    const productData = {
-        type,
-        title,
-        description,
-        url,
-        price,
-        image_url: '', // Se actualizaría con la imagen subida
-        status: 'active',
-        sales: 0
-    };
-    
-    if (isEditing && editingId) {
-        // Actualizar producto existente
-        const index = appState.products.findIndex(p => p.id === editingId);
-        if (index !== -1) {
-            appState.products[index] = { ...appState.products[index], ...productData };
-        }
-        showToast('Producto actualizado correctamente', 'success');
-    } else {
-        // Crear nuevo producto
-        const newProduct = {
-            id: Date.now(), // Usar timestamp como ID único
-            sort_order: appState.products.length + 1,
-            ...productData
-        };
-        
-        appState.products.push(newProduct);
-        showToast('Producto creado correctamente', 'success');
-    }
-    
-    saveToStorage();
-    renderProducts();
-    updatePreview();
-    
-    // Cerrar modal
-    const modal = bootstrap.Modal.getInstance(document.getElementById('createModal'));
-    modal.hide();
-}
-
-function handleImagePreview(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        document.getElementById('imagePreview').innerHTML = `
-            <img src="${e.target.result}" alt="Preview" style="max-width: 100%; max-height: 150px; object-fit: cover; border-radius: 4px;">
-        `;
-    };
-    reader.readAsDataURL(file);
-}
-
 function handleAvatarUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -549,11 +477,7 @@ function handleAvatarUpload(event) {
     const reader = new FileReader();
     reader.onload = function(e) {
         appState.profile.avatar_url = e.target.result;
-        
-        // Actualizar avatar en la interfaz
-        const avatarElement = document.getElementById('profileAvatar');
-        avatarElement.innerHTML = `<img src="${e.target.result}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-        
+        updateProfileUI();
         saveToStorage();
         updatePreview();
     };
@@ -561,17 +485,29 @@ function handleAvatarUpload(event) {
 }
 
 function showToast(message, type = 'success') {
-    const toastId = type === 'success' ? 'successToast' : 'errorToast';
-    const messageId = type === 'success' ? 'successMessage' : 'errorMessage';
+    const toast = document.getElementById('successToast');
+    const messageElement = document.getElementById('successMessage');
+    const toastBody = toast.querySelector('.toast-body');
     
-    document.getElementById(messageId).textContent = message;
+    // Actualizar mensaje
+    messageElement.textContent = message;
     
-    const toast = new bootstrap.Toast(document.getElementById(toastId), {
+    // Cambiar colores según el tipo
+    toastBody.className = 'toast-body d-flex align-items-center';
+    if (type === 'success') {
+        toastBody.classList.add('bg-success', 'text-white');
+    } else if (type === 'error') {
+        toastBody.classList.add('bg-danger', 'text-white');
+    } else if (type === 'info') {
+        toastBody.classList.add('bg-info', 'text-white');
+    }
+    
+    const bsToast = new bootstrap.Toast(toast, {
         autohide: true,
         delay: 3000
     });
     
-    toast.show();
+    bsToast.show();
 }
 
 // Funciones de utilidad
@@ -585,23 +521,6 @@ function formatPrice(price) {
         currency: 'USD'
     }).format(price);
 }
-
-// Event listeners para cards de tipo de producto
-document.addEventListener('click', function(e) {
-    if (e.target.closest('.product-type-card')) {
-        // Efecto visual para la selección
-        document.querySelectorAll('.product-type-card').forEach(card => {
-            card.style.transform = 'scale(1)';
-        });
-        
-        const selectedCard = e.target.closest('.product-type-card');
-        selectedCard.style.transform = 'scale(0.98)';
-        
-        setTimeout(() => {
-            selectedCard.style.transform = 'scale(1)';
-        }, 150);
-    }
-});
 
 // Manejo de errores global
 window.addEventListener('error', function(event) {
@@ -617,11 +536,11 @@ window.addEventListener('beforeunload', function(e) {
 window.MiTienda = {
     showProfileModal,
     showCreateModal,
+    selectProductType,
     editProduct,
     deleteProduct,
     saveProfile,
-    saveProduct,
-    selectType,
+    saveLinkProduct,
     getState: () => appState,
     setState: (newState) => {
         appState = { ...appState, ...newState };
@@ -631,4 +550,5 @@ window.MiTienda = {
     }
 };
 
-console.log('Mi Tienda v2.0 - Listo para Laravel Blade + Bootstrap');
+console.log('Mi Tienda v2.1 - Listo para Laravel Blade + Bootstrap');
+console.log('Estado inicial:', appState);
