@@ -4938,7 +4938,8 @@ window.MiTienda = {
     }
 };
 
-// Función de prueba para debug
+// Función de prueba para debug - COMENTADA
+/*
 window.testOverlay = function() {
     console.log('Test Overlay function called');
     const overlay = document.getElementById('productTypeOverlay');
@@ -4951,6 +4952,7 @@ window.testOverlay = function() {
         alert('ERROR: Overlay element not found');
     }
 };
+*/
 
 // Inicializar aplicación y estado limpio
 console.log('Aplicación Mi Tienda cargada');
