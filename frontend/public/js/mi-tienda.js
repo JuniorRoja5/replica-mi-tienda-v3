@@ -352,6 +352,14 @@ function showLinkFormModal() {
     document.getElementById('linkForm').reset();
     document.getElementById('linkImagePreview').innerHTML = '<i class="bi bi-image image-preview-icon"></i>';
     document.getElementById('linkActive').checked = true;
+    document.getElementById('linkTitle').placeholder = 'Se extraerá automáticamente del enlace';
+    
+    // Setup URL change listener
+    const urlInput = document.getElementById('linkUrl');
+    const titleInput = document.getElementById('linkTitle');
+    
+    urlInput.removeEventListener('input', handleUrlChange); // Remove existing listener if any
+    urlInput.addEventListener('input', debounce(handleUrlChange, 1000));
     
     const modal = new bootstrap.Modal(document.getElementById('linkFormModal'));
     modal.show();
