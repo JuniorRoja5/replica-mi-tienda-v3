@@ -2,26 +2,91 @@
    RESPONSIVE FIXES FOR MI TIENDA
    ================================= */
 
-/* GENERAL MOBILE FIXES */
+/* MOBILE OVERLAY FIXES - CRITICAL FIXES */
 @media (max-width: 768px) {
-    /* Fix modal positioning and z-index issues */
-    .product-type-overlay {
+    /* Force correct positioning for ALL overlays */
+    .profile-overlay,
+    .overlay,
+    [id*="overlay"],
+    [id*="Overlay"] {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
         z-index: 9999 !important;
-        background: rgba(0, 0, 0, 0.8) !important;
+        background: rgba(0, 0, 0, 0.85) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
         padding: 1rem !important;
-    }
-    
-    .profile-overlay {
-        z-index: 9999 !important;
-        background: rgba(0, 0, 0, 0.8) !important;
-        padding: 1rem !important;
-    }
-    
-    .overlay-content {
-        max-height: 80vh !important;
         overflow-y: auto !important;
+    }
+    
+    /* Hide overlays when they should be hidden */
+    .profile-overlay[style*="display: none"],
+    .overlay[style*="display: none"],
+    [id*="overlay"][style*="display: none"],
+    [id*="Overlay"][style*="display: none"] {
+        display: none !important;
+    }
+    
+    /* Content inside overlays */
+    .overlay-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        background: white !important;
+        border-radius: 0.75rem !important;
+        position: relative !important;
+        margin: 0 !important;
+    }
+    
+    /* Headers should be sticky */
+    .overlay-header {
+        position: sticky !important;
+        top: 0 !important;
+        background: white !important;
+        z-index: 10 !important;
+        border-bottom: 1px solid #dee2e6 !important;
         padding: 1rem !important;
     }
+    
+    /* Tab navigation should be scrollable */
+    .nav-tabs {
+        overflow-x: auto !important;
+        white-space: nowrap !important;
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+    }
+    
+    .nav-tabs::-webkit-scrollbar {
+        display: none !important;
+    }
+    
+    .nav-tabs .nav-item {
+        flex-shrink: 0 !important;
+    }
+    
+    .nav-tabs .nav-link {
+        font-size: 0.85rem !important;
+        padding: 0.5rem 1rem !important;
+        white-space: nowrap !important;
+    }
+    
+    /* Footer should be sticky */
+    .overlay-footer {
+        position: sticky !important;
+        bottom: 0 !important;
+        background: white !important;
+        border-top: 1px solid #dee2e6 !important;
+        padding: 1rem !important;
+        z-index: 10 !important;
+    }
+}
     
     /* Fix product type cards */
     .product-type-card {
