@@ -4563,7 +4563,7 @@ function updateMembershipTabNavigation() {
                     updateExistingMembership();
                 };
             } else {
-                createBtn.innerHTML = '<i class="bi bi-check-circle"></i> Crear Membresía';
+                createBtn.innerHTML = '<i class="bi bi-check-circle"></i> Create Membership';
                 createBtn.onclick = function() {
                     createMembership();
                 };
