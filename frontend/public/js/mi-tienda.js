@@ -476,7 +476,7 @@ function handleProductClick(productId, productType) {
         const username = appState.profile.username || 'user';
         const productUrl = `public-product.html?p=${product.id}&u=${username}`;
         
-        // NOTA: En Laravel backend, esto sería una ruta como /products/{slug} o /p/{id}
+        // NOTE: In Laravel backend, this will be a route like /products/{slug} or /p/{id}
         window.open(productUrl, '_blank');
     } else if (productType === 'consultation') {
         // Navigate to consultation page for booking
