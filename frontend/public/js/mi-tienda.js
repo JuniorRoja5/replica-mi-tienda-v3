@@ -799,7 +799,7 @@ let consultationFormData = {
         duration: 30, // minutos
         notice_period: { value: 12, unit: 'hours' },
         buffer_time: { before: 15, after: 15 },
-        booking_window: 60, // días
+        booking_window: 60, // days
         weekly_availability: [
             { day: 'sunday', name: 'Domingo', enabled: false, intervals: [] },
             { day: 'monday', name: 'Lunes', enabled: true, intervals: [{ from: '09:00', to: '17:00' }] },
