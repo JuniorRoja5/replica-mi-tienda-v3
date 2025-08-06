@@ -5013,7 +5013,7 @@ function copyPublicLink() {
     try {
         // Select the text
         linkInput.select();
-        linkInput.setSelectionRange(0, 99999); // Para dispositivos móviles
+        linkInput.setSelectionRange(0, 99999); // For mobile devices
         
         // Copiar al portapapeles
         navigator.clipboard.writeText(linkInput.value).then(() => {
