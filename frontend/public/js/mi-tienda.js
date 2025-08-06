@@ -902,11 +902,14 @@ window.addEventListener('beforeunload', function(e) {
 // Exportar funciones para uso en Blade (Laravel)
 window.MiTienda = {
     showProfileModal,
+    showProfileOverlay,
+    closeProfileOverlay,
     showCreateModal,
     selectProductType,
     editProduct,
     deleteProduct,
     saveProfile,
+    saveOverlayProfile,
     saveLinkProduct,
     getState: () => appState,
     setState: (newState) => {
