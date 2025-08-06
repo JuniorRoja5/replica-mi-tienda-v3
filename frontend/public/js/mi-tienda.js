@@ -1,4 +1,32 @@
-// Estado global de la aplicación
+/* ========================================
+   MI TIENDA BUILDER - JAVASCRIPT CORE
+   Compatible con Laravel Blade + Bootstrap 5
+   ======================================== */
+
+/* === PARA DESARROLLADOR LARAVEL === 
+ * 
+ * INTEGRACIÓN REQUERIDA:
+ * 1. Reemplazar localStorage con API calls a Laravel
+ * 2. Agregar CSRF tokens para formularios  
+ * 3. Modificar loadProducts() para usar Route::apiResource
+ * 4. Actualizar saveProduct() para POST /api/products
+ * 5. Conectar updateProfileUI() con PUT /api/profile
+ * 
+ * VARIABLES GLOBALES IMPORTANTES:
+ * - appState: Estado principal de la aplicación
+ * - productFormData: Datos del formulario de productos
+ * - courseFormData: Datos específicos de cursos
+ * - membershipFormData: Datos específicos de membresías
+ * 
+ * FUNCIONES CRÍTICAS A INTEGRAR:
+ * - getCurrentUser(): Debe usar auth()->user()
+ * - loadProducts(): Debe usar API /api/products  
+ * - saveProduct(): Debe usar API POST con CSRF
+ * - updatePreview(): Mantener como está (solo UI)
+ */
+
+// === ESTADO GLOBAL DE LA APLICACIÓN ===
+// NOTA LARAVEL: Reemplazar con datos de auth()->user() y $user->products()
 let appState = {
     profile: {
         name: 'Trading Sharks',
