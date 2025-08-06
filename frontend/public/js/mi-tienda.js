@@ -4556,7 +4556,7 @@ function updateMembershipTabNavigation() {
             nextBtn.style.display = 'none';
             createBtn.style.display = 'block';
             
-            // Verificar si estamos en modo edición
+            // Check if we are in edit mode
             if (membershipFormData.id) {
                 createBtn.innerHTML = '<i class="bi bi-check-circle"></i> Actualizar Membresía';
                 createBtn.onclick = function() {
