@@ -4519,7 +4519,7 @@ function removeMembershipFormListeners() {
 function showMembershipTab(tabName) {
     currentMembershipTab = tabName;
     
-    // Actualizar navegación de tabs
+    // Update tab navigation
     document.querySelectorAll('#membershipTabs .nav-link').forEach(tab => {
         tab.classList.remove('active');
     });
