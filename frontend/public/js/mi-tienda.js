@@ -2419,7 +2419,7 @@ function resetConsultationForm() {
     document.getElementById('consultationTitleCounter').textContent = '0';
     document.getElementById('consultationSubtitleCounter').textContent = '0';
     
-    // Resetear reseñas
+    // Reset reviews
     document.getElementById('consultationReviewsList').innerHTML = `
         <div class="text-muted text-center py-3">
             <i class="bi bi-star display-6"></i>
