@@ -568,20 +568,46 @@
 
         function handlePurchase() {
             // TODO: Laravel Backend Integration
-            // En producción, esto abrirá el modal de compras embebido
-            // que se integrará con Stripe para procesamiento real
+            // En producción, esto abrirá diferentes modales según el tipo de producto
             
             if (productData) {
-                // Por ahora, mostrar información de compra simulada
-                const displayPrice = productData.has_discount && productData.discount_price > 0 
-                    ? productData.discount_price 
-                    : productData.price;
-                
-                const purchaseInfo = `🛒 FUNCIONALIDAD DE COMPRA
-                
+                if (productData.type === 'consultation') {
+                    // Para consultoría, mostrar sistema de agendamiento
+                    const consultationInfo = `📅 FUNCIONALIDAD DE AGENDAMIENTO
+                    
+Consultoría: ${productData.title}
+${productData.price > 0 ? `Precio: $${productData.price}` : 'Consultoría gratuita'}
+                    
+🔧 EN DESARROLLO:
+✅ Calendario interactivo de disponibilidad
+✅ Selección de horarios disponibles
+✅ Formulario de datos del cliente
+✅ Confirmación por email
+✅ Integración con Google Meet/Zoom
+✅ Sistema de recordatorios
+
+📋 INTEGRACIÓN LARAVEL:
+• GET /api/consultations/{id}/availability
+• POST /api/bookings/create
+• POST /api/bookings/{id}/confirm  
+• Webhook: Integración con calendario
+• Email: Confirmación y recordatorios
+
+Esta funcionalidad incluirá el sistema de agendamiento
+completo basado en la configuración de disponibilidad.`;
+
+                    alert(consultationInfo);
+                } else {
+                    // Para productos digitales, sistema de compras
+                    const displayPrice = productData.has_discount && productData.discount_price > 0 
+                        ? productData.discount_price 
+                        : productData.price;
+                    
+                    const purchaseInfo = `🛒 FUNCIONALIDAD DE COMPRA
+                    
 Producto: ${productData.title}
 Precio: $${displayPrice}
-                
+                    
 🔧 EN DESARROLLO:
 ✅ Modal de compra embebido (como en mi-tienda.html)
 ✅ Integración con Stripe Elements
@@ -598,10 +624,12 @@ Precio: $${displayPrice}
 Esta página individual será integrada con el mismo
 sistema de compras de la página principal.`;
 
-                alert(purchaseInfo);
+                    alert(purchaseInfo);
+                }
                 
-                // TODO: Redirigir o abrir modal de compras
+                // TODO: Redirigir o abrir modal de compras/agendamiento
                 // window.opener.showPurchaseModal(productData);
+                // window.opener.showBookingCalendar(productData);
             }
         }
 
