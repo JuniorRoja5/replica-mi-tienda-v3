@@ -173,8 +173,8 @@ function loadFromStorage() {
 
 function saveToStorage() {
     try {
-        // NOTA: En Laravel backend, esto se reemplazará por llamadas API a la base de datos
-        // Laravel manejará la persistencia de datos sin limitaciones de localStorage
+        // NOTE: In Laravel backend, this will be replaced by API calls to the database
+        // Laravel will handle data persistence without localStorage limitations
         const dataToSave = {
             profile: appState.profile,
             products: appState.products.map(product => {
