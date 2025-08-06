@@ -5006,7 +5006,7 @@ console.log('My Store application loaded');
 console.log('Using HTML + CSS + JS vanilla (compatible with Laravel Blade + Bootstrap)');
 console.log('Initial state:', appState);
 
-// Función para copiar el enlace público
+// Function to copy public link
 function copyPublicLink() {
     const linkInput = document.getElementById('publicLinkInput');
     
