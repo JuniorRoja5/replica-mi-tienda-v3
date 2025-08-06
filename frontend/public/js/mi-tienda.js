@@ -4847,7 +4847,68 @@ function createMembershipFromForm() {
     };
 }
 
-// ============== FIN FUNCIONES PARA MEMBRESÍA RECURRENTE ==============
+// ============== FUNCIONES DE LIMPIEZA GLOBAL ==============
+
+// Función para cerrar todos los overlays y limpiar el estado
+function closeAllOverlays() {
+    // Lista de todos los overlays posibles
+    const overlayIds = [
+        'productFormOverlay',
+        'consultationFormOverlay', 
+        'courseFormOverlay',
+        'membershipFormOverlay',
+        'profileOverlay',
+        'createModal',
+        'productTypeOverlay'
+    ];
+    
+    // Cerrar todos los overlays
+    overlayIds.forEach(overlayId => {
+        const overlay = document.getElementById(overlayId);
+        if (overlay) {
+            overlay.style.display = 'none';
+        }
+    });
+    
+    // Limpiar variables globales
+    currentProductTab = 'datos';
+    currentConsultationTab = 'datos';
+    currentCourseTab = 'datos';
+    currentMembershipTab = 'datos';
+    
+    // Restaurar preview normal
+    updatePreview();
+    
+    // Remover clases de modal abierto del body
+    document.body.classList.remove('modal-open');
+    
+    // Limpiar cualquier backdrop modal
+    const backdrops = document.querySelectorAll('.modal-backdrop');
+    backdrops.forEach(backdrop => backdrop.remove());
+    
+    console.log('Todos los overlays cerrados y estado limpiado');
+}
+
+// Función para inicializar el estado limpio al cargar la página
+function initializeCleanState() {
+    closeAllOverlays();
+    
+    // Agregar event listener para la tecla Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeAllOverlays();
+        }
+    });
+    
+    // Agregar event listener para clics fuera de los modals
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('profile-overlay') || e.target.classList.contains('overlay')) {
+            closeAllOverlays();
+        }
+    });
+}
+
+// ============== FIN FUNCIONES DE LIMPIEZA GLOBAL ==============
 
 // Exportar funciones para uso en Blade (Laravel)
 window.MiTienda = {
