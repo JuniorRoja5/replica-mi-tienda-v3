@@ -414,12 +414,23 @@
                 // Find the product - convert both to string for comparison
                 const product = appData.products.find(p => p.id.toString() === productId.toString());
                 if (!product) {
-                    console.log('Product not found. Available products:', appData.products.map(p => ({id: p.id, title: p.title})));
-                    showError('Producto no encontrado');
+                    console.log('Product/Consultation not found. Available products:', appData.products.map(p => ({id: p.id, title: p.title, type: p.type})));
+                    showError(isConsultation ? 'Consultoría no encontrada' : 'Producto no encontrado');
                     return;
                 }
 
-                console.log('Product found:', product);
+                // Verify product type matches URL parameter
+                if (isConsultation && product.type !== 'consultation') {
+                    console.log('URL expects consultation but product type is:', product.type);
+                    showError('Tipo de producto incorrecto');
+                    return;
+                } else if (!isConsultation && product.type === 'consultation') {
+                    console.log('URL expects product but found consultation');
+                    showError('Tipo de producto incorrecto');
+                    return;
+                }
+
+                console.log(isConsultation ? 'Consultation found:' : 'Product found:', product);
                 productData = product;
                 displayProduct();
 
