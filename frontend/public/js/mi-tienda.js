@@ -1400,7 +1400,7 @@ function updatePreviewWithProduct() {
         custom_fields: productFormData.custom_fields || []
     };
     
-    // Mostrar la página de ventas del producto en lugar del perfil general
+    // Show product sales page instead of general profile
     const displayPrice = tempProduct.has_discount && tempProduct.discount_price > 0 
         ? tempProduct.discount_price 
         : tempProduct.price;
