@@ -2065,207 +2065,257 @@
                 <i class="bi bi-x-lg"></i>
             </button>
         </div>
-            
-            <!-- Tabs de navegación -->
-            <div class="tabs-navigation" id="membershipTabs">
-                <button type="button" class="nav-link active" id="datos-membership-tab" data-tab="datos">
-                    <i class="bi bi-info-circle"></i> Datos
-                </button>
-                <button type="button" class="nav-link" id="contenido-membership-tab" data-tab="contenido">
-                    <i class="bi bi-file-text"></i> Contenido y Precio
-                </button>
-                <button type="button" class="nav-link" id="opciones-membership-tab" data-tab="opciones">
-                    <i class="bi bi-gear"></i> Opciones
-                </button>
-            </div>
-            
-            <!-- Panel 1: Datos básicos -->
-            <div class="membership-tab-content-panel" id="datos-membership-panel">
-                <h3 class="section-title">
-                    <i class="bi bi-info-circle text-primary"></i>
-                    Datos básicos de la membresía
-                </h3>
+        
+        <!-- Navegación de tabs para membresía -->
+        <div style="padding: 0 2rem; border-bottom: 1px solid #dee2e6; background: white; position: sticky; top: 80px; z-index: 5;">
+            <ul class="nav nav-tabs" id="membershipTabs" role="tablist" style="border-bottom: none; margin: 0;">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="datos-membership-tab" data-tab="datos" type="button" role="tab">
+                        <span class="tab-number">1.</span> Datos
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="contenido-membership-tab" data-tab="contenido" type="button" role="tab">
+                        <span class="tab-number">2.</span> Contenido y Precio
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="opciones-membership-tab" data-tab="opciones" type="button" role="tab">
+                        <span class="tab-number">3.</span> Opciones
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="overlay-content">
+            <!-- Tab 1: Datos -->
+            <div class="membership-tab-content-panel active" id="datos-membership-panel">
+                <div class="mb-4">
+                    <h5 class="mb-3">Datos básicos de la membresía</h5>
+                    <p class="text-muted">Información principal que verán tus suscriptores</p>
+                </div>
                 
                 <!-- Imagen de la membresía -->
-                <div class="form-group">
-                    <label class="form-label">Imagen de la membresía</label>
-                    <div class="image-upload-section">
-                        <div class="image-preview" id="membershipImagePreview">
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Imagen de la membresía</label>
+                    <div class="d-flex gap-4 align-items-start">
+                        <div class="product-image-preview" id="membershipImagePreview">
                             <div class="product-image-placeholder">
                                 <i class="bi bi-crown"></i>
                             </div>
                         </div>
-                        <div class="image-upload-actions">
+                        <div class="d-flex flex-column gap-2">
                             <input type="file" id="membershipImageInput" accept="image/*" style="display: none;">
                             <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('membershipImageInput').click()">
                                 <i class="bi bi-upload"></i> Subir imagen
                             </button>
+                            <small class="text-muted">Formatos: JPG, PNG, GIF. Máx: 5MB</small>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Título -->
-                <div class="form-group">
-                    <label for="membershipTitle" class="form-label">
+                <div class="mb-4">
+                    <label for="membershipTitle" class="form-label fw-semibold">
                         Título de la membresía
-                        <span class="character-counter" id="membershipTitleCounter">0</span>/50
+                        <span class="character-counter text-muted ms-2">(<span id="membershipTitleCounter">0</span>/50)</span>
                     </label>
                     <input type="text" class="form-control" id="membershipTitle" maxlength="50" 
                            placeholder="Ej: Membresía Exclusiva Premium">
+                    <div class="form-text">Este será el nombre principal de tu membresía</div>
                 </div>
                 
                 <!-- Subtítulo -->
-                <div class="form-group">
-                    <label for="membershipSubtitle" class="form-label">
-                        Subtítulo
-                        <span class="character-counter" id="membershipSubtitleCounter">0</span>/100
+                <div class="mb-4">
+                    <label for="membershipSubtitle" class="form-label fw-semibold">
+                        Subtítulo (opcional)
+                        <span class="character-counter text-muted ms-2">(<span id="membershipSubtitleCounter">0</span>/100)</span>
                     </label>
                     <textarea class="form-control" id="membershipSubtitle" rows="3" maxlength="100" 
-                              placeholder="Acceso completo a contenido exclusivo y comunidad privada"></textarea>
+                              placeholder="Ej: Acceso completo a contenido exclusivo y comunidad privada"></textarea>
+                    <div class="form-text">Un breve resumen del valor de tu membresía</div>
                 </div>
             </div>
             
-            <!-- Panel 2: Contenido y precio -->
+            <!-- Tab 2: Contenido y precio -->
             <div class="membership-tab-content-panel" id="contenido-membership-panel" style="display: none;">
-                <h3 class="section-title">
-                    <i class="bi bi-file-text text-success"></i>
-                    Contenido y precio recurrente
-                </h3>
+                <div class="mb-4">
+                    <h5 class="mb-3">Contenido y precio recurrente</h5>
+                    <p class="text-muted">Configura el contenido, precio y facturación de tu membresía</p>
+                </div>
                 
                 <!-- Descripción -->
-                <div class="form-group">
-                    <label for="membershipDescription" class="form-label">
+                <div class="mb-4">
+                    <label for="membershipDescription" class="form-label fw-semibold">
                         Descripción de la membresía
-                        <button type="button" class="btn btn-sm btn-outline-info" onclick="generateMembershipDescriptionAI()">
+                        <button type="button" class="btn btn-sm btn-outline-info ms-2" onclick="generateMembershipDescriptionAI()">
                             <i class="bi bi-stars"></i> Generar con IA
                         </button>
                     </label>
                     <textarea class="form-control" id="membershipDescription" rows="6" 
                               placeholder="Describe los beneficios, el contenido y el valor que recibirán los miembros..."></textarea>
+                    <div class="form-text">Explica claramente qué incluye tu membresía y por qué vale la pena</div>
                 </div>
                 
                 <!-- Configuración de precio recurrente -->
-                <div class="pricing-section">
-                    <h4><i class="bi bi-arrow-repeat"></i> Configuración de facturación</h4>
+                <div class="pricing-section mb-5">
+                    <h6 class="mb-3"><i class="bi bi-arrow-repeat text-primary"></i> Configuración de facturación recurrente</h6>
                     
-                    <div class="row">
+                    <div class="row g-3 mb-3">
                         <!-- Precio -->
                         <div class="col-md-6">
-                            <label for="membershipPrice" class="form-label">Precio ($)</label>
-                            <input type="number" class="form-control" id="membershipPrice" step="0.01" min="0" 
-                                   placeholder="29.99">
+                            <label for="membershipPrice" class="form-label fw-semibold">Precio ($)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="membershipPrice" step="0.01" min="0" 
+                                       placeholder="29.99">
+                            </div>
                         </div>
                         
                         <!-- Frecuencia -->
                         <div class="col-md-6">
-                            <label for="membershipFrequency" class="form-label">Frecuencia de cobro</label>
+                            <label for="membershipFrequency" class="form-label fw-semibold">Frecuencia de cobro</label>
                             <select class="form-select" id="membershipFrequency">
                                 <option value="daily">Diario</option>
                                 <option value="weekly">Semanal</option>
                                 <option value="monthly" selected>Mensual</option>
-                                <option value="quarterly">Trimestral</option>
-                                <option value="semi_annually">Semestral</option>
+                                <option value="quarterly">Trimestral (cada 3 meses)</option>
+                                <option value="semi_annually">Semestral (cada 6 meses)</option>
                                 <option value="annually">Anual</option>
                             </select>
                         </div>
                     </div>
                     
                     <!-- Precio con descuento -->
-                    <div class="form-check mt-3">
-                        <input class="form-check-input" type="checkbox" id="membershipHasDiscount">
-                        <label class="form-check-label" for="membershipHasDiscount">
-                            Ofrecer precio promocional
-                        </label>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="membershipHasDiscount">
+                            <label class="form-check-label fw-semibold" for="membershipHasDiscount">
+                                Ofrecer precio promocional
+                            </label>
+                        </div>
                     </div>
-                    <div class="form-group" id="membershipDiscountPriceGroup" style="display: none;">
-                        <label for="membershipDiscountPrice" class="form-label">Precio promocional ($)</label>
-                        <input type="number" class="form-control" id="membershipDiscountPrice" step="0.01" min="0" 
-                               placeholder="19.99">
+                    
+                    <div class="mb-4" id="membershipDiscountPriceGroup" style="display: none;">
+                        <label for="membershipDiscountPrice" class="form-label fw-semibold">Precio promocional ($)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" id="membershipDiscountPrice" step="0.01" min="0" 
+                                   placeholder="19.99">
+                        </div>
+                        <div class="form-text">Este precio se mostrará como oferta especial</div>
                     </div>
                     
                     <!-- Duración de la membresía -->
-                    <div class="membership-duration mt-4">
-                        <div class="form-check">
+                    <div class="membership-duration">
+                        <h6 class="mb-3"><i class="bi bi-calendar-check text-success"></i> Duración de la membresía</h6>
+                        
+                        <div class="form-check mb-3">
                             <input class="form-check-input" type="checkbox" id="membershipHasEndDate">
-                            <label class="form-check-label" for="membershipHasEndDate">
+                            <label class="form-check-label fw-semibold" for="membershipHasEndDate">
                                 Finalizar automáticamente después de un período determinado
                             </label>
                         </div>
-                        <div class="form-group" id="membershipEndAfterGroup" style="display: none;">
-                            <label for="membershipEndAfterMonths" class="form-label">Finalizar después de (meses)</label>
-                            <input type="number" class="form-control" id="membershipEndAfterMonths" min="1" max="24" value="12">
-                            <small class="form-text text-muted">La membresía se cancelará automáticamente después de este período</small>
+                        
+                        <div class="mb-3" id="membershipEndAfterGroup" style="display: none;">
+                            <label for="membershipEndAfterMonths" class="form-label fw-semibold">Finalizar después de (meses)</label>
+                            <select class="form-select" id="membershipEndAfterMonths">
+                                <option value="1">1 mes</option>
+                                <option value="3">3 meses</option>
+                                <option value="6">6 meses</option>
+                                <option value="12" selected>12 meses</option>
+                                <option value="24">24 meses</option>
+                            </select>
+                            <div class="form-text">La membresía se cancelará automáticamente después de este período</div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Texto del botón -->
-                <div class="form-group">
-                    <label for="membershipButtonText" class="form-label">Texto del botón de acción</label>
+                <div class="mb-4">
+                    <label for="membershipButtonText" class="form-label fw-semibold">Texto del botón de acción</label>
                     <input type="text" class="form-control" id="membershipButtonText" 
                            placeholder="Subscribirse" value="Subscribirse">
+                    <div class="form-text">Este texto aparecerá en el botón de suscripción</div>
                 </div>
                 
-                <!-- Reseñas de estudiantes -->
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="bi bi-star"></i> Reseñas de miembros
+                <!-- Reseñas de miembros -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label class="form-label fw-semibold mb-0">
+                            <i class="bi bi-star text-warning"></i> Reseñas de miembros
+                        </label>
                         <button type="button" class="btn btn-sm btn-outline-primary" onclick="addMembershipReview()">
                             <i class="bi bi-plus"></i> Agregar reseña
                         </button>
-                    </label>
-                    <div class="reviews-container" id="membershipReviewsList">
+                    </div>
+                    <div class="reviews-container border rounded p-3 bg-light" id="membershipReviewsList">
                         <div class="text-muted text-center py-3">
-                            <i class="bi bi-star display-6"></i>
-                            <p>No hay reseñas aún. Agrega algunas para aumentar la confianza.</p>
+                            <i class="bi bi-star display-6 opacity-25"></i>
+                            <p class="mb-0">No hay reseñas aún. Agrega algunas para aumentar la confianza.</p>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Panel 3: Opciones -->
+            <!-- Tab 3: Opciones -->
             <div class="membership-tab-content-panel" id="opciones-membership-panel" style="display: none;">
-                <h3 class="section-title">
-                    <i class="bi bi-gear text-info"></i>
-                    Configuraciones adicionales
-                </h3>
+                <div class="mb-4">
+                    <h5 class="mb-3">Configuraciones adicionales</h5>
+                    <p class="text-muted">Ajustes finales para tu membresía</p>
+                </div>
                 
                 <!-- Estado -->
-                <div class="form-group">
+                <div class="mb-4">
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" id="membershipIsActive" checked>
-                        <label class="form-check-label" for="membershipIsActive">
-                            <i class="bi bi-eye"></i> Membresía visible para nuevos miembros
+                        <label class="form-check-label fw-semibold" for="membershipIsActive">
+                            <i class="bi bi-eye text-success"></i> Membresía visible para nuevos miembros
                         </label>
                     </div>
-                    <small class="form-text text-muted">Si está desactivada, solo los miembros actuales podrán acceder</small>
+                    <div class="form-text">Si está desactivada, solo los miembros actuales podrán acceder</div>
                 </div>
                 
                 <!-- Vista previa de facturación -->
                 <div class="billing-preview">
-                    <h5><i class="bi bi-receipt"></i> Vista previa de facturación</h5>
+                    <h6 class="mb-3"><i class="bi bi-receipt text-info"></i> Vista previa de facturación</h6>
                     <div class="alert alert-info" id="membershipBillingPreview">
                         <div><strong>Precio:</strong> <span id="previewPrice">$0.00</span></div>
                         <div><strong>Frecuencia:</strong> <span id="previewFrequency">mensual</span></div>
                         <div><strong>Duración:</strong> <span id="previewDuration">Sin límite</span></div>
                     </div>
                 </div>
+                
+                <!-- Información adicional -->
+                <div class="alert alert-warning">
+                    <h6><i class="bi bi-info-circle"></i> Información importante</h6>
+                    <ul class="mb-0 small">
+                        <li>Los pagos recurrentes se procesarán automáticamente según la frecuencia seleccionada</li>
+                        <li>Los miembros pueden cancelar su suscripción en cualquier momento</li>
+                        <li>Recibirás notificaciones de nuevos suscriptores y cancelaciones</li>
+                    </ul>
+                </div>
             </div>
-            
-            <!-- Botones de navegación -->
-            <div class="form-actions">
-                <button type="button" class="btn btn-secondary" onclick="closeMembershipFormOverlay()">
+        </div>
+        
+        <!-- Botones de navegación del formulario -->
+        <div class="overlay-footer">
+            <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary" onclick="closeMembershipFormOverlay()">
                     <i class="bi bi-x-circle"></i> Cancelar
                 </button>
-                <button type="button" class="btn btn-outline-secondary" id="prevMembershipTabBtn" onclick="previousMembershipTab()" style="display: none;">
-                    <i class="bi bi-arrow-left"></i> Anterior
-                </button>
-                <button type="button" class="btn btn-primary" id="nextMembershipTabBtn" onclick="nextMembershipTab()">
-                    Siguiente <i class="bi bi-arrow-right"></i>
-                </button>
-                <button type="button" class="btn btn-success" id="createMembershipBtn" onclick="createMembership()" style="display: none;">
-                    <i class="bi bi-check-circle"></i> Crear Membresía
-                </button>
+                
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-secondary" id="prevMembershipTabBtn" onclick="previousMembershipTab()" style="display: none;">
+                        <i class="bi bi-arrow-left"></i> Anterior
+                    </button>
+                    <button type="button" class="btn btn-primary" id="nextMembershipTabBtn" onclick="nextMembershipTab()">
+                        Siguiente <i class="bi bi-arrow-right"></i>
+                    </button>
+                    <button type="button" class="btn btn-success" id="createMembershipBtn" onclick="createMembership()" style="display: none;">
+                        <i class="bi bi-check-circle"></i> Crear Membresía
+                    </button>
+                </div>
             </div>
         </div>
     </div>
