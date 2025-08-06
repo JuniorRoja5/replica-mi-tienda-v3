@@ -4319,7 +4319,7 @@ function createCourseFromForm() {
 
 // ============== MAIN FUNCTIONS FOR RECURRING MEMBERSHIP ==============
 
-// Variables globales para membresía
+// Global variables for membership
 let currentMembershipTab = 'datos';
 
 function showMembershipFormOverlay() {
