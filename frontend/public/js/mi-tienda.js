@@ -804,10 +804,11 @@ function selectDigitalProductType(productType) {
         showProductFormOverlay();
     } else if (productType === 'consultation') {
         showConsultationFormOverlay();
+    } else if (productType === 'course') {
+        showCourseFormOverlay();
     } else {
         // Para otros tipos, mostrar mensaje temporal
         const typeNames = {
-            course: 'Curso Digital',
             membership: 'Membresía Recurrente'
         };
         showToast(`Creando ${typeNames[productType]}... (próximamente)`, 'info');
