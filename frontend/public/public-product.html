@@ -531,6 +531,17 @@
                     <i class="bi bi-calendar-plus"></i>
                     <span id="purchaseButtonText">${purchaseBtn.textContent}</span>
                 `;
+            } else if (productData.type === 'course') {
+                // For courses, update button text and icon
+                if (productData.button_text) {
+                    purchaseBtn.textContent = productData.button_text;
+                } else {
+                    purchaseBtn.textContent = 'Empezar curso';
+                }
+                purchaseButton.innerHTML = `
+                    <i class="bi bi-play-circle"></i>
+                    <span id="purchaseButtonText">${purchaseBtn.textContent}</span>
+                `;
             } else {
                 // For regular products
                 if (productData.button_text) {
