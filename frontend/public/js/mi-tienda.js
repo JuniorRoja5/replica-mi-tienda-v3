@@ -989,7 +989,7 @@ function resetProductForm() {
 }
 
 function setupProductFormListeners() {
-    // Títulos con actualización en tiempo real
+    // Titles with real-time update
     const titleInput = document.getElementById('productTitle');
     const subtitleInput = document.getElementById('productSubtitle');
     const descriptionInput = document.getElementById('productDescription');
