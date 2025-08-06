@@ -608,7 +608,7 @@ function setupOverlayListeners() {
         spotify: document.getElementById('overlaySpotify')
     };
     
-    // Nombre - actualización en tiempo real
+    // Name - real-time update
     const handleNameChange = function() {
         appState.profile.name = this.value;
         updateProfileUI();
