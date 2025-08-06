@@ -4893,21 +4893,23 @@ function closeAllOverlays() {
 
 // Función para inicializar el estado limpio al cargar la página
 function initializeCleanState() {
-    closeAllOverlays();
+    // COMENTADO: Esta función causa problemas con los event listeners
+    // closeAllOverlays();
     
-    // Agregar event listener para la tecla Escape
+    // Agregar event listener para la tecla Escape SOLAMENTE
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeAllOverlays();
         }
     });
     
-    // Agregar event listener para clics fuera de los modals
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('profile-overlay') || e.target.classList.contains('overlay')) {
-            closeAllOverlays();
-        }
-    });
+    // COMENTADO: Este listener interfiere con los clicks normales
+    // // Agregar event listener para clics fuera de los modals
+    // document.addEventListener('click', function(e) {
+    //     if (e.target.classList.contains('profile-overlay') || e.target.classList.contains('overlay')) {
+    //         closeAllOverlays();
+    //     }
+    // });
 }
 
 // ============== FIN FUNCIONES DE LIMPIEZA GLOBAL ==============
