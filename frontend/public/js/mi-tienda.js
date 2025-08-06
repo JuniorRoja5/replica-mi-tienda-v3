@@ -746,6 +746,55 @@ let consultationFormData = {
     }
 };
 
+// Estado específico para curso digital (nuevo)
+let courseFormData = {
+    title: '',
+    subtitle: '',
+    description: '',
+    price: '',
+    discount_price: '',
+    has_discount: false,
+    image_url: '',
+    button_text: 'Empezar curso',
+    is_active: true,
+    reviews: [],
+    custom_fields: [
+        { id: 'name', label: 'Nombre completo', type: 'text', required: true },
+        { id: 'email', label: 'Correo electrónico', type: 'email', required: true }
+    ],
+    // CONFIGURACIONES ESPECÍFICAS DE CURSO
+    course_content: {
+        header_image_url: '',
+        title: '',
+        description: '',
+        modules: [
+            { 
+                id: 'm_' + Date.now() + '_1', 
+                title: 'Introducción', 
+                lessons: [
+                    { 
+                        id: 'l_' + Date.now() + '_1', 
+                        title: 'Bienvenida al curso', 
+                        description: 'En esta lección te damos la bienvenida y explicamos cómo navegar el curso.', 
+                        video_url: '', 
+                        attachments: [] 
+                    }
+                ] 
+            },
+            { 
+                id: 'm_' + Date.now() + '_2', 
+                title: 'Capítulo 1', 
+                lessons: [] 
+            },
+            { 
+                id: 'm_' + Date.now() + '_3', 
+                title: 'Capítulo 2', 
+                lessons: [] 
+            }
+        ]
+    }
+};
+
 function selectDigitalProductType(productType) {
     // Cerrar la vista superpuesta de selección de tipo
     closeProductTypeOverlay();
