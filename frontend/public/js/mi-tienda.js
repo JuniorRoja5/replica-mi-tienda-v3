@@ -178,7 +178,7 @@ function saveToStorage() {
         const dataToSave = {
             profile: appState.profile,
             products: appState.products.map(product => {
-                // Reducir el tamaño de las imágenes en base64 si son muy grandes
+                // Reduce base64 image size if they are too large
                 const productCopy = { ...product };
                 if (productCopy.image_url && productCopy.image_url.startsWith('data:image') && productCopy.image_url.length > 50000) {
                     console.warn('Imagen demasiado grande para localStorage, se omitirá en el guardado');
