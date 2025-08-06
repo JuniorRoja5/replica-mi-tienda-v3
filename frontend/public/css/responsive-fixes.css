@@ -2,11 +2,14 @@
    RESPONSIVE FIXES FOR MI TIENDA
    ================================= */
 
-/* MOBILE OVERLAY FIXES - CRITICAL FIXES */
+/* CRITICAL MOBILE MODAL FIXES */
 @media (max-width: 768px) {
-    /* Force correct positioning for ALL overlays */
-    .profile-overlay,
+    /* Reset and fix ALL modal/overlay positioning */
+    .modal,
     .overlay,
+    .profile-overlay,
+    [id*="modal"],
+    [id*="Modal"], 
     [id*="overlay"],
     [id*="Overlay"] {
         position: fixed !important;
@@ -22,30 +25,44 @@
         align-items: center !important;
         justify-content: center !important;
         padding: 1rem !important;
-        overflow-y: auto !important;
+        overflow: hidden !important;
     }
     
-    /* Hide overlays when they should be hidden */
-    .profile-overlay[style*="display: none"],
+    /* Hide modals when they should be hidden */
+    .modal[style*="display: none"],
     .overlay[style*="display: none"],
+    .profile-overlay[style*="display: none"],
+    [id*="modal"][style*="display: none"],
+    [id*="Modal"][style*="display: none"],
     [id*="overlay"][style*="display: none"],
     [id*="Overlay"][style*="display: none"] {
         display: none !important;
     }
     
-    /* Content inside overlays */
+    /* Modal content containers */
+    .modal-dialog,
+    .modal-content,
     .overlay-content {
-        width: 100% !important;
-        max-width: 100% !important;
-        max-height: 85vh !important;
-        overflow-y: auto !important;
+        width: 95% !important;
+        max-width: 95% !important;
+        max-height: 90vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
         background: white !important;
-        border-radius: 0.75rem !important;
+        border-radius: 1rem !important;
         position: relative !important;
+        overflow-y: auto !important;
+        transform: none !important;
+    }
+    
+    /* Fix Bootstrap modal dialog specifically */
+    .modal.show .modal-dialog {
+        transform: none !important;
         margin: 0 !important;
     }
     
-    /* Headers should be sticky */
+    /* Headers */
+    .modal-header,
     .overlay-header {
         position: sticky !important;
         top: 0 !important;
@@ -53,31 +70,19 @@
         z-index: 10 !important;
         border-bottom: 1px solid #dee2e6 !important;
         padding: 1rem !important;
+        border-radius: 1rem 1rem 0 0 !important;
     }
     
-    /* Tab navigation should be scrollable */
-    .nav-tabs {
-        overflow-x: auto !important;
-        white-space: nowrap !important;
-        scrollbar-width: none !important;
-        -ms-overflow-style: none !important;
+    /* Body content */
+    .modal-body,
+    .overlay-content > div:not(.overlay-header):not(.overlay-footer) {
+        padding: 1rem !important;
+        overflow-y: auto !important;
+        max-height: calc(90vh - 140px) !important;
     }
     
-    .nav-tabs::-webkit-scrollbar {
-        display: none !important;
-    }
-    
-    .nav-tabs .nav-item {
-        flex-shrink: 0 !important;
-    }
-    
-    .nav-tabs .nav-link {
-        font-size: 0.85rem !important;
-        padding: 0.5rem 1rem !important;
-        white-space: nowrap !important;
-    }
-    
-    /* Footer should be sticky */
+    /* Footers */
+    .modal-footer,
     .overlay-footer {
         position: sticky !important;
         bottom: 0 !important;
@@ -85,6 +90,21 @@
         border-top: 1px solid #dee2e6 !important;
         padding: 1rem !important;
         z-index: 10 !important;
+        border-radius: 0 0 1rem 1rem !important;
+    }
+    
+    /* Close buttons */
+    .btn-close,
+    .btn-close-overlay {
+        position: absolute !important;
+        top: 1rem !important;
+        right: 1rem !important;
+        z-index: 11 !important;
+        background: rgba(0, 0, 0, 0.1) !important;
+        border: none !important;
+        border-radius: 50% !important;
+        width: 32px !important;
+        height: 32px !important;
     }
 }
     
