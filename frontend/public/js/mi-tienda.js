@@ -5029,7 +5029,7 @@ function copyPublicLink() {
         }).catch(() => {
             // Fallback for old browsers
             document.execCommand('copy');
-            showToast('¡Enlace copiado!', 'success');
+            showToast('Link copied!', 'success');
         });
     } catch (err) {
         // Fallback adicional
