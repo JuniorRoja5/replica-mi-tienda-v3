@@ -848,6 +848,19 @@ function updateTabNavigation() {
             prevBtn.style.display = 'block';
             nextBtn.style.display = 'none';
             createBtn.style.display = 'block';
+            
+            // Verificar si estamos en modo edición
+            if (productFormData.id) {
+                createBtn.innerHTML = '<i class="bi bi-check-circle"></i> Actualizar Producto';
+                createBtn.onclick = function() {
+                    updateExistingProduct();
+                };
+            } else {
+                createBtn.innerHTML = '<i class="bi bi-check-circle"></i> Crear Producto';
+                createBtn.onclick = function() {
+                    createProduct();
+                };
+            }
             break;
     }
 }
