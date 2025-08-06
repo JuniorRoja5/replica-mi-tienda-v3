@@ -732,7 +732,7 @@ function showCreateModal() {
 }
 
 function selectProductType(type) {
-    // Cerrar modal de selección
+    // Close selection modal
     const typeModal = bootstrap.Modal.getInstance(document.getElementById('productTypeModal'));
     typeModal.hide();
     
