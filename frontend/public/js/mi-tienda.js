@@ -4623,7 +4623,7 @@ function updatePreviewWithMembership() {
         return;
     }
 
-    // Durante la edición de membresía, mostrar la página de membresía simulada en el preview
+    // During membership editing, show simulated membership page in preview
     const previewContent = document.getElementById('previewContent');
     if (!previewContent) {
         console.warn('Preview content element not found');
