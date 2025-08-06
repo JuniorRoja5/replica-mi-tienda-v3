@@ -2166,12 +2166,12 @@ function debounce(func, wait) {
     };
 }
 
-/* === GUARDAR PRODUCTO TIPO LINK ===
- * INTEGRACIÓN LARAVEL: 
- * - Reemplazar con POST /api/products
- * - Agregar CSRF token: headers['X-CSRF-TOKEN']
- * - Validación en ProductController
- * - Retornar JSON con el producto creado
+/* === SAVE LINK PRODUCT ===
+ * LARAVEL INTEGRATION: 
+ * - Replace with POST /api/products
+ * - Add CSRF token: headers['X-CSRF-TOKEN']
+ * - Validation in ProductController
+ * - Return JSON with created product
  */
 function saveLinkProduct() {
     const url = document.getElementById('linkUrl').value.trim();
