@@ -85,7 +85,16 @@ function initializeApp() {
     });
 }
 
-// Manejar clics de productos desde el iframe
+// Manejar compras desde la vista pública (iframe preview)
+function handlePurchaseFromPublicView(product) {
+    // NOTA IMPORTANTE: En la implementación real con Laravel:
+    // - Este modal aparecerá en la página pública: https://dominio/u/usuario
+    // - NO en la plataforma de construcción (mi-tienda.html)
+    // - El usuario final verá el modal al hacer clic en "comprar" en la vCard pública
+    
+    console.log('🛒 Compra desde vista pública:', product);
+    showPurchaseModal(product);
+}
 function handleProductClickFromIframe(productId, productType) {
     const product = appState.products.find(p => p.id === productId);
     if (!product) return;
