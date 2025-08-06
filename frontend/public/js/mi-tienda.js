@@ -139,7 +139,7 @@ function handleProductClickFromIframe(productId, productType) {
     } else if (productType === 'consultation') {
         // Navigate to consultation page (scheduling)
         const username = appState.profile.username || 'user';
-        // NOTA: En Laravel backend, esto será una ruta como /u/{username}/c/{id} o /consultation/{id}
+        // NOTE: In Laravel backend, this will be a route like /u/{username}/c/{id} or /consultation/{id}
         window.open(`public-product.html?c=${product.id}&u=${username}`, '_blank');
     } else if (productType === 'course') {
         // Navegar a la página del curso
