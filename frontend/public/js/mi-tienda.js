@@ -1418,6 +1418,20 @@ window.handleProductPurchase = function() {
 
 // Mostrar modal de compra basado en PurchaseModal.jsx del código React original
 function showPurchaseModal(product) {
+    // ARQUITECTURA DE COMPRAS EN PRODUCCIÓN:
+    // 
+    // 1. PLATAFORMA DE CONSTRUCCIÓN (mi-tienda.html):
+    //    - Solo para configurar productos
+    //    - El creador ve el preview de cómo se verá su vCard
+    //
+    // 2. VISTA PÚBLICA (https://dominio/u/usuario):
+    //    - Aquí es donde aparecerá este modal de compras
+    //    - Los usuarios finales harán clic en "comprar"
+    //    - Procesamiento real con Stripe + Laravel
+    //
+    // NOTA: Este modal está temporalmente en mi-tienda.html para demo,
+    // pero en producción estará integrado en la vista pública de cada usuario.
+    
     currentPurchaseProduct = product;
     
     // Poblar datos del producto en el modal
