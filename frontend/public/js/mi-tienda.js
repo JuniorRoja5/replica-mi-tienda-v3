@@ -1371,7 +1371,7 @@ function updatePreviewWithProduct() {
         return;
     }
 
-    // Durante la edición del producto, mostrar la página de ventas simulada en el preview
+    // During product editing, show simulated sales page in preview
     const previewContent = document.getElementById('previewContent');
     if (!previewContent) {
         console.warn('Preview content element not found');
