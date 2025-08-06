@@ -3777,7 +3777,7 @@ function setupCourseFormListeners() {
         updatePreviewWithCourse();
     });
     
-    // Navegación de tabs
+    // Tab navigation
     document.querySelectorAll('#courseTabs button').forEach(tab => {
         tab.addEventListener('click', function() {
             const tabName = this.getAttribute('data-tab');
