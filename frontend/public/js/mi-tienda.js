@@ -4531,7 +4531,7 @@ function showMembershipTab(tabName) {
     });
     document.getElementById(`${tabName}-membership-panel`).style.display = 'block';
     
-    // Actualizar botones de navegación
+    // Update navigation buttons
     updateMembershipTabNavigation();
 }
 
