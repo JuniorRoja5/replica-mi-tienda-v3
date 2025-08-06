@@ -335,7 +335,7 @@ function getProductTypeLabel(type) {
         product: 'PRODUCTO',
         consultation: 'Consultoría',
         course: 'Curso',
-        membership: 'Membresía'
+        membership: 'MEMBRESÍA'
     };
     return labels[type] || 'Producto';
 }
