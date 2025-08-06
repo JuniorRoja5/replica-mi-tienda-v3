@@ -999,7 +999,7 @@ function setupProductFormListeners() {
     const buttonTextInput = document.getElementById('buttonText');
     const isActiveInput = document.getElementById('isActive');
     
-    // Event listeners para actualización en tiempo real
+    // Event listeners for real-time update
     titleInput.addEventListener('input', function() {
         productFormData.title = this.value;
         document.getElementById('titleCounter').textContent = this.value.length;
