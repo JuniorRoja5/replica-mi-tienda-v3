@@ -544,11 +544,34 @@ function selectProductType(type) {
         if (type === 'link') {
             showLinkFormModal();
         } else if (type === 'product') {
-            // Aquí iría el modal para producto digital
-            console.log('Modalidad de producto digital aún no implementada');
-            showToast('Funcionalidad de producto digital próximamente', 'info');
+            // Mostrar la vista superpuesta de selección de tipo de producto digital
+            showProductTypeOverlay();
         }
     }, 300);
+}
+
+function showProductTypeOverlay() {
+    document.getElementById('productTypeOverlay').style.display = 'block';
+}
+
+function closeProductTypeOverlay() {
+    document.getElementById('productTypeOverlay').style.display = 'none';
+}
+
+function selectDigitalProductType(productType) {
+    // Cerrar la vista superpuesta
+    closeProductTypeOverlay();
+    
+    // Aquí se abriría el formulario específico para cada tipo de producto
+    // Por ahora solo mostramos una notificación
+    const typeNames = {
+        digital_product: 'Producto Digital',
+        consultation: 'Llamada de Consultoría',
+        course: 'Curso Digital',
+        membership: 'Membresía Recurrente'
+    };
+    
+    showToast(`Creando ${typeNames[productType]}... (próximamente)`, 'info');
 }
 
 function showLinkFormModal() {
