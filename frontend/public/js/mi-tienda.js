@@ -209,7 +209,7 @@ function saveToStorage() {
                     },
                     products: appState.products.map(product => ({
                         ...product,
-                        image_url: '' // Remover imágenes temporalmente
+                        image_url: '' // Remove images temporarily
                     }))
                 };
                 localStorage.setItem('miTiendaData', JSON.stringify(minimalData));
