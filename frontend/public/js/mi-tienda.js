@@ -2333,6 +2333,225 @@ function updateConsultationTabNavigation() {
     }
 }
 
+function setupConsultationFormListeners() {
+    // Event listeners para actualización en tiempo real
+    const titleInput = document.getElementById('consultationTitle');
+    const subtitleInput = document.getElementById('consultationSubtitle');
+    const descriptionInput = document.getElementById('consultationDescription');
+    const priceInput = document.getElementById('consultationPrice');
+    const discountPriceInput = document.getElementById('consultationDiscountPrice');
+    const hasDiscountInput = document.getElementById('consultationHasDiscount');
+    const buttonTextInput = document.getElementById('consultationButtonText');
+    const isActiveInput = document.getElementById('consultationIsActive');
+    
+    titleInput.addEventListener('input', function() {
+        consultationFormData.title = this.value;
+        document.getElementById('consultationTitleCounter').textContent = this.value.length;
+        updatePreviewWithConsultation();
+    });
+    
+    subtitleInput.addEventListener('input', function() {
+        consultationFormData.subtitle = this.value;
+        document.getElementById('consultationSubtitleCounter').textContent = this.value.length;
+        updatePreviewWithConsultation();
+    });
+    
+    descriptionInput.addEventListener('input', function() {
+        consultationFormData.description = this.value;
+        updatePreviewWithConsultation();
+    });
+    
+    priceInput.addEventListener('input', function() {
+        consultationFormData.price = this.value;
+        updatePreviewWithConsultation();
+    });
+    
+    discountPriceInput.addEventListener('input', function() {
+        consultationFormData.discount_price = this.value;
+        updatePreviewWithConsultation();
+    });
+    
+    hasDiscountInput.addEventListener('change', function() {
+        consultationFormData.has_discount = this.checked;
+        document.getElementById('consultationDiscountPrice').style.display = this.checked ? 'block' : 'none';
+        updatePreviewWithConsultation();
+    });
+    
+    buttonTextInput.addEventListener('input', function() {
+        consultationFormData.button_text = this.value;
+        updatePreviewWithConsultation();
+    });
+    
+    isActiveInput.addEventListener('change', function() {
+        consultationFormData.is_active = this.checked;
+        updatePreviewWithConsultation();
+    });
+    
+    // Navegación de tabs
+    document.querySelectorAll('#consultationTabs button').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabName = this.getAttribute('data-tab');
+            showConsultationTab(tabName);
+        });
+    });
+    
+    // Upload de imagen para consultoría
+    document.getElementById('consultationImageInput').addEventListener('change', handleConsultationImageUpload);
+    
+    // Event listeners para configuración de disponibilidad
+    document.querySelectorAll('input[name="callMethod"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            consultationFormData.availability_settings.call_method = this.value;
+            const customContainer = document.getElementById('customLinkContainer');
+            customContainer.style.display = this.value === 'custom' ? 'block' : 'none';
+            updatePreviewWithConsultation();
+        });
+    });
+    
+    // Configuración de tiempo
+    document.getElementById('consultationTimezone').addEventListener('change', function() {
+        consultationFormData.availability_settings.timezone = this.value;
+    });
+    
+    document.getElementById('consultationDuration').addEventListener('change', function() {
+        consultationFormData.availability_settings.duration = parseInt(this.value);
+        updatePreviewWithConsultation();
+    });
+    
+    // Custom call link
+    document.getElementById('customCallLink').addEventListener('input', function() {
+        consultationFormData.availability_settings.custom_call_link = this.value;
+    });
+}
+
+function removeConsultationFormListeners() {
+    // Remover listeners para evitar conflictos
+    const titleInput = document.getElementById('consultationTitle');
+    const subtitleInput = document.getElementById('consultationSubtitle');
+    
+    if (titleInput) {
+        const newTitleInput = titleInput.cloneNode(true);
+        titleInput.parentNode.replaceChild(newTitleInput, titleInput);
+    }
+    
+    if (subtitleInput) {
+        const newSubtitleInput = subtitleInput.cloneNode(true);
+        subtitleInput.parentNode.replaceChild(newSubtitleInput, subtitleInput);
+    }
+}
+
+function handleConsultationImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (!file.type.startsWith('image/')) {
+        showToast('Por favor selecciona un archivo de imagen válido', 'error');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        consultationFormData.image_url = e.target.result;
+        document.getElementById('consultationImagePreview').innerHTML = `
+            <img src="${e.target.result}" alt="Imagen de consultoría">
+        `;
+        updatePreviewWithConsultation();
+        showToast('¡Imagen subida correctamente!', 'success');
+    };
+    reader.readAsDataURL(file);
+}
+
+function generateConsultationAIDescription() {
+    const title = consultationFormData.title || 'consultoría personalizada';
+    const description = `Esta ${title.toLowerCase()} está diseñada para ayudarte a alcanzar tus objetivos específicos. Durante nuestra sesión personalizada trabajaremos juntos en:
+
+**Beneficios de la consultoría:**
+- Análisis personalizado de tu situación actual
+- Estrategias específicas para tus necesidades
+- Plan de acción claro y ejecutable
+- Seguimiento y recomendaciones prácticas
+
+**Lo que incluye:**
+- Sesión 1 a 1 por videollamada
+- Documento con resumen de la sesión
+- Recursos adicionales personalizados
+- Seguimiento por email
+
+¡Agenda tu llamada hoy y comienza a ver resultados reales!`;
+
+    document.getElementById('consultationDescription').value = description;
+    consultationFormData.description = description;
+    updatePreviewWithConsultation();
+    showToast('¡Descripción generada con IA!', 'success');
+}
+
+// Funciones para reseñas de consultoría
+function addConsultationReview() {
+    const newReview = {
+        id: Date.now(),
+        customer_name: '',
+        rating: 5,
+        comment: ''
+    };
+    
+    consultationFormData.reviews.push(newReview);
+    renderConsultationReviews();
+}
+
+function renderConsultationReviews() {
+    const reviewsList = document.getElementById('consultationReviewsList');
+    
+    if (consultationFormData.reviews.length === 0) {
+        reviewsList.innerHTML = `
+            <div class="text-muted text-center py-3">
+                <i class="bi bi-star display-6"></i>
+                <p>No hay reseñas aún. Agrega algunas para aumentar la confianza.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    reviewsList.innerHTML = consultationFormData.reviews.map((review, index) => `
+        <div class="review-item">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <input type="text" class="form-control form-control-sm" 
+                       placeholder="Nombre del cliente" 
+                       value="${review.customer_name}"
+                       onchange="updateConsultationReview(${index}, 'customer_name', this.value)">
+                <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="removeConsultationReview(${index})">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+            <div class="mb-2">
+                <div class="review-stars">
+                    ${[1,2,3,4,5].map(star => `
+                        <i class="bi bi-star${star <= review.rating ? '-fill' : ''}" 
+                           onclick="updateConsultationReview(${index}, 'rating', ${star})" 
+                           style="cursor: pointer; color: #ffc107;"></i>
+                    `).join('')}
+                </div>
+            </div>
+            <textarea class="form-control form-control-sm" 
+                      placeholder="Comentario de la reseña..." 
+                      rows="2"
+                      onchange="updateConsultationReview(${index}, 'comment', this.value)">${review.comment}</textarea>
+        </div>
+    `).join('');
+}
+
+function updateConsultationReview(index, field, value) {
+    if (consultationFormData.reviews[index]) {
+        consultationFormData.reviews[index][field] = value;
+        updatePreviewWithConsultation();
+    }
+}
+
+function removeConsultationReview(index) {
+    consultationFormData.reviews.splice(index, 1);
+    renderConsultationReviews();
+    updatePreviewWithConsultation();
+}
+
 function consultationNextTab() {
     switch(currentProductTab) {
         case 'datos':
