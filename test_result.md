@@ -101,3 +101,48 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: Fix the "Llamada de Consultoría" navigation so that when users click on a consultation product from the iframe preview, it navigates to the proper consultation page (similar to how digital products navigate to their sales page).
+
+frontend:
+  - task: "Fix consultation navigation in handleProductClick function"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/public/js/mi-tienda.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        -working: "implemented"
+        -agent: "main"
+        -comment: "Added consultation type handling to both handleProductClick and handleProductClickFromIframe functions. Now consultation products will navigate to public-product.html?c={productId}&u={username} instead of being ignored."
+        
+  - task: "Update public-product.html to handle consultation products"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/public/public-product.html"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        -working: "implemented"
+        -agent: "main"
+        -comment: "Modified loadProductData to accept both 'p' (product) and 'c' (consultation) URL parameters. Added type validation and updated UI elements for consultation-specific interface (calendar icon, 'Agendar llamada' text)."
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 0
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Fix consultation navigation in handleProductClick function"
+    - "Update public-product.html to handle consultation products"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+    -agent: "main"
+    -message: "I have implemented the consultation navigation fix by updating both JavaScript files. The mi-tienda.js now properly handles 'consultation' type products in handleProductClick functions, and public-product.html can now process both product ('p') and consultation ('c') URL parameters. Need to test if clicking on consultation products in the iframe now properly navigates to the consultation booking page."
