@@ -861,7 +861,7 @@ let courseFormData = {
     }
 };
 
-// Estado global para formulario de membresía recurrente
+// Global state for recurring membership form
 let membershipFormData = {
     title: '',
     subtitle: '',
