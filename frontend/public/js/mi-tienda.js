@@ -81,6 +81,23 @@ function initializeApp() {
     });
 }
 
+// Manejar clics de productos desde el iframe
+function handleProductClickFromIframe(productId, productType) {
+    const product = appState.products.find(p => p.id === productId);
+    if (!product) return;
+    
+    if (productType === 'link') {
+        // Abrir link externo
+        if (product.url) {
+            window.open(product.url, '_blank');
+        }
+    } else if (productType === 'product') {
+        // Navegar a la página de ventas del producto
+        const username = appState.profile.username || 'user';
+        window.open(`public-product.html?p=${product.id}&u=${username}`, '_blank');
+    }
+}
+
 function loadFromStorage() {
     const savedData = localStorage.getItem('miTiendaData');
     if (savedData) {
