@@ -88,7 +88,7 @@ let sortableInstance = null;
 let isEditing = false;
 let editingId = null;
 
-// Inicialización
+// Initialization
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
     loadFromStorage();
