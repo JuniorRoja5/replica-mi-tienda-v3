@@ -19,6 +19,49 @@ Este paquete contiene todos los archivos necesarios para integrar el **Mi Tienda
 └── 📄 DELIVERY_PACKAGE.md         # ⭐ Este archivo (instrucciones)
 ```
 
+### **⚠️ IMPORTANTE: Gestión del CSS**
+
+**ESTADO ACTUAL:** El CSS está **embebido dentro de los archivos HTML** entre las etiquetas `<style>...</style>`
+
+**UBICACIÓN:**
+- `mi-tienda.html`: Líneas ~18-1200 (todo el styling principal)
+- `public-product.html`: CSS embebido para vista pública
+
+**OPCIONES PARA EL DESARROLLADOR:**
+
+#### **OPCIÓN A: Mantener CSS Embebido (Recomendado)**
+✅ **Ventajas:**
+- Menos peticiones HTTP (mejor performance)
+- Todo en un solo archivo
+- No requiere configuración adicional
+
+❌ **Desventajas:**
+- Archivo HTML más grande
+- Difícil cachear CSS por separado
+
+#### **OPCIÓN B: Extraer CSS a Archivo Separado**
+✅ **Ventajas:**  
+- CSS cacheable por separado
+- HTML más limpio
+- Reutilizable en múltiples vistas
+
+❌ **Desventajas:**
+- Petición HTTP adicional
+- Requiere configuración en Laravel
+
+**CÓMO EXTRAER (si se elige Opción B):**
+```bash
+# 1. Crear archivo CSS
+mkdir -p public/css
+nano public/css/mi-tienda.css
+# (Copiar contenido entre <style> y </style> de mi-tienda.html)
+
+# 2. En mi-tienda.blade.php reemplazar:
+# <style>...todo el CSS...</style>
+# Por:
+# <link href="{{ asset('css/mi-tienda.css') }}" rel="stylesheet">
+```
+
 ### **ARCHIVOS OPCIONALES**
 ```
 📂 OPCIONAL/
