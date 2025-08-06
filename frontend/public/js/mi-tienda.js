@@ -4317,7 +4317,7 @@ function createCourseFromForm() {
 
 // ============== FIN FUNCIONES PARA CURSO DIGITAL ==============
 
-// ============== FUNCIONES PRINCIPALES PARA MEMBRESÍA RECURRENTE ==============
+// ============== MAIN FUNCTIONS FOR RECURRING MEMBERSHIP ==============
 
 // Variables globales para membresía
 let currentMembershipTab = 'datos';
