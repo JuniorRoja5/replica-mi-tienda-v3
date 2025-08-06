@@ -1115,9 +1115,16 @@ function updatePreviewWithProduct() {
         return;
     }
 
-    // Durante la edición del producto, mostrar la página de ventas en el iframe
-    const preview = document.getElementById('iframePreview');
+    // Durante la edición del producto, mostrar la página de ventas simulada en el preview
+    const previewContent = document.getElementById('previewContent');
+    if (!previewContent) {
+        console.warn('Preview content element not found');
+        return;
+    }
+    
     const username = appState.profile.username || 'usuario';
+    const profileName = appState.profile.name || 'Tu Nombre';
+    const profileAvatar = appState.profile.avatar || '';
     
     // Crear una versión temporal del producto para preview
     const tempProduct = {
@@ -1137,15 +1144,166 @@ function updatePreviewWithProduct() {
         custom_fields: productFormData.custom_fields || []
     };
     
-    // Guardar temporalmente el producto en localStorage para que la página de ventas lo pueda leer
-    const tempData = {
-        profile: appState.profile,
-        products: [tempProduct]
-    };
-    localStorage.setItem('tempProductPreview', JSON.stringify(tempData));
+    // Mostrar la página de ventas del producto en lugar del perfil general
+    const displayPrice = tempProduct.has_discount && tempProduct.discount_price > 0 
+        ? tempProduct.discount_price 
+        : tempProduct.price;
+    const originalPrice = tempProduct.has_discount && tempProduct.discount_price > 0 
+        ? tempProduct.price 
+        : null;
     
-    // Actualizar el iframe para mostrar la página de ventas
-    preview.src = `public-product.html?p=${tempProduct.id}&u=${username}&preview=true`;
+    // Generar reseñas válidas
+    const validReviews = (tempProduct.reviews || []).filter(review => 
+        review.customer_name && review.customer_name.trim() !== '' && 
+        review.comment && review.comment.trim() !== ''
+    );
+    
+    const reviewsHTML = validReviews.length > 0 ? validReviews.map(review => {
+        const stars = Array.from({length: 5}, (_, i) => 
+            `<span style="color: #ffc107;">${i < review.rating ? '★' : '☆'}</span>`
+        ).join('');
+        
+        return `
+            <div style="background: #2a2a2a; padding: 1rem; border-radius: 0.75rem; margin-bottom: 0.75rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <span style="font-weight: 600; font-size: 0.9rem; color: white;">${review.customer_name}</span>
+                    <div style="font-size: 0.85rem;">${stars}</div>
+                </div>
+                <p style="color: #a0a0a0; font-size: 0.9rem; margin: 0;">${review.comment}</p>
+            </div>
+        `;
+    }).join('') : '';
+    
+    // HTML de la página de ventas simulada
+    previewContent.innerHTML = `
+        <div style="
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            overflow-y: auto;
+        ">
+            <!-- Header con botón de regreso -->
+            <div style="
+                position: sticky;
+                top: 0;
+                background: rgba(26, 26, 26, 0.95);
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid #333;
+                padding: 1rem;
+                z-index: 10;
+            ">
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    color: #a0a0a0;
+                    font-size: 0.95rem;
+                    cursor: pointer;
+                ">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Volver al perfil</span>
+                </div>
+            </div>
+
+            <!-- Contenido del producto -->
+            <div style="padding: 2rem 1.5rem; padding-bottom: 120px;">
+                <!-- Imagen del producto -->
+                ${tempProduct.image_url ? `
+                    <div style="width: 100%; height: 200px; border-radius: 1rem; overflow: hidden; margin-bottom: 2rem; background: #2a2a2a; display: flex; align-items: center; justify-content: center;">
+                        <img src="${tempProduct.image_url}" alt="${tempProduct.title}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                ` : `
+                    <div style="width: 100%; height: 200px; border-radius: 1rem; background: #2a2a2a; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem; color: #666; font-size: 3rem;">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                `}
+
+                <!-- Información del producto -->
+                <div style="margin-bottom: 2rem;">
+                    <h1 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2;">
+                        ${tempProduct.title}
+                    </h1>
+                    
+                    ${tempProduct.subtitle ? `
+                        <p style="font-size: 1.1rem; color: #a0a0a0; margin-bottom: 1.5rem; line-height: 1.4;">
+                            ${tempProduct.subtitle}
+                        </p>
+                    ` : ''}
+                </div>
+
+                <!-- Precio -->
+                ${tempProduct.price > 0 ? `
+                    <div style="margin-bottom: 2rem;">
+                        <span style="font-size: 2rem; font-weight: 700; color: #10b981;">
+                            $${displayPrice}
+                        </span>
+                        ${originalPrice ? `
+                            <span style="font-size: 1.2rem; color: #666; text-decoration: line-through; margin-left: 1rem; vertical-align: top; margin-top: 0.5rem; display: inline-block;">
+                                $${originalPrice}
+                            </span>
+                            <span style="background: #dc2626; color: white; font-size: 0.85rem; padding: 0.25rem 0.75rem; border-radius: 2rem; font-weight: 600; margin-left: 1rem; vertical-align: top; margin-top: 0.75rem; display: inline-block;">
+                                -${Math.round(((originalPrice - displayPrice) / originalPrice) * 100)}%
+                            </span>
+                        ` : ''}
+                    </div>
+                ` : ''}
+
+                <!-- Descripción -->
+                ${tempProduct.description ? `
+                    <div style="line-height: 1.6; color: #d0d0d0; margin-bottom: 2rem; white-space: pre-line;">
+                        ${tempProduct.description}
+                    </div>
+                ` : ''}
+
+                <!-- Reseñas -->
+                ${reviewsHTML ? `
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-star-fill" style="color: #fbbf24;"></i>
+                            Reseñas de clientes
+                        </h3>
+                        ${reviewsHTML}
+                    </div>
+                ` : ''}
+            </div>
+
+            <!-- Botón de compra fijo -->
+            <div style="
+                position: fixed;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                max-width: 380px;
+                width: 100%;
+                background: rgba(26, 26, 26, 0.95);
+                backdrop-filter: blur(10px);
+                border-top: 1px solid #333;
+                padding: 1.5rem;
+                z-index: 100;
+            ">
+                <button style="
+                    width: 100%;
+                    background: #8b5cf6;
+                    border: none;
+                    color: white;
+                    font-size: 1.1rem;
+                    font-weight: 600;
+                    padding: 1rem;
+                    border-radius: 0.75rem;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.5rem;
+                ">
+                    <i class="bi bi-cart-plus"></i>
+                    <span>${tempProduct.button_text || (tempProduct.price > 0 ? `Comprar por $${displayPrice}` : 'Obtener Gratis')}</span>
+                </button>
+            </div>
+        </div>
+    `;
 }
 
 function saveAsDraft() {
