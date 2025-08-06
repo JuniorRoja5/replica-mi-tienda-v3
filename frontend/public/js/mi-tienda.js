@@ -72,6 +72,13 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeApp() {
     console.log('Mi Tienda v2.0 - Aplicación inicializada');
     renderProducts();
+    
+    // Configurar evento para escuchar mensajes del iframe
+    window.addEventListener('message', function(event) {
+        if (event.data.type === 'productClick') {
+            handleProductClickFromIframe(event.data.productId, event.data.productType);
+        }
+    });
 }
 
 function loadFromStorage() {
