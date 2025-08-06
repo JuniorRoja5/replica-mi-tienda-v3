@@ -755,7 +755,7 @@ function closeProductTypeOverlay() {
     document.getElementById('productTypeOverlay').style.display = 'none';
 }
 
-// Estado para el formulario de producto Y consultoría
+// State for product form AND consultation
 let currentProductTab = 'datos';
 let productFormData = {
     title: '',
