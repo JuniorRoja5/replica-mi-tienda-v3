@@ -1584,14 +1584,8 @@ function editDigitalProduct(product) {
     // Configurar event listeners
     setupProductFormListeners();
     
-    // Cambiar el botón de crear por actualizar
-    const createButton = document.getElementById('createProductBtn');
-    if (createButton) {
-        createButton.innerHTML = '<i class="bi bi-check-circle"></i> Actualizar Producto';
-        createButton.onclick = function() {
-            updateExistingProduct();
-        };
-    }
+    // Activar preview inmediatamente con los datos existentes
+    updatePreviewWithProduct();
 }
 
 function populateProductForm() {
