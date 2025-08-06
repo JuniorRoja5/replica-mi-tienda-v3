@@ -371,12 +371,35 @@ function closeProfileOverlay() {
     removeOverlayListeners();
 }
 
+function updateAvatarPreview() {
+    const avatarPreview = document.getElementById('avatarPreviewOverlay');
+    if (avatarPreview) {
+        if (appState.profile.avatar_url) {
+            avatarPreview.innerHTML = `<img src="${appState.profile.avatar_url}" alt="Avatar preview">`;
+        } else {
+            avatarPreview.innerHTML = '<div class="avatar-placeholder">👤</div>';
+        }
+    }
+}
+
 function setupOverlayListeners() {
     const nameInput = document.getElementById('overlayNameInput');
     const usernameInput = document.getElementById('overlayUsernameInput');
     const bioInput = document.getElementById('overlayBioInput');
     const avatarInput = document.getElementById('overlayAvatarInput');
     const bioCounter = document.getElementById('overlayBioCounter');
+    
+    // Redes sociales
+    const socialInputs = {
+        tiktok: document.getElementById('overlayTiktok'),
+        instagram: document.getElementById('overlayInstagram'),
+        youtube: document.getElementById('overlayYoutube'),
+        twitter: document.getElementById('overlayTwitter'),
+        facebook: document.getElementById('overlayFacebook'),
+        linkedin: document.getElementById('overlayLinkedin'),
+        discord: document.getElementById('overlayDiscord'),
+        spotify: document.getElementById('overlaySpotify')
+    };
     
     // Nombre - actualización en tiempo real
     const handleNameChange = function() {
@@ -410,8 +433,17 @@ function setupOverlayListeners() {
             appState.profile.avatar_url = e.target.result;
             updateProfileUI();
             updatePreview();
+            updateAvatarPreview();
         };
         reader.readAsDataURL(file);
+    };
+    
+    // Redes sociales - actualización en tiempo real
+    const handleSocialChange = function(platform) {
+        return function() {
+            appState.profile.social_links[platform] = this.value.trim();
+            updatePreview();
+        };
     };
     
     // Agregar listeners
@@ -419,6 +451,15 @@ function setupOverlayListeners() {
     usernameInput.addEventListener('input', handleUsernameChange);
     bioInput.addEventListener('input', handleBioChange);
     avatarInput.addEventListener('change', handleAvatarChange);
+    
+    // Agregar listeners para redes sociales
+    Object.keys(socialInputs).forEach(platform => {
+        if (socialInputs[platform]) {
+            const handler = handleSocialChange(platform);
+            socialInputs[platform].addEventListener('input', handler);
+            socialInputs[platform]._socialHandler = handler;
+        }
+    });
     
     // Guardar referencias para poder removerlos después
     nameInput._handleNameChange = handleNameChange;
