@@ -4898,7 +4898,7 @@ function createMembershipFromForm() {
 
 // ============== FUNCIONES DE LIMPIEZA GLOBAL ==============
 
-// Función para cerrar todos los overlays y limpiar el estado
+// Function to close all overlays and clean state
 function closeAllOverlays() {
     // Lista de todos los overlays posibles
     const overlayIds = [
