@@ -4410,7 +4410,7 @@ function resetMembershipForm() {
 }
 
 function setupMembershipFormListeners() {
-    // Títulos con actualización en tiempo real
+    // Titles with real-time update
     const titleInput = document.getElementById('membershipTitle');
     const subtitleInput = document.getElementById('membershipSubtitle');
     const descriptionInput = document.getElementById('membershipDescription');
