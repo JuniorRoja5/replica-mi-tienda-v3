@@ -113,7 +113,7 @@ function initializeApp() {
     });
 }
 
-// Manejar compras desde la vista pública (iframe preview)
+// Handle purchases from public view (iframe preview)
 function handlePurchaseFromPublicView(product) {
     // NOTA IMPORTANTE: En la implementación real con Laravel:
     // - Este modal aparecerá en la página pública: https://dominio/u/usuario
