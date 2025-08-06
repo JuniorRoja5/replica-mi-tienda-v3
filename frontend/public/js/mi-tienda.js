@@ -775,7 +775,7 @@ let productFormData = {
     ]
 };
 
-// Estado específico para consultoría (nuevo)
+// Specific state for consultation (new)
 let consultationFormData = {
     title: '',
     subtitle: '',
