@@ -113,6 +113,11 @@ function handleProductClickFromIframe(productId, productType) {
         const username = appState.profile.username || 'user';
         // NOTA: En Laravel backend, esto será una ruta como /u/{username}/c/{id} o /consultation/{id}
         window.open(`public-product.html?c=${product.id}&u=${username}`, '_blank');
+    } else if (productType === 'course') {
+        // Navegar a la página del curso
+        const username = appState.profile.username || 'user';
+        // NOTA: En Laravel backend, esto será una ruta como /u/{username}/course/{id} o /courses/{id}
+        window.open(`public-product.html?course=${product.id}&u=${username}`, '_blank');
     }
 }
 
