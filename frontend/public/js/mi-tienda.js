@@ -224,9 +224,9 @@ function saveToStorage() {
     }
 }
 
-/* === ACTUALIZACIÓN UI DEL PERFIL ===
- * INTEGRACIÓN LARAVEL: Conectar con Model User
- * Campos requeridos en DB: name, username, bio, avatar_url
+/* === PROFILE UI UPDATE ===
+ * LARAVEL INTEGRATION: Connect with User Model
+ * Required DB fields: name, username, bio, avatar_url
  * API endpoint: GET /api/profile  
  */
 function updateProfileUI() {
