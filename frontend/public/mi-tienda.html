@@ -2058,12 +2058,13 @@
     </div>
 
     <!-- Overlay para Membresía Recurrente -->
-    <div class="overlay" id="membershipFormOverlay" style="display: none;">
-        <div class="overlay-content membership-form">
-            <div class="form-header">
-                <h2 class="text-center"><i class="bi bi-crown text-warning"></i> Crear Membresía Recurrente</h2>
-                <button type="button" class="btn-close" onclick="closeMembershipFormOverlay()"></button>
-            </div>
+    <div class="profile-overlay" id="membershipFormOverlay" style="display: none;">
+        <div class="overlay-header">
+            <h3><i class="bi bi-crown text-warning"></i> Crear Membresía Recurrente</h3>
+            <button class="btn-close-overlay" onclick="closeMembershipFormOverlay()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
             
             <!-- Tabs de navegación -->
             <div class="tabs-navigation" id="membershipTabs">
