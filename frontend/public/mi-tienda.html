@@ -1109,6 +1109,87 @@
                 padding: 1rem;
             }
         }
+
+        /* Estilos para el mockup mejorado */
+        .mockup-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .phone-frame {
+            background: #1F2937;
+            border-radius: 2.5rem;
+            padding: 0.75rem;
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.25),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            position: relative;
+            transform: scale(0.85);
+        }
+
+        .phone-frame::before {
+            content: '';
+            position: absolute;
+            top: 0.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 6px;
+            background: #374151;
+            border-radius: 3px;
+            z-index: 10;
+        }
+
+        /* Campo "Tu enlace público" */
+        .public-link-section {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 
+                0 10px 25px -5px rgba(0, 0, 0, 0.1),
+                0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #E5E7EB;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .public-link-label {
+            color: #6B7280;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .public-link-input {
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 1rem;
+            width: 100%;
+            font-size: 0.95rem;
+            color: #374151;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .public-link-input:hover {
+            background: #F3F4F6;
+            border-color: #D1D5DB;
+        }
+
+        .public-link-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: #FFFFFF;
+        }
     </style>
 </head>
 <body>
