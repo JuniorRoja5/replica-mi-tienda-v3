@@ -133,7 +133,7 @@ function handleProductClickFromIframe(productId, productType) {
             window.open(product.url, '_blank');
         }
     } else if (productType === 'product') {
-        // Navegar a la página de ventas del producto
+        // Navigate to product sales page
         const username = appState.profile.username || 'user';
         window.open(`public-product.html?p=${product.id}&u=${username}`, '_blank');
     } else if (productType === 'consultation') {
