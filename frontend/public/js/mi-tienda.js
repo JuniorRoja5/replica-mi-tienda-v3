@@ -1179,7 +1179,7 @@ function handleProductFileUpload(event) {
     if (!file) return;
     
     // Simular subida de archivo
-    productFormData.file_url = file.name; // En producción sería una URL real
+    productFormData.file_url = file.name; // In production this would be a real URL
     
     // Mostrar archivo subido
     document.getElementById('fileUploadArea').style.display = 'none';
