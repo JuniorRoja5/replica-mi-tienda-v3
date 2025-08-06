@@ -741,7 +741,7 @@ function selectProductType(type) {
         if (type === 'link') {
             showLinkFormModal();
         } else if (type === 'product') {
-            // Mostrar la vista superpuesta de selección de tipo de producto digital
+            // Show digital product type selection overlay
             showProductTypeOverlay();
         }
     }, 300);
