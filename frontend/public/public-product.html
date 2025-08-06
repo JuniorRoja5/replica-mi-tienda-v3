@@ -461,6 +461,8 @@
                 pageTitle += ' - Consultoría';
             } else if (productData.type === 'course') {
                 pageTitle += ' - Curso Digital';
+            } else if (productData.type === 'membership') {
+                pageTitle += ' - Membresía';
             }
             document.getElementById('pageTitle').textContent = pageTitle;
             document.title = pageTitle;
