@@ -5015,7 +5015,7 @@ function copyPublicLink() {
         linkInput.select();
         linkInput.setSelectionRange(0, 99999); // For mobile devices
         
-        // Copiar al portapapeles
+        // Copy to clipboard
         navigator.clipboard.writeText(linkInput.value).then(() => {
             showToast('¡Enlace copiado al portapapeles!', 'success');
             
