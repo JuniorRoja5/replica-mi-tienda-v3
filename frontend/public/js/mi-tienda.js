@@ -3390,6 +3390,123 @@ window.addEventListener('beforeunload', function(e) {
     saveToStorage();
 });
 
+function saveAsCourseAsDraft() {
+    if (!courseFormData.title.trim()) {
+        showToast('El título es obligatorio', 'error');
+        return;
+    }
+    
+    const draftCourse = createCourseFromForm();
+    draftCourse.is_active = false;
+    
+    appState.products.push(draftCourse);
+    saveToStorage();
+    renderProducts();
+    updatePreview();
+    
+    closeCourseFormOverlay();
+    showToast('¡Borrador de curso guardado correctamente!', 'success');
+}
+
+// Funciones adicionales para curso
+function addCourseReview() {
+    const newReview = {
+        id: Date.now(),
+        customer_name: '',
+        rating: 5,
+        comment: ''
+    };
+    
+    courseFormData.reviews.push(newReview);
+    renderCourseReviews();
+}
+
+function renderCourseReviews() {
+    const reviewsList = document.getElementById('courseReviewsList');
+    
+    if (courseFormData.reviews.length === 0) {
+        reviewsList.innerHTML = `
+            <div class="text-muted text-center py-3">
+                <i class="bi bi-star display-6"></i>
+                <p>No hay reseñas aún. Agrega algunas para aumentar la confianza.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    reviewsList.innerHTML = courseFormData.reviews.map((review, index) => `
+        <div class="review-item">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <input type="text" class="form-control form-control-sm" 
+                       placeholder="Nombre del estudiante" 
+                       value="${review.customer_name}"
+                       onchange="updateCourseReview(${index}, 'customer_name', this.value)">
+                <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="removeCourseReview(${index})">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+            <div class="mb-2">
+                <div class="review-stars">
+                    ${[1,2,3,4,5].map(star => `
+                        <i class="bi bi-star${star <= review.rating ? '-fill' : ''}" 
+                           onclick="updateCourseReview(${index}, 'rating', ${star})" 
+                           style="cursor: pointer;"></i>
+                    `).join('')}
+                </div>
+            </div>
+            <textarea class="form-control form-control-sm" 
+                      placeholder="Comentario de la reseña..." 
+                      rows="2"
+                      onchange="updateCourseReview(${index}, 'comment', this.value)">${review.comment}</textarea>
+        </div>
+    `).join('');
+}
+
+function updateCourseReview(index, field, value) {
+    if (courseFormData.reviews[index]) {
+        courseFormData.reviews[index][field] = value;
+        updatePreviewWithCourse();
+    }
+}
+
+function removeCourseReview(index) {
+    courseFormData.reviews.splice(index, 1);
+    renderCourseReviews();
+    updatePreviewWithCourse();
+}
+
+function generateCourseAIDescription() {
+    const title = courseFormData.title || 'curso digital';
+    const description = `Este ${title.toLowerCase()} te enseñará todo lo que necesitas saber para alcanzar tus metas. Es la guía ideal si estás buscando:
+
+**Lo que aprenderás:**
+- Dominar los conceptos fundamentales
+- Aplicar técnicas probadas y efectivas
+- Desarrollar habilidades prácticas
+- Obtener resultados reales
+
+**Beneficios principales:**
+- Acceso de por vida al contenido
+- Certificado de finalización
+- Soporte directo del instructor
+- Actualizaciones gratuitas
+
+**Módulos incluidos:**
+- Introducción y fundamentos
+- Estrategias avanzadas
+- Casos prácticos reales
+- Recursos y herramientas
+
+¡Inscríbete ahora y transforma tu futuro!`;
+
+    document.getElementById('courseDescription').value = description;
+    courseFormData.description = description;
+    updatePreviewWithCourse();
+    showToast('¡Descripción generada con IA!', 'success');
+}
+
+// ============== FIN FUNCIONES PARA CURSO DIGITAL ==============
+
 // Exportar funciones para uso en Blade (Laravel)
 window.MiTienda = {
     showProfileModal,
