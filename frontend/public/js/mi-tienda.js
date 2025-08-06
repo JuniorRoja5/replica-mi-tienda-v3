@@ -1392,6 +1392,9 @@ function createProduct() {
     showToast('¡Producto creado correctamente!', 'success');
 }
 
+// Variables globales para el modal de compras
+let currentPurchaseProduct = null;
+
 // Función global para manejar compras desde el preview
 window.handleProductPurchase = function() {
     if (productFormData && productFormData.title) {
@@ -1400,34 +1403,307 @@ window.handleProductPurchase = function() {
     }
 };
 
-// Mostrar modal de compra (placeholder para futura integración con Stripe)
+// Mostrar modal de compra basado en PurchaseModal.jsx del código React original
 function showPurchaseModal(product) {
-    // TODO: Integrar con Stripe Embedded Checkout
-    // En Laravel backend, esto se manejará con:
-    // 1. API para crear sesión de Stripe
-    // 2. Modal embebido con Stripe Elements
-    // 3. Webhook para confirmar pago
-    // 4. Animación de confeti tras éxito
+    currentPurchaseProduct = product;
     
+    // Poblar datos del producto en el modal
+    populateProductSummary(product);
+    
+    // Resetear estados del modal
+    resetModalStates();
+    
+    // Mostrar modal
+    const modal = new bootstrap.Modal(document.getElementById('purchaseModal'));
+    modal.show();
+    
+    // Configurar event listener del formulario
+    setupPurchaseFormListeners();
+}
+
+function populateProductSummary(product) {
     const displayPrice = product.has_discount && product.discount_price > 0 
         ? product.discount_price 
-        : product.price;
-    
-    const message = `¡Funcionalidad de compra!
-    
-Producto: ${product.title}
-Precio: $${displayPrice}
+        : (product.price || 0);
+    const originalPrice = product.has_discount && product.discount_price > 0 
+        ? product.price 
+        : null;
 
-En producción con Laravel + Stripe:
-✅ Modal de pago embebido
-✅ Procesamiento seguro 
-✅ Animación de confeti
-✅ Descarga automática`;
-
-    alert(message);
+    // Título del producto
+    document.getElementById('productTitleSummary').textContent = product.title || 'Producto Digital';
     
-    // Simulación de éxito (reemplazar con lógica real de Stripe)
-    // showConfettiAnimation();
+    // Descripción
+    const description = product.subtitle || product.description || 'Descripción del producto';
+    document.getElementById('productDescriptionSummary').textContent = 
+        description.length > 80 ? description.substring(0, 80) + '...' : description;
+    
+    // Precio
+    const priceElement = document.getElementById('productPriceSummary');
+    if (originalPrice) {
+        priceElement.innerHTML = `
+            <span style="color: #10b981; font-size: 1.75rem;">$${displayPrice}</span>
+            <span style="color: #6b7280; text-decoration: line-through; font-size: 1rem; margin-left: 0.5rem;">$${originalPrice}</span>
+        `;
+    } else {
+        priceElement.textContent = `$${displayPrice}`;
+    }
+    
+    // Imagen del producto
+    const imageContainer = document.getElementById('productImageSummary');
+    if (product.image_url) {
+        imageContainer.innerHTML = `<img src="${product.image_url}" alt="${product.title}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0.5rem;">`;
+    } else {
+        imageContainer.innerHTML = '<i class="bi bi-box-seam text-white" style="font-size: 2rem;"></i>';
+    }
+    
+    // Texto del botón de compra
+    const buttonText = product.price > 0 ? `Pagar Ahora $${displayPrice}` : 'Obtener Gratis';
+    document.getElementById('purchaseButtonText').textContent = buttonText;
+    
+    // Generar campos personalizados si existen
+    generateCustomFields(product.custom_fields || []);
+}
+
+function generateCustomFields(customFields) {
+    const container = document.getElementById('customFieldsContainer');
+    container.innerHTML = '';
+    
+    // Filtrar solo campos que no sean nombre y email (ya están en el formulario principal)
+    const additionalFields = customFields.filter(field => 
+        field.id !== 'name' && field.id !== 'email' && field.label.trim() !== ''
+    );
+    
+    if (additionalFields.length === 0) return;
+    
+    // Título para campos adicionales
+    const titleDiv = document.createElement('div');
+    titleDiv.className = 'mb-3';
+    titleDiv.innerHTML = '<h6 class="text-white fw-semibold mb-3"><i class="bi bi-clipboard-data me-2"></i>Información Adicional</h6>';
+    container.appendChild(titleDiv);
+    
+    // Generar campos
+    const fieldsRow = document.createElement('div');
+    fieldsRow.className = 'row g-3';
+    
+    additionalFields.forEach(field => {
+        const fieldDiv = document.createElement('div');
+        fieldDiv.className = 'col-md-6';
+        
+        const isRequired = field.required ? 'required' : '';
+        const placeholder = getFieldPlaceholder(field.type, field.label);
+        
+        fieldDiv.innerHTML = `
+            <label class="form-label text-white fw-semibold">
+                <i class="bi bi-${getFieldIcon(field.type)} me-2"></i>
+                ${field.label} ${field.required ? '<span class="text-danger">*</span>' : ''}
+            </label>
+            <input type="${field.type}" class="form-control custom-field" 
+                   data-field-id="${field.id}"
+                   ${isRequired}
+                   style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 0.5rem;"
+                   placeholder="${placeholder}">
+        `;
+        
+        fieldsRow.appendChild(fieldDiv);
+    });
+    
+    container.appendChild(fieldsRow);
+}
+
+function getFieldPlaceholder(type, label) {
+    switch(type) {
+        case 'email': return 'correo@ejemplo.com';
+        case 'tel': return '+1 234 567 8900';
+        case 'url': return 'https://ejemplo.com';
+        default: return `Ingresa tu ${label.toLowerCase()}`;
+    }
+}
+
+function getFieldIcon(type) {
+    switch(type) {
+        case 'email': return 'envelope';
+        case 'tel': return 'telephone';
+        case 'url': return 'link-45deg';
+        default: return 'pencil';
+    }
+}
+
+function resetModalStates() {
+    // Mostrar formulario, ocultar estados de procesamiento y éxito
+    document.getElementById('purchaseForm').style.display = 'block';
+    document.getElementById('processingState').style.display = 'none';
+    document.getElementById('successState').style.display = 'none';
+    
+    // Limpiar formulario
+    document.getElementById('customerForm').reset();
+}
+
+function setupPurchaseFormListeners() {
+    const form = document.getElementById('customerForm');
+    
+    // Remover listener previo si existe
+    const newForm = form.cloneNode(true);
+    form.parentNode.replaceChild(newForm, form);
+    
+    // Añadir nuevo listener
+    document.getElementById('customerForm').addEventListener('submit', handlePurchaseSubmit);
+}
+
+async function handlePurchaseSubmit(e) {
+    e.preventDefault();
+    
+    if (!currentPurchaseProduct) return;
+    
+    // Recopilar datos del formulario
+    const customerData = {
+        name: document.getElementById('customerName').value.trim(),
+        email: document.getElementById('customerEmail').value.trim(),
+        customFields: {}
+    };
+    
+    // Recopilar campos personalizados
+    document.querySelectorAll('.custom-field').forEach(field => {
+        const fieldId = field.getAttribute('data-field-id');
+        customerData.customFields[fieldId] = field.value.trim();
+    });
+    
+    // Validar campos requeridos
+    if (!customerData.name || !customerData.email) {
+        showToast('Por favor completa todos los campos obligatorios', 'error');
+        return;
+    }
+    
+    // Cambiar a estado de procesamiento
+    showProcessingState();
+    
+    try {
+        // TODO: Laravel Backend Integration
+        // Esta simulación será reemplazada por integración real con Stripe
+        // Endpoints necesarios:
+        // 1. POST /api/stripe/create-payment-intent - Crear intención de pago
+        // 2. POST /api/orders/create - Crear orden en DB
+        // 3. Webhook: POST /api/stripe/webhook - Confirmar pago
+        // 4. POST /api/orders/deliver - Entregar producto automáticamente
+        
+        // Simular procesamiento (2 segundos como en el código React original)
+        await simulatePaymentProcessing(customerData);
+        
+        // Mostrar estado de éxito con confeti
+        showSuccessState();
+        
+    } catch (error) {
+        console.error('Error procesando compra:', error);
+        showPurchaseError('Error procesando la compra. Por favor intenta nuevamente.');
+    }
+}
+
+function showProcessingState() {
+    document.getElementById('purchaseForm').style.display = 'none';
+    document.getElementById('processingState').style.display = 'block';
+    document.getElementById('successState').style.display = 'none';
+}
+
+function showSuccessState() {
+    document.getElementById('purchaseForm').style.display = 'none';
+    document.getElementById('processingState').style.display = 'none';
+    document.getElementById('successState').style.display = 'block';
+    
+    // ¡ANIMACIÓN DE CONFETI! 🎉
+    launchConfetti();
+}
+
+function showPurchaseError(message) {
+    // Volver al formulario
+    document.getElementById('purchaseForm').style.display = 'block';
+    document.getElementById('processingState').style.display = 'none';
+    document.getElementById('successState').style.display = 'none';
+    
+    showToast(message, 'error');
+}
+
+async function simulatePaymentProcessing(customerData) {
+    return new Promise((resolve, reject) => {
+        // Simulación del procesamiento de pago
+        // En producción, esto será reemplazado por:
+        // 1. Stripe.js para procesar el pago
+        // 2. Confirmación vía webhook
+        // 3. Creación de orden en base de datos
+        // 4. Envío automático de email con descarga
+        
+        setTimeout(() => {
+            // Simular éxito del pago
+            const success = Math.random() > 0.1; // 90% de éxito para demo
+            
+            if (success) {
+                console.log('Compra procesada exitosamente:', {
+                    product: currentPurchaseProduct.title,
+                    customer: customerData.name,
+                    amount: currentPurchaseProduct.price,
+                    timestamp: new Date().toISOString()
+                });
+                resolve();
+            } else {
+                reject(new Error('Pago rechazado'));
+            }
+        }, 2000);
+    });
+}
+
+// 🎉 FUNCIÓN DE CONFETI
+function launchConfetti() {
+    // Configuración de confeti similar a celebraciones de éxito
+    const duration = 3000; // 3 segundos
+    const animationEnd = Date.now() + duration;
+    const defaults = { 
+        startVelocity: 30, 
+        spread: 360, 
+        ticks: 60, 
+        zIndex: 9999,
+        colors: ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444']
+    };
+
+    function randomInRange(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    // Múltiples ráfagas de confeti
+    const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+            return clearInterval(interval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        
+        // Desde el lado izquierdo
+        confetti(Object.assign({}, defaults, { 
+            particleCount,
+            origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } 
+        }));
+        
+        // Desde el lado derecho  
+        confetti(Object.assign({}, defaults, { 
+            particleCount,
+            origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+        }));
+        
+        // Desde el centro (más intenso)
+        confetti(Object.assign({}, defaults, { 
+            particleCount: particleCount * 2,
+            origin: { x: randomInRange(0.4, 0.6), y: randomInRange(0.1, 0.3) }
+        }));
+    }, 250);
+
+    // Confeti adicional inmediato para impacto inicial
+    confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.4 },
+        colors: ['#8b5cf6', '#3b82f6', '#10b981']
+    });
+    
+    console.log('🎉 ¡Confeti lanzado! ¡Compra exitosa!');
 }
 
 function createProductFromForm() {
