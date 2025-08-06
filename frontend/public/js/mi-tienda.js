@@ -433,6 +433,13 @@ function handleProductClick(productId, productType) {
         
         // NOTA: En Laravel backend, esto sería una ruta como /u/{username}/c/{id} o /consultation/{id}
         window.open(consultationUrl, '_blank');
+    } else if (productType === 'course') {
+        // Navigate to course page
+        const username = appState.profile.username || 'user';
+        const courseUrl = `public-product.html?course=${product.id}&u=${username}`;
+        
+        // NOTA: En Laravel backend, esto sería una ruta como /u/{username}/course/{id} o /courses/{id}
+        window.open(courseUrl, '_blank');
     }
 }
 
