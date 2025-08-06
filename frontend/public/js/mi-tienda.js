@@ -1089,7 +1089,7 @@ function showTab(tabName) {
     });
     document.getElementById(`${tabName}-panel`).style.display = 'block';
     
-    // Actualizar botones de navegación
+    // Update navigation buttons
     updateTabNavigation();
 }
 
