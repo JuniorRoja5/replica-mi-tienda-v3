@@ -1225,7 +1225,7 @@
         </div>
     </div>
 
-    <!-- Vista superpuesta para edición de perfil en tiempo real -->
+    <!-- Vista superpuesta para edición de perfil -->
     <div class="profile-overlay" id="profileOverlay" style="display: none;">
         <div class="overlay-header">
             <h3>Editar Perfil</h3>
@@ -1234,123 +1234,356 @@
             </button>
         </div>
         <div class="overlay-content">
-            <form id="overlayProfileForm">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label">Avatar</label>
-                            <div class="avatar-upload-section">
-                                <div class="avatar-preview-container">
-                                    <div class="avatar-preview-overlay" id="avatarPreviewOverlay">
-                                        <div class="avatar-placeholder">👤</div>
-                                    </div>
-                                </div>
-                                <input type="file" class="form-control mt-2" id="overlayAvatarInput" accept="image/*">
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="overlayNameInput" value="">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Username</label>
-                            <div class="input-group">
-                                <span class="input-group-text">@</span>
-                                <input type="text" class="form-control" id="overlayUsernameInput" value="">
-                            </div>
+            <form>
+                <div class="avatar-upload-section mb-4">
+                    <div class="avatar-preview-container">
+                        <div class="avatar-preview-overlay" id="avatarPreviewOverlay">
+                            <div class="avatar-placeholder">👤</div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label">Bio</label>
-                            <textarea class="form-control" id="overlayBioInput" rows="4"></textarea>
-                            <div class="form-text">
-                                <span id="overlayBioCounter">0</span>/160 caracteres
+                    <input type="file" id="overlayAvatarInput" accept="image/*" style="display: none;">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.getElementById('overlayAvatarInput').click()">
+                        <i class="bi bi-upload"></i> Cambiar Avatar
+                    </button>
+                </div>
+
+                <div class="mb-3">
+                    <label for="overlayNameInput" class="form-label">Nombre completo</label>
+                    <input type="text" class="form-control" id="overlayNameInput" placeholder="Tu nombre">
+                </div>
+
+                <div class="mb-3">
+                    <label for="overlayUsernameInput" class="form-label">Usuario</label>
+                    <div class="input-group">
+                        <span class="input-group-text">@</span>
+                        <input type="text" class="form-control" id="overlayUsernameInput" placeholder="usuario">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <label for="overlayBioInput" class="form-label">Biografía</label>
+                        <small class="text-muted"><span id="overlayBioCounter">0</span>/150</small>
+                    </div>
+                    <textarea class="form-control" id="overlayBioInput" rows="3" maxlength="150" placeholder="Cuéntales quién eres..."></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <h5 class="mb-3">Redes Sociales</h5>
+                    <p class="text-muted small mb-3">Solo ingresa tu nombre de usuario (sin @)</p>
+                    
+                    <div class="social-inputs">
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="bi bi-tiktok text-dark"></i> TikTok
+                                </label>
+                                <input type="text" class="form-control form-control-sm" id="overlayTiktok" placeholder="usuario">
                             </div>
-                        </div>
-                        <div class="mb-3">
-                            <h6>Redes Sociales</h6>
-                            <div class="social-inputs" id="overlaySocialInputs">
-                                <div class="mb-2">
-                                    <label class="form-label">
-                                        <i class="bi bi-tiktok"></i> TikTok
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">tiktok.com/@</span>
-                                        <input type="text" class="form-control" id="overlayTiktok" placeholder="usuario">
-                                    </div>
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label">
-                                        <i class="bi bi-instagram"></i> Instagram
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">instagram.com/</span>
-                                        <input type="text" class="form-control" id="overlayInstagram" placeholder="usuario">
-                                    </div>
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label">
-                                        <i class="bi bi-youtube"></i> YouTube
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">youtube.com/@</span>
-                                        <input type="text" class="form-control" id="overlayYoutube" placeholder="usuario">
-                                    </div>
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label">
-                                        <i class="bi bi-twitter"></i> Twitter/X
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">x.com/</span>
-                                        <input type="text" class="form-control" id="overlayTwitter" placeholder="usuario">
-                                    </div>
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label">
-                                        <i class="bi bi-facebook"></i> Facebook
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">facebook.com/</span>
-                                        <input type="text" class="form-control" id="overlayFacebook" placeholder="usuario">
-                                    </div>
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label">
-                                        <i class="bi bi-linkedin"></i> LinkedIn
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">linkedin.com/in/</span>
-                                        <input type="text" class="form-control" id="overlayLinkedin" placeholder="usuario">
-                                    </div>
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label">
-                                        <i class="bi bi-discord"></i> Discord
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">discord.com/users/</span>
-                                        <input type="text" class="form-control" id="overlayDiscord" placeholder="usuario">
-                                    </div>
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label">
-                                        <i class="bi bi-spotify"></i> Spotify
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">open.spotify.com/user/</span>
-                                        <input type="text" class="form-control" id="overlaySpotify" placeholder="usuario">
-                                    </div>
-                                </div>
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="bi bi-instagram text-danger"></i> Instagram
+                                </label>
+                                <input type="text" class="form-control form-control-sm" id="overlayInstagram" placeholder="usuario">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="bi bi-youtube text-danger"></i> YouTube
+                                </label>
+                                <input type="text" class="form-control form-control-sm" id="overlayYoutube" placeholder="canal">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="bi bi-twitter text-primary"></i> Twitter/X
+                                </label>
+                                <input type="text" class="form-control form-control-sm" id="overlayTwitter" placeholder="usuario">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="bi bi-facebook text-primary"></i> Facebook
+                                </label>
+                                <input type="text" class="form-control form-control-sm" id="overlayFacebook" placeholder="usuario">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="bi bi-linkedin text-primary"></i> LinkedIn
+                                </label>
+                                <input type="text" class="form-control form-control-sm" id="overlayLinkedin" placeholder="usuario">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="bi bi-discord text-primary"></i> Discord
+                                </label>
+                                <input type="text" class="form-control form-control-sm" id="overlayDiscord" placeholder="usuario">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="bi bi-spotify text-success"></i> Spotify
+                                </label>
+                                <input type="text" class="form-control form-control-sm" id="overlaySpotify" placeholder="usuario">
                             </div>
                         </div>
                     </div>
                 </div>
             </form>
+
             <div class="overlay-actions">
-                <button type="button" class="btn btn-secondary" onclick="closeProfileOverlay()">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="saveOverlayProfile()">Guardar Cambios</button>
+                <button type="button" class="btn btn-secondary" onclick="closeProfileOverlay()">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" onclick="saveOverlayProfile()">
+                    <i class="bi bi-check"></i> Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vista superpuesta para crear producto digital -->
+    <div class="profile-overlay" id="productFormOverlay" style="display: none;">
+        <div class="overlay-header">
+            <h3 id="productFormTitle">Crear Producto Digital</h3>
+            <button class="btn-close-overlay" onclick="closeProductFormOverlay()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        
+        <!-- Navegación de tabs -->
+        <div style="padding: 0 2rem; border-bottom: 1px solid #dee2e6; background: white; position: sticky; top: 80px; z-index: 5;">
+            <ul class="nav nav-tabs" id="productTabs" role="tablist" style="border-bottom: none; margin: 0;">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="datos-tab" data-tab="datos" type="button" role="tab">
+                        <span class="tab-number">1.</span> Datos
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="contenido-tab" data-tab="contenido" type="button" role="tab">
+                        <span class="tab-number">2.</span> Contenido y Precio
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="opciones-tab" data-tab="opciones" type="button" role="tab">
+                        <span class="tab-number">3.</span> Opciones
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="overlay-content">
+            <!-- Tab 1: Datos -->
+            <div class="tab-content-panel active" id="datos-panel">
+                <div class="mb-4">
+                    <h5 class="mb-3">Datos básicos del producto</h5>
+                    <p class="text-muted">Información principal que verán tus clientes</p>
+                </div>
+
+                <!-- Imagen del Producto -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Imagen del Producto</label>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="product-image-preview" id="productImagePreview">
+                            <div class="product-image-placeholder">
+                                <i class="bi bi-box-seam"></i>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column gap-2">
+                            <input type="file" id="productImageInput" accept="image/*" style="display: none;">
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="document.getElementById('productImageInput').click()">
+                                <i class="bi bi-upload"></i> Subir Imagen
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-search"></i> Buscar Imagen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Título del Producto -->
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label for="productTitle" class="form-label fw-bold">Título del Producto</label>
+                        <small class="text-muted"><span id="titleCounter">0</span>/50</small>
+                    </div>
+                    <input type="text" class="form-control" id="productTitle" maxlength="50" 
+                           placeholder="Ej: Guía Completa de Marketing Digital">
+                </div>
+
+                <!-- Subtítulo del Producto -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label for="productSubtitle" class="form-label fw-bold">Subtítulo del Producto</label>
+                        <small class="text-muted"><span id="subtitleCounter">0</span>/100</small>
+                    </div>
+                    <textarea class="form-control" id="productSubtitle" rows="2" maxlength="100" 
+                              placeholder="Un subtítulo breve y atractivo que describa el valor de tu producto"></textarea>
+                </div>
+            </div>
+
+            <!-- Tab 2: Contenido y Precio -->
+            <div class="tab-content-panel" id="contenido-panel" style="display: none;">
+                <div class="mb-4">
+                    <h5 class="mb-3">Contenido y Precio</h5>
+                    <p class="text-muted">Define el contenido y precio de tu producto digital</p>
+                </div>
+
+                <!-- Descripción del Producto -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label for="productDescription" class="form-label fw-bold">Descripción</label>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="generateAIDescription()">
+                            <i class="bi bi-stars"></i> Generar con IA
+                        </button>
+                    </div>
+                    <textarea class="form-control" id="productDescription" rows="6" 
+                              placeholder="Este template le enseñará todo lo que necesita saber para alcanzar sus metas. Es la guía ideal si usted está buscando:
+- Alcanzar sus sueños
+- Encontrar propósito en su trabajo
+- Mejorar sus finanzas
+- Ser más feliz"></textarea>
+                </div>
+
+                <!-- Precio -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label for="productPrice" class="form-label fw-bold">Precio ($)</label>
+                        <input type="number" class="form-control" id="productPrice" min="0" step="0.01" 
+                               placeholder="0.00">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check form-switch mt-4">
+                            <input class="form-check-input" type="checkbox" id="hasDiscount">
+                            <label class="form-check-label" for="hasDiscount">
+                                <strong>Precio con descuento</strong>
+                            </label>
+                        </div>
+                        <input type="number" class="form-control mt-2" id="discountPrice" min="0" step="0.01" 
+                               placeholder="Precio con descuento" style="display: none;">
+                    </div>
+                </div>
+
+                <!-- Archivo del Producto -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Archivo del Producto (Descarga)</label>
+                    <div class="file-upload-area" id="fileUploadArea">
+                        <input type="file" id="productFileInput" style="display: none;">
+                        <div class="file-upload-placeholder">
+                            <i class="bi bi-cloud-arrow-up display-4 text-muted"></i>
+                            <p class="mb-2">Selecciona el archivo que recibirán tus clientes</p>
+                            <p class="text-muted small">PDF, ZIP, DOCX, PPTX, etc.</p>
+                            <button type="button" class="btn btn-primary" onclick="document.getElementById('productFileInput').click()">
+                                <i class="bi bi-upload"></i> Subir Archivo
+                            </button>
+                        </div>
+                        <div class="file-upload-success" id="fileUploadSuccess" style="display: none;">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-file-earmark-check text-success"></i>
+                                    <span id="uploadedFileName"></span>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeUploadedFile()">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reseñas -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label class="form-label fw-bold">Reseñas de Clientes</label>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="addReview()">
+                            <i class="bi bi-plus"></i> Agregar Reseña
+                        </button>
+                    </div>
+                    <div id="reviewsList">
+                        <div class="text-muted text-center py-3">
+                            <i class="bi bi-star display-6"></i>
+                            <p>No hay reseñas aún. Agrega algunas para aumentar la confianza.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Opciones -->
+            <div class="tab-content-panel" id="opciones-panel" style="display: none;">
+                <div class="mb-4">
+                    <h5 class="mb-3">Opciones Adicionales</h5>
+                    <p class="text-muted">Configura opciones avanzadas para tu producto</p>
+                </div>
+
+                <!-- Texto del Botón -->
+                <div class="mb-4">
+                    <label for="buttonText" class="form-label fw-bold">Texto del Botón de Compra</label>
+                    <input type="text" class="form-control" id="buttonText" placeholder="Comprar ahora" 
+                           value="Comprar ahora">
+                </div>
+
+                <!-- Estado del Producto -->
+                <div class="mb-4">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="isActive" checked>
+                        <label class="form-check-label" for="isActive">
+                            <strong>Producto está activo</strong>
+                        </label>
+                    </div>
+                    <small class="text-muted">Los productos inactivos no aparecerán en tu perfil público</small>
+                </div>
+
+                <!-- Campos de información adicional -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label class="form-label fw-bold">Información que recolectar del cliente</label>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="addCustomField()">
+                            <i class="bi bi-plus"></i> Agregar Campo
+                        </button>
+                    </div>
+                    <div id="customFieldsList">
+                        <!-- Campos por defecto -->
+                        <div class="custom-field-item mb-2">
+                            <div class="d-flex gap-2 align-items-center">
+                                <input type="text" class="form-control" value="Nombre completo" readonly>
+                                <select class="form-select" disabled style="max-width: 120px;">
+                                    <option>Texto</option>
+                                </select>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" checked disabled>
+                                    <label class="form-check-label small">Obligatorio</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="custom-field-item mb-2">
+                            <div class="d-flex gap-2 align-items-center">
+                                <input type="text" class="form-control" value="Correo electrónico" readonly>
+                                <select class="form-select" disabled style="max-width: 120px;">
+                                    <option>Email</option>
+                                </select>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" checked disabled>
+                                    <label class="form-check-label small">Obligatorio</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navegación entre tabs -->
+            <div class="tab-navigation d-flex justify-content-between align-items-center pt-4 border-top">
+                <button type="button" class="btn btn-outline-secondary" id="prevTabBtn" onclick="previousTab()" style="display: none;">
+                    <i class="bi bi-arrow-left"></i> Anterior
+                </button>
+                <div></div>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-primary" onclick="saveAsDraft()">
+                        <i class="bi bi-file-earmark"></i> Guardar Borrador
+                    </button>
+                    <button type="button" class="btn btn-success" id="nextTabBtn" onclick="nextTab()">
+                        Siguiente <i class="bi bi-arrow-right"></i>
+                    </button>
+                    <button type="button" class="btn btn-success" id="createProductBtn" onclick="createProduct()" style="display: none;">
+                        <i class="bi bi-check-circle"></i> Crear Producto
+                    </button>
+                </div>
             </div>
         </div>
     </div>
