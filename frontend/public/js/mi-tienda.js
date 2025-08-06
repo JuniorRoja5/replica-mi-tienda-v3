@@ -5033,7 +5033,7 @@ function copyPublicLink() {
         });
     } catch (err) {
         // Additional fallback
-        showToast('Por favor, selecciona y copia el enlace manualmente', 'info');
+        showToast('Please select and copy the link manually', 'info');
     }
 }
 
