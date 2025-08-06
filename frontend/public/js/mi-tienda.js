@@ -280,7 +280,7 @@ function updatePreview() {
         previewProducts = `
             <div class="preview-products">
                 ${sortedProducts.map(product => `
-                    <div class="preview-product">
+                    <div class="preview-product" onclick="handleProductClick(${product.id}, '${product.type}')" style="cursor: pointer;">
                         <div class="preview-product-content">
                             <div class="preview-product-icon ${product.type}">
                                 ${product.image_url && (product.type === 'link' || product.type === 'product') ? 
