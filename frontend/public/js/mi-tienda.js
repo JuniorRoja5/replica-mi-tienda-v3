@@ -4125,7 +4125,7 @@ function updatePreviewWithCourse() {
         </div>
     `).join('') : '';
     
-    // HTML de la página del curso simulada
+    // HTML for simulated course page
     previewContent.innerHTML = `
         <div style="
             background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
