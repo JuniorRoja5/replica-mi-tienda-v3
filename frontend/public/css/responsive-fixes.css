@@ -1,0 +1,289 @@
+/* =================================
+   RESPONSIVE FIXES FOR MI TIENDA
+   ================================= */
+
+/* GENERAL MOBILE FIXES */
+@media (max-width: 768px) {
+    /* Fix modal positioning and z-index issues */
+    .product-type-overlay {
+        z-index: 9999 !important;
+        background: rgba(0, 0, 0, 0.8) !important;
+        padding: 1rem !important;
+    }
+    
+    .profile-overlay {
+        z-index: 9999 !important;
+        background: rgba(0, 0, 0, 0.8) !important;
+        padding: 1rem !important;
+    }
+    
+    .overlay-content {
+        max-height: 80vh !important;
+        overflow-y: auto !important;
+        padding: 1rem !important;
+    }
+    
+    /* Fix product type cards */
+    .product-type-card {
+        margin-bottom: 0.75rem !important;
+        padding: 1rem !important;
+    }
+    
+    .product-type-card h4 {
+        font-size: 1rem !important;
+        line-height: 1.2 !important;
+        word-wrap: break-word !important;
+    }
+    
+    .product-type-card p {
+        font-size: 0.85rem !important;
+        line-height: 1.3 !important;
+        word-wrap: break-word !important;
+    }
+    
+    /* Fix product items in main list */
+    .product-item {
+        flex-direction: column !important;
+        padding: 1rem !important;
+    }
+    
+    .product-info {
+        width: 100% !important;
+        margin-top: 0.5rem !important;
+    }
+    
+    .product-title {
+        font-size: 1rem !important;
+        line-height: 1.2 !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+    }
+    
+    .product-actions {
+        margin-top: 0.75rem !important;
+        justify-content: center !important;
+    }
+    
+    /* Fix iframe preview */
+    .preview-container {
+        margin-top: 2rem !important;
+        width: 100% !important;
+    }
+    
+    .phone-mockup {
+        transform: scale(0.8) !important;
+        margin: 0 auto !important;
+    }
+    
+    /* Fix form tabs navigation */
+    .nav-tabs {
+        overflow-x: auto !important;
+        white-space: nowrap !important;
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+    }
+    
+    .nav-tabs::-webkit-scrollbar {
+        display: none !important;
+    }
+    
+    .nav-tabs .nav-item {
+        flex-shrink: 0 !important;
+    }
+    
+    .nav-tabs .nav-link {
+        font-size: 0.85rem !important;
+        padding: 0.5rem 0.75rem !important;
+        white-space: nowrap !important;
+    }
+    
+    /* Fix form inputs */
+    .form-control, .form-select {
+        font-size: 1rem !important; /* Prevent zoom on iOS */
+    }
+    
+    /* Fix buttons */
+    .btn {
+        font-size: 0.9rem !important;
+        padding: 0.5rem 1rem !important;
+    }
+    
+    /* Fix headers */
+    .overlay-header h3 {
+        font-size: 1.25rem !important;
+        line-height: 1.2 !important;
+        word-wrap: break-word !important;
+    }
+}
+
+/* TABLET SPECIFIC FIXES */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .product-item {
+        padding: 1.25rem !important;
+    }
+    
+    .preview-container {
+        width: 100% !important;
+    }
+    
+    .phone-mockup {
+        transform: scale(0.9) !important;
+    }
+}
+
+/* EXTRA SMALL MOBILE FIXES */
+@media (max-width: 375px) {
+    .overlay-content {
+        padding: 0.75rem !important;
+    }
+    
+    .product-type-card {
+        padding: 0.75rem !important;
+    }
+    
+    .product-type-card h4 {
+        font-size: 0.9rem !important;
+    }
+    
+    .product-type-card p {
+        font-size: 0.8rem !important;
+    }
+    
+    .nav-tabs .nav-link {
+        font-size: 0.75rem !important;
+        padding: 0.4rem 0.6rem !important;
+    }
+    
+    .btn {
+        font-size: 0.85rem !important;
+        padding: 0.4rem 0.8rem !important;
+    }
+}
+
+/* LANDSCAPE MOBILE FIXES */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    .profile-overlay {
+        padding: 0.5rem !important;
+    }
+    
+    .overlay-content {
+        max-height: 85vh !important;
+        padding: 0.5rem !important;
+    }
+    
+    .overlay-header {
+        padding: 0.5rem 1rem !important;
+    }
+}
+
+/* FIX SPECIFIC ISSUES */
+
+/* Fix long product titles */
+.product-title {
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* Fix product descriptions */
+.product-url {
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-size: 0.85rem !important;
+    color: #666 !important;
+}
+
+/* Ensure proper modal stacking */
+.modal-backdrop {
+    z-index: 9998 !important;
+}
+
+.modal {
+    z-index: 9999 !important;
+}
+
+/* Fix Bootstrap modal issues on mobile */
+@media (max-width: 576px) {
+    .modal-dialog {
+        margin: 0.5rem !important;
+        max-width: calc(100% - 1rem) !important;
+    }
+    
+    .modal-content {
+        border-radius: 0.5rem !important;
+    }
+}
+
+/* Make preview iframe responsive */
+.preview-iframe {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 9/16 !important;
+    border-radius: 1.5rem !important;
+}
+
+@media (max-width: 768px) {
+    .preview-iframe {
+        aspect-ratio: 9/16 !important;
+        max-height: 60vh !important;
+    }
+}
+
+/* Fix grid layouts for mobile */
+@media (max-width: 768px) {
+    .row > div[class*="col-"] {
+        margin-bottom: 1rem !important;
+    }
+    
+    .d-flex.gap-3 {
+        flex-direction: column !important;
+    }
+    
+    .d-flex.gap-2 {
+        flex-wrap: wrap !important;
+    }
+}
+
+/* Ensure text is readable */
+@media (max-width: 768px) {
+    body {
+        font-size: 0.9rem !important;
+        line-height: 1.4 !important;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        line-height: 1.2 !important;
+        word-wrap: break-word !important;
+    }
+    
+    .text-muted {
+        font-size: 0.8rem !important;
+    }
+}
+
+/* Fix specific product type selection issues */
+.product-type-selection-overlay {
+    z-index: 10000 !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(0, 0, 0, 0.85) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+@media (max-width: 768px) {
+    .product-type-selection-overlay .modal-dialog {
+        width: 95% !important;
+        max-width: none !important;
+        margin: 1rem !important;
+    }
+}
