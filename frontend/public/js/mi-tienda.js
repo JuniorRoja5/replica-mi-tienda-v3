@@ -567,7 +567,7 @@ function showProfileOverlay() {
     // Mostrar la vista superpuesta
     document.getElementById('profileOverlay').style.display = 'block';
     
-    // Configurar listeners para actualización en tiempo real
+    // Set up listeners for real-time updates
     setupOverlayListeners();
 }
 
