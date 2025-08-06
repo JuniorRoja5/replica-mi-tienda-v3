@@ -1100,31 +1100,43 @@ function removeCustomField(index) {
 }
 
 function updatePreviewWithProduct() {
-    // Crear preview temporal del producto
+    if (!productFormData || !productFormData.title) {
+        // Si no hay datos del producto, mostrar preview normal
+        updatePreview();
+        return;
+    }
+
+    // Durante la edición del producto, mostrar la página de ventas en el iframe
+    const preview = document.getElementById('iframePreview');
+    const username = appState.profile.username || 'usuario';
+    
+    // Crear una versión temporal del producto para preview
     const tempProduct = {
-        id: 'preview',
+        id: productFormData.id || 'preview',
         type: 'product',
         title: productFormData.title || 'Nuevo Producto Digital',
-        description: productFormData.description || 'Descripción del producto...',
+        subtitle: productFormData.subtitle || '',
+        description: productFormData.description || '',
         price: parseFloat(productFormData.price) || 0,
         discount_price: productFormData.has_discount ? (parseFloat(productFormData.discount_price) || 0) : 0,
         has_discount: productFormData.has_discount,
-        image_url: productFormData.image_url,
-        status: productFormData.is_active ? 'active' : 'inactive',
-        sales: 0,
-        sort_order: appState.products.length + 1
+        image_url: productFormData.image_url || '',
+        file_url: productFormData.file_url || '',
+        button_text: productFormData.button_text || 'Comprar ahora',
+        is_active: productFormData.is_active !== false,
+        reviews: productFormData.reviews || [],
+        custom_fields: productFormData.custom_fields || []
     };
     
-    // Añadir temporalmente a los productos para el preview
-    const tempProducts = [...appState.products, tempProduct];
-    const originalProducts = appState.products;
-    appState.products = tempProducts;
+    // Guardar temporalmente el producto en localStorage para que la página de ventas lo pueda leer
+    const tempData = {
+        profile: appState.profile,
+        products: [tempProduct]
+    };
+    localStorage.setItem('tempProductPreview', JSON.stringify(tempData));
     
-    // Actualizar preview
-    updatePreview();
-    
-    // Restaurar productos originales
-    appState.products = originalProducts;
+    // Actualizar el iframe para mostrar la página de ventas
+    preview.src = `public-product.html?p=${tempProduct.id}&u=${username}&preview=true`;
 }
 
 function saveAsDraft() {
