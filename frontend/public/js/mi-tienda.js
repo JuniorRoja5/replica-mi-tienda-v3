@@ -645,7 +645,7 @@ function setupOverlayListeners() {
         reader.readAsDataURL(file);
     };
     
-    // Redes sociales - actualización en tiempo real
+    // Social media - real-time update
     const handleSocialChange = function(platform) {
         return function() {
             appState.profile.social_links[platform] = this.value.trim();
