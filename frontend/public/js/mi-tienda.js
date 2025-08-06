@@ -3722,7 +3722,7 @@ function setupCourseFormListeners() {
     const pageTitleInput = document.getElementById('courseContentTitle');
     const pageDescriptionInput = document.getElementById('courseContentDescription');
     
-    // Event listeners para actualización en tiempo real
+    // Event listeners for real-time update
     titleInput.addEventListener('input', function() {
         courseFormData.title = this.value;
         document.getElementById('courseTitleCounter').textContent = this.value.length;
