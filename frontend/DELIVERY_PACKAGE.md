@@ -88,7 +88,30 @@ cp public-product.html resources/views/builder/public-product.blade.php
 cp mi-tienda.js public/js/builder/mi-tienda.js
 ```
 
-### **PASO 2: Modificar Referencias en Blade**
+### **PASO 2: Gestión del CSS (Decidir)**
+
+#### **Opción A: Mantener Embebido (Sin cambios)**
+```bash
+# No hacer nada - el CSS ya está en el HTML
+# Ventaja: Funciona inmediatamente
+```
+
+#### **Opción B: Extraer CSS (Recomendado para proyectos grandes)**
+```bash
+# Crear archivo CSS separado
+mkdir -p public/css
+
+# Extraer CSS de mi-tienda.html
+# Copiar todo el contenido entre <style> y </style> a:
+# public/css/mi-tienda.css
+
+# En mi-tienda.blade.php reemplazar:
+# <style>...contenido...</style>
+# Por:
+# <link href="{{ asset('css/mi-tienda.css') }}" rel="stylesheet">
+```
+
+### **PASO 3: Modificar Referencias en Blade**
 ```html
 <!-- En mi-tienda.blade.php cambiar: -->
 <script src="js/mi-tienda.js"></script>
