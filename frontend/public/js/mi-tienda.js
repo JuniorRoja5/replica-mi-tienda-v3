@@ -321,16 +321,126 @@ function truncateText(text, maxLength) {
 
 // Funciones para modales
 function showProfileModal() {
+    // En lugar del modal, mostrar la vista superpuesta
+    showProfileOverlay();
+}
+
+function showProfileOverlay() {
     // Llenar el formulario con los datos actuales
-    document.getElementById('nameInput').value = appState.profile.name;
-    document.getElementById('usernameInput').value = appState.profile.username;
-    document.getElementById('bioInput').value = appState.profile.bio;
+    document.getElementById('overlayNameInput').value = appState.profile.name;
+    document.getElementById('overlayUsernameInput').value = appState.profile.username;
+    document.getElementById('overlayBioInput').value = appState.profile.bio;
     
     // Actualizar contador de bio
-    document.getElementById('bioCounter').textContent = appState.profile.bio.length;
+    document.getElementById('overlayBioCounter').textContent = appState.profile.bio.length;
     
-    const modal = new bootstrap.Modal(document.getElementById('profileModal'));
-    modal.show();
+    // Mostrar la vista superpuesta
+    document.getElementById('profileOverlay').style.display = 'block';
+    
+    // Configurar listeners para actualización en tiempo real
+    setupOverlayListeners();
+}
+
+function closeProfileOverlay() {
+    document.getElementById('profileOverlay').style.display = 'none';
+    
+    // Remover listeners
+    removeOverlayListeners();
+}
+
+function setupOverlayListeners() {
+    const nameInput = document.getElementById('overlayNameInput');
+    const usernameInput = document.getElementById('overlayUsernameInput');
+    const bioInput = document.getElementById('overlayBioInput');
+    const avatarInput = document.getElementById('overlayAvatarInput');
+    const bioCounter = document.getElementById('overlayBioCounter');
+    
+    // Nombre - actualización en tiempo real
+    const handleNameChange = function() {
+        appState.profile.name = this.value;
+        updateProfileUI();
+        updatePreview();
+    };
+    
+    // Username - actualización en tiempo real
+    const handleUsernameChange = function() {
+        appState.profile.username = this.value;
+        updateProfileUI();
+        updatePreview();
+    };
+    
+    // Bio - actualización en tiempo real
+    const handleBioChange = function() {
+        appState.profile.bio = this.value;
+        bioCounter.textContent = this.value.length;
+        updateProfileUI();
+        updatePreview();
+    };
+    
+    // Avatar - actualización en tiempo real
+    const handleAvatarChange = function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            appState.profile.avatar_url = e.target.result;
+            updateProfileUI();
+            updatePreview();
+        };
+        reader.readAsDataURL(file);
+    };
+    
+    // Agregar listeners
+    nameInput.addEventListener('input', handleNameChange);
+    usernameInput.addEventListener('input', handleUsernameChange);
+    bioInput.addEventListener('input', handleBioChange);
+    avatarInput.addEventListener('change', handleAvatarChange);
+    
+    // Guardar referencias para poder removerlos después
+    nameInput._handleNameChange = handleNameChange;
+    usernameInput._handleUsernameChange = handleUsernameChange;
+    bioInput._handleBioChange = handleBioChange;
+    avatarInput._handleAvatarChange = handleAvatarChange;
+}
+
+function removeOverlayListeners() {
+    const nameInput = document.getElementById('overlayNameInput');
+    const usernameInput = document.getElementById('overlayUsernameInput');
+    const bioInput = document.getElementById('overlayBioInput');
+    const avatarInput = document.getElementById('overlayAvatarInput');
+    
+    if (nameInput && nameInput._handleNameChange) {
+        nameInput.removeEventListener('input', nameInput._handleNameChange);
+    }
+    if (usernameInput && usernameInput._handleUsernameChange) {
+        usernameInput.removeEventListener('input', usernameInput._handleUsernameChange);
+    }
+    if (bioInput && bioInput._handleBioChange) {
+        bioInput.removeEventListener('input', bioInput._handleBioChange);
+    }
+    if (avatarInput && avatarInput._handleAvatarChange) {
+        avatarInput.removeEventListener('change', avatarInput._handleAvatarChange);
+    }
+}
+
+function saveOverlayProfile() {
+    const name = document.getElementById('overlayNameInput').value.trim();
+    const username = document.getElementById('overlayUsernameInput').value.trim();
+    const bio = document.getElementById('overlayBioInput').value.trim();
+    
+    if (!name || !username) {
+        showToast('Nombre y usuario son obligatorios', 'error');
+        return;
+    }
+    
+    // Los datos ya se han actualizado en tiempo real, solo guardar en storage
+    saveToStorage();
+    
+    // Cerrar vista superpuesta
+    closeProfileOverlay();
+    
+    showToast('Perfil actualizado correctamente', 'success');
 }
 
 function showCreateModal() {
