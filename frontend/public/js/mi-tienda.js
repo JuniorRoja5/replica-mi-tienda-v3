@@ -587,6 +587,17 @@ function saveLinkProduct() {
         return;
     }
     
+    // Obtener la imagen extraída del preview
+    const imagePreview = document.getElementById('linkImagePreview');
+    let extractedImage = '';
+    
+    if (imagePreview) {
+        const img = imagePreview.querySelector('img');
+        if (img) {
+            extractedImage = img.src;
+        }
+    }
+    
     const newProduct = {
         id: Date.now(),
         type: 'link',
@@ -594,7 +605,7 @@ function saveLinkProduct() {
         description: '',
         url: url,
         price: 0,
-        image_url: '',
+        image_url: extractedImage,
         status: isActive ? 'active' : 'inactive',
         sales: 0,
         sort_order: appState.products.length + 1
