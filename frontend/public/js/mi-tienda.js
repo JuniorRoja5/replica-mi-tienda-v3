@@ -2580,6 +2580,462 @@ function consultationPreviousTab() {
     }
 }
 
+// Generar horarios semanales dinámicamente
+function generateWeeklySchedule() {
+    const container = document.getElementById('weeklySchedule');
+    const weeklyAvailability = consultationFormData.availability_settings.weekly_availability;
+    
+    container.innerHTML = weeklyAvailability.map((day, dayIndex) => `
+        <div class="mb-3 p-3 border rounded">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" 
+                           id="day-${day.day}" 
+                           ${day.enabled ? 'checked' : ''}
+                           onchange="toggleWeeklyDay(${dayIndex}, this.checked)">
+                    <label class="form-check-label fw-semibold" for="day-${day.day}">
+                        ${day.name}
+                    </label>
+                </div>
+                ${day.enabled ? `
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="addTimeInterval(${dayIndex})">
+                        <i class="bi bi-plus"></i> Intervalo
+                    </button>
+                ` : ''}
+            </div>
+            
+            <div id="intervals-${dayIndex}" class="ms-4">
+                ${day.enabled ? day.intervals.map((interval, intervalIndex) => `
+                    <div class="d-flex gap-2 mb-2 align-items-center p-2 bg-white rounded border">
+                        <input type="time" class="form-control form-control-sm" 
+                               value="${interval.from}" 
+                               onchange="updateTimeInterval(${dayIndex}, ${intervalIndex}, 'from', this.value)">
+                        <span class="text-muted">a</span>
+                        <input type="time" class="form-control form-control-sm" 
+                               value="${interval.to}" 
+                               onchange="updateTimeInterval(${dayIndex}, ${intervalIndex}, 'to', this.value)">
+                        <button type="button" class="btn btn-sm btn-outline-danger" 
+                                onclick="removeTimeInterval(${dayIndex}, ${intervalIndex})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                `).join('') : ''}
+            </div>
+        </div>
+    `).join('');
+}
+
+// Funciones para manejar horarios semanales
+function toggleWeeklyDay(dayIndex, enabled) {
+    consultationFormData.availability_settings.weekly_availability[dayIndex].enabled = enabled;
+    if (!enabled) {
+        consultationFormData.availability_settings.weekly_availability[dayIndex].intervals = [];
+    } else {
+        // Añadir intervalo por defecto
+        consultationFormData.availability_settings.weekly_availability[dayIndex].intervals = [
+            { from: '09:00', to: '17:00' }
+        ];
+    }
+    generateWeeklySchedule();
+    updatePreviewWithConsultation();
+}
+
+function addTimeInterval(dayIndex) {
+    const day = consultationFormData.availability_settings.weekly_availability[dayIndex];
+    day.intervals.push({ from: '09:00', to: '17:00' });
+    generateWeeklySchedule();
+}
+
+function updateTimeInterval(dayIndex, intervalIndex, field, value) {
+    consultationFormData.availability_settings.weekly_availability[dayIndex].intervals[intervalIndex][field] = value;
+    updatePreviewWithConsultation();
+}
+
+function removeTimeInterval(dayIndex, intervalIndex) {
+    consultationFormData.availability_settings.weekly_availability[dayIndex].intervals.splice(intervalIndex, 1);
+    generateWeeklySchedule();
+    updatePreviewWithConsultation();
+}
+
+// Campos personalizados para consultoría
+function generateConsultationCustomFields() {
+    const container = document.getElementById('consultationCustomFieldsList');
+    
+    container.innerHTML = consultationFormData.custom_fields.map((field, index) => {
+        if (field.id === 'name' || field.id === 'email') {
+            return `
+                <div class="custom-field-item mb-2">
+                    <div class="d-flex gap-2 align-items-center">
+                        <input type="text" class="form-control" value="${field.label}" readonly>
+                        <select class="form-select" disabled style="max-width: 120px;">
+                            <option>${field.type === 'email' ? 'Email' : 'Texto'}</option>
+                        </select>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" checked disabled>
+                            <label class="form-check-label small">Obligatorio</label>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            return `
+                <div class="custom-field-item mb-2">
+                    <div class="d-flex gap-2 align-items-center">
+                        <input type="text" class="form-control" placeholder="Etiqueta del campo" 
+                               value="${field.label}"
+                               onchange="updateConsultationCustomField(${index}, 'label', this.value)">
+                        <select class="form-select" style="max-width: 120px;" 
+                                onchange="updateConsultationCustomField(${index}, 'type', this.value)">
+                            <option value="text" ${field.type === 'text' ? 'selected' : ''}>Texto</option>
+                            <option value="email" ${field.type === 'email' ? 'selected' : ''}>Email</option>
+                            <option value="tel" ${field.type === 'tel' ? 'selected' : ''}>Teléfono</option>
+                        </select>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" 
+                                   ${field.required ? 'checked' : ''}
+                                   onchange="updateConsultationCustomField(${index}, 'required', this.checked)">
+                            <label class="form-check-label small">Obligatorio</label>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeConsultationCustomField(${index})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+    }).join('');
+}
+
+function addConsultationCustomField() {
+    const newField = {
+        id: Date.now(),
+        label: '',
+        type: 'text',
+        required: false
+    };
+    
+    consultationFormData.custom_fields.push(newField);
+    generateConsultationCustomFields();
+}
+
+function updateConsultationCustomField(index, field, value) {
+    if (consultationFormData.custom_fields[index]) {
+        consultationFormData.custom_fields[index][field] = value;
+    }
+}
+
+function removeConsultationCustomField(index) {
+    if (consultationFormData.custom_fields[index].id === 'name' || 
+        consultationFormData.custom_fields[index].id === 'email') {
+        return;
+    }
+    
+    consultationFormData.custom_fields.splice(index, 1);
+    generateConsultationCustomFields();
+}
+
+// Función para actualizar el preview con consultoría
+function updatePreviewWithConsultation() {
+    if (!consultationFormData || !consultationFormData.title) {
+        updatePreview();
+        return;
+    }
+
+    // Durante la edición de consultoría, mostrar preview de calendario de agendamiento
+    const previewContent = document.getElementById('previewContent');
+    if (!previewContent) {
+        console.warn('Preview content element not found');
+        return;
+    }
+    
+    const username = appState.profile.username || 'usuario';
+    const profileName = appState.profile.name || 'Tu Nombre';
+    const profileAvatar = appState.profile.avatar || '';
+    
+    const displayPrice = consultationFormData.has_discount && consultationFormData.discount_price > 0 
+        ? consultationFormData.discount_price 
+        : (consultationFormData.price || 0);
+    const originalPrice = consultationFormData.has_discount && consultationFormData.discount_price > 0 
+        ? consultationFormData.price 
+        : null;
+    
+    // Generar reseñas válidas
+    const validReviews = (consultationFormData.reviews || []).filter(review => 
+        review.customer_name && review.customer_name.trim() !== '' && 
+        review.comment && review.comment.trim() !== ''
+    );
+    
+    const reviewsHTML = validReviews.length > 0 ? validReviews.map(review => {
+        const stars = Array.from({length: 5}, (_, i) => 
+            `<span style="color: #ffc107;">${i < review.rating ? '★' : '☆'}</span>`
+        ).join('');
+        
+        return `
+            <div style="background: #2a2a2a; padding: 1rem; border-radius: 0.75rem; margin-bottom: 0.75rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <span style="font-weight: 600; font-size: 0.9rem; color: white;">${review.customer_name}</span>
+                    <div style="font-size: 0.85rem;">${stars}</div>
+                </div>
+                <p style="color: #a0a0a0; font-size: 0.9rem; margin: 0;">${review.comment}</p>
+            </div>
+        `;
+    }).join('') : '';
+
+    // Preview de agendamiento de consultoría (como calendario)
+    previewContent.innerHTML = `
+        <div style="
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            overflow-y: auto;
+        ">
+            <!-- Header con botón de regreso -->
+            <div style="
+                position: sticky;
+                top: 0;
+                background: rgba(26, 26, 26, 0.95);
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid #333;
+                padding: 1rem;
+                z-index: 10;
+            ">
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    color: #a0a0a0;
+                    font-size: 0.95rem;
+                    cursor: pointer;
+                ">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Volver al perfil</span>
+                </div>
+            </div>
+
+            <!-- Información de la consultoría -->
+            <div style="padding: 2rem 1.5rem; padding-bottom: 80px;">
+                <!-- Imagen -->
+                ${consultationFormData.image_url ? `
+                    <div style="width: 100%; height: 150px; border-radius: 1rem; overflow: hidden; margin-bottom: 1.5rem; background: #2a2a2a; display: flex; align-items: center; justify-content: center;">
+                        <img src="${consultationFormData.image_url}" alt="${consultationFormData.title}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                ` : `
+                    <div style="width: 100%; height: 150px; border-radius: 1rem; background: linear-gradient(135deg, #8b5cf6, #3b82f6); display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; color: white; font-size: 2rem;">
+                        <i class="bi bi-camera-video"></i>
+                    </div>
+                `}
+
+                <!-- Información básica -->
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">
+                        ${consultationFormData.title || 'Nueva Consultoría'}
+                    </h1>
+                    
+                    ${consultationFormData.subtitle ? `
+                        <p style="color: #a0a0a0; margin-bottom: 1rem;">
+                            ${consultationFormData.subtitle}
+                        </p>
+                    ` : ''}
+                    
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
+                        <span style="background: rgba(139, 92, 246, 0.2); color: #c4b5fd; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.85rem;">
+                            <i class="bi bi-clock me-1"></i>${consultationFormData.availability_settings.duration} min
+                        </span>
+                        <span style="background: rgba(59, 130, 246, 0.2); color: #93c5fd; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.85rem;">
+                            <i class="bi bi-camera-video me-1"></i>${consultationFormData.availability_settings.call_method === 'google_meet' ? 'Google Meet' : 
+                                consultationFormData.availability_settings.call_method === 'zoom' ? 'Zoom' : 'Videollamada'}
+                        </span>
+                    </div>
+                    
+                    ${consultationFormData.price > 0 ? `
+                        <div style="margin-bottom: 1.5rem;">
+                            <span style="font-size: 1.75rem; font-weight: 700; color: #10b981;">
+                                $${displayPrice}
+                            </span>
+                            ${originalPrice ? `
+                                <span style="font-size: 1rem; color: #666; text-decoration: line-through; margin-left: 0.5rem;">
+                                    $${originalPrice}
+                                </span>
+                            ` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+
+                <!-- Calendario simulado -->
+                <div style="background: #2a2a2a; border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem;">
+                    <h3 style="color: #10b981; margin-bottom: 1rem; text-align: center; font-size: 1.1rem;">
+                        <i class="bi bi-calendar-check me-2"></i>Selecciona fecha y hora
+                    </h3>
+                    
+                    <!-- Calendario simple (visual) -->
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <div style="color: #a0a0a0; font-size: 0.9rem; margin-bottom: 0.5rem;">Julio 2025</div>
+                        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.25rem; font-size: 0.8rem;">
+                            <div style="color: #666; padding: 0.5rem;">D</div>
+                            <div style="color: #666; padding: 0.5rem;">L</div>
+                            <div style="color: #666; padding: 0.5rem;">M</div>
+                            <div style="color: #666; padding: 0.5rem;">X</div>
+                            <div style="color: #666; padding: 0.5rem;">J</div>
+                            <div style="color: #666; padding: 0.5rem;">V</div>
+                            <div style="color: #666; padding: 0.5rem;">S</div>
+                            
+                            ${Array.from({length: 31}, (_, i) => {
+                                const day = i + 1;
+                                const isAvailable = day % 7 !== 0 && day % 7 !== 6; // Simular días disponibles
+                                const isSelected = day === 15; // Día seleccionado ejemplo
+                                return `<div style="
+                                    padding: 0.5rem; 
+                                    border-radius: 0.25rem; 
+                                    cursor: pointer;
+                                    ${isSelected ? 'background: #8b5cf6; color: white;' : 
+                                      isAvailable ? 'background: rgba(16, 185, 129, 0.1); color: #10b981; hover: background: rgba(16, 185, 129, 0.2);' : 
+                                      'color: #666;'}
+                                ">${day}</div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                    
+                    <!-- Horarios disponibles -->
+                    <div style="margin-top: 1rem;">
+                        <div style="color: #a0a0a0; font-size: 0.9rem; margin-bottom: 0.5rem; text-align: center;">Horarios disponibles</div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
+                            ${['09:00', '10:30', '14:00', '15:30', '16:00'].map(time => `
+                                <button style="
+                                    background: rgba(139, 92, 246, 0.1); 
+                                    border: 1px solid rgba(139, 92, 246, 0.3);
+                                    color: #c4b5fd; 
+                                    padding: 0.5rem; 
+                                    border-radius: 0.5rem; 
+                                    font-size: 0.85rem;
+                                    cursor: pointer;
+                                    transition: all 0.2s ease;
+                                ">
+                                    ${time}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                ${consultationFormData.description ? `
+                    <div style="background: #2a2a2a; border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem;">
+                        <h4 style="color: white; margin-bottom: 1rem; font-size: 1.1rem;">Sobre esta consultoría</h4>
+                        <div style="line-height: 1.6; color: #d0d0d0; white-space: pre-line; font-size: 0.9rem;">
+                            ${consultationFormData.description}
+                        </div>
+                    </div>
+                ` : ''}
+
+                <!-- Reseñas -->
+                ${reviewsHTML ? `
+                    <div style="margin-bottom: 2rem;">
+                        <h4 style="color: white; margin-bottom: 1rem; font-size: 1.1rem;">
+                            <i class="bi bi-star-fill" style="color: #fbbf24; margin-right: 0.5rem;"></i>
+                            Reseñas de clientes
+                        </h4>
+                        ${reviewsHTML}
+                    </div>
+                ` : ''}
+
+                <!-- Botón de agendamiento integrado -->
+                <div style="
+                    background: rgba(26, 26, 26, 0.95);
+                    border-top: 1px solid #333;
+                    border-radius: 0.75rem;
+                    padding: 1rem;
+                    margin-top: 2rem;
+                ">
+                    <button style="
+                        width: 100%;
+                        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                        border: none;
+                        color: white;
+                        font-size: 1rem;
+                        font-weight: 600;
+                        padding: 0.875rem;
+                        border-radius: 0.5rem;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 0.5rem;
+                    " onclick="parent.postMessage({type: 'openBookingModal', consultation: ${JSON.stringify(consultationFormData).replace(/"/g, '&quot;')}}, '*')">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>${consultationFormData.button_text || 'Agendar Consultoría'}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Funciones para crear y actualizar consultoría
+function createConsultation() {
+    if (!consultationFormData.title.trim()) {
+        showToast('El título es obligatorio', 'error');
+        return;
+    }
+    
+    if (!consultationFormData.price || parseFloat(consultationFormData.price) <= 0) {
+        showToast('El precio debe ser mayor a 0', 'error');
+        return;
+    }
+    
+    const newConsultation = createConsultationFromForm();
+    
+    appState.products.push(newConsultation);
+    saveToStorage();
+    renderProducts();
+    updatePreview();
+    
+    closeConsultationFormOverlay();
+    showToast('¡Consultoría creada correctamente!', 'success');
+}
+
+function createConsultationFromForm() {
+    return {
+        id: Date.now(),
+        type: 'consultation',
+        title: consultationFormData.title.trim(),
+        subtitle: consultationFormData.subtitle.trim(),
+        description: consultationFormData.description.trim(),
+        price: parseFloat(consultationFormData.price) || 0,
+        discount_price: consultationFormData.has_discount ? (parseFloat(consultationFormData.discount_price) || 0) : 0,
+        has_discount: consultationFormData.has_discount,
+        image_url: consultationFormData.image_url,
+        button_text: consultationFormData.button_text,
+        is_active: consultationFormData.is_active,
+        reviews: [...consultationFormData.reviews],
+        custom_fields: [...consultationFormData.custom_fields],
+        availability_settings: {...consultationFormData.availability_settings},
+        status: consultationFormData.is_active ? 'active' : 'inactive',
+        sales: 0,
+        sort_order: appState.products.length + 1,
+        created_at: new Date().toISOString()
+    };
+}
+
+function saveConsultationAsDraft() {
+    if (!consultationFormData.title.trim()) {
+        showToast('El título es obligatorio', 'error');
+        return;
+    }
+    
+    const draftConsultation = createConsultationFromForm();
+    draftConsultation.is_active = false;
+    
+    appState.products.push(draftConsultation);
+    saveToStorage();
+    renderProducts();
+    updatePreview();
+    
+    closeConsultationFormOverlay();
+    showToast('¡Borrador de consultoría guardado!', 'success');
+}
+
 function populateProductForm() {
     // Tab 1: Datos
     document.getElementById('productTitle').value = productFormData.title;
