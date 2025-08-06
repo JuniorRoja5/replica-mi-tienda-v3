@@ -2171,6 +2171,196 @@ function editDigitalProduct(product) {
     updatePreviewWithProduct();
 }
 
+// ============== FUNCIONES PARA LLAMADA DE CONSULTORÍA (NUEVAS) ==============
+
+function showConsultationFormOverlay() {
+    // Resetear formulario de consultoría
+    resetConsultationForm();
+    
+    // Mostrar el overlay
+    document.getElementById('consultationFormOverlay').style.display = 'block';
+    
+    // Configurar tab inicial
+    currentProductTab = 'datos';
+    showConsultationTab('datos');
+    
+    // Configurar event listeners específicos para consultoría
+    setupConsultationFormListeners();
+    
+    // Activar preview inmediatamente
+    updatePreviewWithConsultation();
+}
+
+function closeConsultationFormOverlay() {
+    document.getElementById('consultationFormOverlay').style.display = 'none';
+    removeConsultationFormListeners();
+    
+    // Limpiar datos temporales de preview
+    localStorage.removeItem('tempConsultationPreview');
+    
+    // Volver al preview normal del perfil
+    updatePreview();
+}
+
+function resetConsultationForm() {
+    consultationFormData = {
+        title: '',
+        subtitle: '',
+        description: '',
+        price: '',
+        discount_price: '',
+        has_discount: false,
+        image_url: '',
+        button_text: 'Agendar llamada',
+        is_active: true,
+        reviews: [],
+        custom_fields: [
+            { id: 'name', label: 'Nombre completo', type: 'text', required: true },
+            { id: 'email', label: 'Correo electrónico', type: 'email', required: true }
+        ],
+        availability_settings: {
+            call_method: 'google_meet',
+            custom_call_link: '',
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            duration: 30,
+            notice_period: { value: 12, unit: 'hours' },
+            buffer_time: { before: 15, after: 15 },
+            booking_window: 60,
+            weekly_availability: [
+                { day: 'sunday', name: 'Domingo', enabled: false, intervals: [] },
+                { day: 'monday', name: 'Lunes', enabled: true, intervals: [{ from: '09:00', to: '17:00' }] },
+                { day: 'tuesday', name: 'Martes', enabled: true, intervals: [{ from: '09:00', to: '17:00' }] },
+                { day: 'wednesday', name: 'Miércoles', enabled: true, intervals: [{ from: '09:00', to: '17:00' }] },
+                { day: 'thursday', name: 'Jueves', enabled: true, intervals: [{ from: '09:00', to: '17:00' }] },
+                { day: 'friday', name: 'Viernes', enabled: true, intervals: [{ from: '09:00', to: '17:00' }] },
+                { day: 'saturday', name: 'Sábado', enabled: false, intervals: [] }
+            ]
+        }
+    };
+    
+    // Limpiar formularios HTML
+    document.getElementById('consultationTitle').value = '';
+    document.getElementById('consultationSubtitle').value = '';
+    document.getElementById('consultationDescription').value = '';
+    document.getElementById('consultationPrice').value = '';
+    document.getElementById('consultationDiscountPrice').value = '';
+    document.getElementById('consultationHasDiscount').checked = false;
+    document.getElementById('consultationButtonText').value = 'Agendar llamada';
+    document.getElementById('consultationIsActive').checked = true;
+    
+    // Resetear imagen
+    document.getElementById('consultationImagePreview').innerHTML = `
+        <div class="product-image-placeholder">
+            <i class="bi bi-camera-video"></i>
+        </div>
+    `;
+    
+    // Resetear contadores
+    document.getElementById('consultationTitleCounter').textContent = '0';
+    document.getElementById('consultationSubtitleCounter').textContent = '0';
+    
+    // Resetear reseñas
+    document.getElementById('consultationReviewsList').innerHTML = `
+        <div class="text-muted text-center py-3">
+            <i class="bi bi-star display-6"></i>
+            <p>No hay reseñas aún. Agrega algunas para aumentar la confianza.</p>
+        </div>
+    `;
+    
+    // Generar horarios semanales
+    generateWeeklySchedule();
+    generateConsultationCustomFields();
+}
+
+function showConsultationTab(tabName) {
+    currentProductTab = tabName;
+    
+    // Actualizar navegación de tabs
+    document.querySelectorAll('#consultationTabs .nav-link').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.getElementById(`consultation-${tabName}-tab`).classList.add('active');
+    
+    // Mostrar panel correspondiente
+    document.querySelectorAll('#consultationFormOverlay .tab-content-panel').forEach(panel => {
+        panel.style.display = 'none';
+    });
+    document.getElementById(`consultation-${tabName}-panel`).style.display = 'block';
+    
+    // Actualizar botones de navegación
+    updateConsultationTabNavigation();
+}
+
+function updateConsultationTabNavigation() {
+    const prevBtn = document.getElementById('consultationPrevTabBtn');
+    const nextBtn = document.getElementById('consultationNextTabBtn');
+    const createBtn = document.getElementById('createConsultationBtn');
+    
+    switch(currentProductTab) {
+        case 'datos':
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'block';
+            createBtn.style.display = 'none';
+            break;
+        case 'contenido':
+            prevBtn.style.display = 'block';
+            nextBtn.style.display = 'block';
+            createBtn.style.display = 'none';
+            break;
+        case 'disponibilidad':
+            prevBtn.style.display = 'block';
+            nextBtn.style.display = 'block';
+            createBtn.style.display = 'none';
+            break;
+        case 'opciones':
+            prevBtn.style.display = 'block';
+            nextBtn.style.display = 'none';
+            createBtn.style.display = 'block';
+            
+            // Verificar si estamos en modo edición
+            if (consultationFormData.id) {
+                createBtn.innerHTML = '<i class="bi bi-check-circle"></i> Actualizar Consultoría';
+                createBtn.onclick = function() {
+                    updateExistingConsultation();
+                };
+            } else {
+                createBtn.innerHTML = '<i class="bi bi-check-circle"></i> Crear Consultoría';
+                createBtn.onclick = function() {
+                    createConsultation();
+                };
+            }
+            break;
+    }
+}
+
+function consultationNextTab() {
+    switch(currentProductTab) {
+        case 'datos':
+            showConsultationTab('contenido');
+            break;
+        case 'contenido':
+            showConsultationTab('disponibilidad');
+            break;
+        case 'disponibilidad':
+            showConsultationTab('opciones');
+            break;
+    }
+}
+
+function consultationPreviousTab() {
+    switch(currentProductTab) {
+        case 'contenido':
+            showConsultationTab('datos');
+            break;
+        case 'disponibilidad':
+            showConsultationTab('contenido');
+            break;
+        case 'opciones':
+            showConsultationTab('disponibilidad');
+            break;
+    }
+}
+
 function populateProductForm() {
     // Tab 1: Datos
     document.getElementById('productTitle').value = productFormData.title;
