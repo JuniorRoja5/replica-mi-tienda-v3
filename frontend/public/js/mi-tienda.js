@@ -347,22 +347,201 @@ function selectProductType(type) {
     }, 300);
 }
 
-function showLinkFormModal() {
-    // Resetear formulario
-    document.getElementById('linkForm').reset();
-    document.getElementById('linkImagePreview').innerHTML = '<i class="bi bi-image image-preview-icon"></i>';
-    document.getElementById('linkActive').checked = true;
-    document.getElementById('linkTitle').placeholder = 'Se extraerá automáticamente del enlace';
-    
-    // Setup URL change listener
-    const urlInput = document.getElementById('linkUrl');
+// Función para extraer metadatos de URL
+async function extractMetadataFromUrl(url) {
+    try {
+        // Validar URL
+        const urlObj = new URL(url);
+        const domain = urlObj.hostname.toLowerCase();
+        
+        // Base de datos de sitios conocidos para simular extracción automática
+        const knownSites = {
+            'instagram.com': {
+                title: 'Instagram',
+                favicon: 'https://static.cdninstagram.com/rsrc.php/v3/yI/r/VsNE-OHk_8a.png'
+            },
+            'www.instagram.com': {
+                title: 'Instagram',
+                favicon: 'https://static.cdninstagram.com/rsrc.php/v3/yI/r/VsNE-OHk_8a.png'
+            },
+            'youtube.com': {
+                title: 'YouTube',
+                favicon: 'https://www.youtube.com/s/desktop/12d6b690/img/favicon_32x32.png'
+            },
+            'www.youtube.com': {
+                title: 'YouTube',
+                favicon: 'https://www.youtube.com/s/desktop/12d6b690/img/favicon_32x32.png'
+            },
+            'tiktok.com': {
+                title: 'TikTok',
+                favicon: 'https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/tiktok/webapp/main/webapp-desktop/8152caf0c8e8bc67ae0d.ico'
+            },
+            'www.tiktok.com': {
+                title: 'TikTok',
+                favicon: 'https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/tiktok/webapp/main/webapp-desktop/8152caf0c8e8bc67ae0d.ico'
+            },
+            'twitter.com': {
+                title: 'Twitter',
+                favicon: 'https://abs.twimg.com/favicons/twitter.2.ico'
+            },
+            'x.com': {
+                title: 'X (Twitter)',
+                favicon: 'https://abs.twimg.com/favicons/twitter.2.ico'
+            },
+            'facebook.com': {
+                title: 'Facebook',
+                favicon: 'https://static.xx.fbcdn.net/rsrc.php/yb/r/hLRJ1GG_y0J.ico'
+            },
+            'www.facebook.com': {
+                title: 'Facebook',
+                favicon: 'https://static.xx.fbcdn.net/rsrc.php/yb/r/hLRJ1GG_y0J.ico'
+            },
+            'linkedin.com': {
+                title: 'LinkedIn',
+                favicon: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca'
+            },
+            'www.linkedin.com': {
+                title: 'LinkedIn',
+                favicon: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca'
+            },
+            'spotify.com': {
+                title: 'Spotify',
+                favicon: 'https://www.spotify.com/favicon.ico'
+            },
+            'open.spotify.com': {
+                title: 'Spotify',
+                favicon: 'https://www.spotify.com/favicon.ico'
+            },
+            'github.com': {
+                title: 'GitHub',
+                favicon: 'https://github.com/favicon.ico'
+            },
+            'google.com': {
+                title: 'Google',
+                favicon: 'https://www.google.com/favicon.ico'
+            },
+            'www.google.com': {
+                title: 'Google',
+                favicon: 'https://www.google.com/favicon.ico'
+            }
+        };
+        
+        // Buscar en sitios conocidos
+        if (knownSites[domain]) {
+            return knownSites[domain];
+        }
+        
+        // Para sitios no conocidos, generar título basado en el dominio
+        const cleanDomain = domain.replace('www.', '');
+        const title = cleanDomain.split('.')[0];
+        const capitalizedTitle = title.charAt(0).toUpperCase() + title.slice(1);
+        
+        return {
+            title: capitalizedTitle,
+            favicon: `https://www.google.com/s2/favicons?domain=${domain}&sz=32`
+        };
+        
+    } catch (error) {
+        console.error('Error extrayendo metadatos:', error);
+        return null;
+    }
+}
+
+// Función para manejar cambios en la URL
+async function handleUrlChange(event) {
+    const url = event.target.value.trim();
     const titleInput = document.getElementById('linkTitle');
+    const imagePreview = document.getElementById('linkImagePreview');
     
-    urlInput.removeEventListener('input', handleUrlChange); // Remove existing listener if any
-    urlInput.addEventListener('input', debounce(handleUrlChange, 1000));
+    if (!url || !isValidUrl(url)) {
+        // Resetear campos si URL no es válida
+        titleInput.value = '';
+        titleInput.placeholder = 'Se extraerá automáticamente del enlace';
+        imagePreview.innerHTML = '<i class="bi bi-image image-preview-icon"></i>';
+        return;
+    }
     
-    const modal = new bootstrap.Modal(document.getElementById('linkFormModal'));
-    modal.show();
+    // Mostrar indicador de carga
+    titleInput.placeholder = 'Extrayendo información...';
+    imagePreview.innerHTML = '<div class="spinner-border spinner-border-sm text-primary" role="status"></div>';
+    
+    try {
+        const metadata = await extractMetadataFromUrl(url);
+        
+        if (metadata) {
+            // Solo actualizar si el campo está vacío (no ha sido editado manualmente)
+            if (!titleInput.value) {
+                titleInput.value = metadata.title;
+            }
+            
+            // Actualizar imagen
+            if (metadata.favicon) {
+                const img = new Image();
+                img.onload = function() {
+                    imagePreview.innerHTML = `
+                        <img src="${metadata.favicon}" alt="Favicon" 
+                             style="max-width: 100%; max-height: 100px; object-fit: contain;">
+                    `;
+                };
+                img.onerror = function() {
+                    // Si falla la carga del favicon, usar ícono por defecto
+                    imagePreview.innerHTML = '<i class="bi bi-link-45deg image-preview-icon text-primary"></i>';
+                };
+                img.src = metadata.favicon;
+            }
+            
+            // Mostrar notificación de éxito
+            showAutoExtractNotification('¡Información extraída correctamente!');
+        } else {
+            throw new Error('No se pudo extraer información');
+        }
+        
+    } catch (error) {
+        console.error('Error al extraer metadatos:', error);
+        titleInput.placeholder = 'Título del enlace';
+        imagePreview.innerHTML = '<i class="bi bi-link-45deg image-preview-icon text-secondary"></i>';
+        showAutoExtractNotification('No se pudo extraer información automáticamente', 'warning');
+    }
+}
+
+// Función para mostrar notificación de auto-extracción
+function showAutoExtractNotification(message, type = 'success') {
+    const noticeElement = document.querySelector('.auto-extract-notice span');
+    if (noticeElement) {
+        const originalText = noticeElement.textContent;
+        noticeElement.textContent = message;
+        
+        if (type === 'warning') {
+            noticeElement.parentElement.style.backgroundColor = '#fff3cd';
+            noticeElement.parentElement.style.borderColor = '#ffeaa7';
+            noticeElement.style.color = '#856404';
+        } else {
+            noticeElement.parentElement.style.backgroundColor = '#d4edda';
+            noticeElement.parentElement.style.borderColor = '#c3e6cb';
+            noticeElement.style.color = '#155724';
+        }
+        
+        // Restaurar texto original después de 3 segundos
+        setTimeout(() => {
+            noticeElement.textContent = originalText;
+            noticeElement.parentElement.style.backgroundColor = '#fff3cd';
+            noticeElement.parentElement.style.borderColor = '#ffeaa7';
+            noticeElement.style.color = '#856404';
+        }, 3000);
+    }
+}
+
+// Función debounce para evitar múltiples llamadas
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
 }
 
 function saveLinkProduct() {
