@@ -1467,13 +1467,243 @@ function isValidUrl(string) {
     }
 }
 
-function editProduct(id) {
-    const product = appState.products.find(p => p.id === id);
-    if (!product) return;
+function editProduct(productId) {
+    console.log('Editando producto:', productId);
     
-    console.log('Editando producto:', product);
-    // Funcionalidad de edición pendiente
-    showToast('Funcionalidad de edición próximamente', 'info');
+    const product = appState.products.find(p => p.id === productId);
+    if (!product) {
+        showToast('Producto no encontrado', 'error');
+        return;
+    }
+    
+    if (product.type === 'link') {
+        // Editar enlace externo
+        editLink(product);
+    } else if (product.type === 'product') {
+        // Editar producto digital
+        editDigitalProduct(product);
+    } else {
+        showToast('Tipo de producto no soportado para edición', 'info');
+    }
+}
+
+function editLink(link) {
+    // Poblar el formulario de enlaces con los datos existentes
+    document.getElementById('linkUrl').value = link.url || '';
+    document.getElementById('linkTitle').value = link.title || '';
+    document.getElementById('linkDescription').value = link.description || '';
+    
+    // Si tiene imagen personalizada, mostrarla
+    if (link.image_url) {
+        updateLinkImagePreview(link.image_url);
+    }
+    
+    // Cambiar el título del modal
+    document.getElementById('linkFormModalLabel').textContent = 'Editar Enlace';
+    
+    // Cambiar el botón de crear por actualizar
+    const createButton = document.querySelector('#linkFormModal .btn-primary');
+    if (createButton) {
+        createButton.textContent = 'Actualizar Enlace';
+        createButton.onclick = function() {
+            updateExistingLink(link.id);
+        };
+    }
+    
+    // Mostrar el modal
+    const modal = new bootstrap.Modal(document.getElementById('linkFormModal'));
+    modal.show();
+}
+
+function editDigitalProduct(product) {
+    // Poblar el formulario de producto digital con los datos existentes
+    productFormData = {
+        id: product.id, // Importante: incluir el ID para actualizaciones
+        title: product.title || '',
+        subtitle: product.subtitle || '',
+        description: product.description || '',
+        price: product.price || '',
+        discount_price: product.discount_price || '',
+        has_discount: product.has_discount || false,
+        image_url: product.image_url || '',
+        file_url: product.file_url || '',
+        button_text: product.button_text || 'Comprar ahora',
+        is_active: product.is_active !== false,
+        reviews: [...(product.reviews || [])],
+        custom_fields: [...(product.custom_fields || [
+            { id: 'name', label: 'Nombre completo', type: 'text', required: true },
+            { id: 'email', label: 'Correo electrónico', type: 'email', required: true }
+        ])]
+    };
+    
+    // Mostrar el overlay de edición
+    document.getElementById('productFormOverlay').style.display = 'block';
+    document.getElementById('productFormTitle').textContent = 'Editar Producto Digital';
+    
+    // Configurar tab inicial
+    currentProductTab = 'datos';
+    showTab('datos');
+    
+    // Poblar todos los campos del formulario
+    populateProductForm();
+    
+    // Configurar event listeners
+    setupProductFormListeners();
+    
+    // Cambiar el botón de crear por actualizar
+    const createButton = document.getElementById('createProductBtn');
+    if (createButton) {
+        createButton.innerHTML = '<i class="bi bi-check-circle"></i> Actualizar Producto';
+        createButton.onclick = function() {
+            updateExistingProduct();
+        };
+    }
+}
+
+function populateProductForm() {
+    // Tab 1: Datos
+    document.getElementById('productTitle').value = productFormData.title;
+    document.getElementById('productSubtitle').value = productFormData.subtitle;
+    document.getElementById('titleCounter').textContent = productFormData.title.length;
+    document.getElementById('subtitleCounter').textContent = productFormData.subtitle.length;
+    
+    // Mostrar imagen si existe
+    if (productFormData.image_url) {
+        document.getElementById('productImagePreview').innerHTML = `
+            <img src="${productFormData.image_url}" alt="Imagen del producto">
+        `;
+    }
+    
+    // Tab 2: Contenido y Precio
+    document.getElementById('productDescription').value = productFormData.description;
+    document.getElementById('productPrice').value = productFormData.price;
+    document.getElementById('hasDiscount').checked = productFormData.has_discount;
+    document.getElementById('discountPrice').value = productFormData.discount_price;
+    document.getElementById('discountPrice').style.display = productFormData.has_discount ? 'block' : 'none';
+    
+    // Mostrar archivo subido si existe
+    if (productFormData.file_url) {
+        document.getElementById('fileUploadArea').style.display = 'none';
+        document.getElementById('fileUploadSuccess').style.display = 'block';
+        document.getElementById('uploadedFileName').textContent = productFormData.file_url;
+    }
+    
+    // Tab 3: Opciones
+    document.getElementById('buttonText').value = productFormData.button_text;
+    document.getElementById('isActive').checked = productFormData.is_active;
+    
+    // Renderizar reseñas y campos personalizados
+    renderReviews();
+    renderCustomFields();
+}
+
+function updateExistingLink(linkId) {
+    const linkUrl = document.getElementById('linkUrl').value.trim();
+    const linkTitle = document.getElementById('linkTitle').value.trim();
+    const linkDescription = document.getElementById('linkDescription').value.trim();
+    
+    if (!linkUrl || !linkTitle) {
+        showToast('URL y título son obligatorios', 'error');
+        return;
+    }
+    
+    // Encontrar y actualizar el enlace
+    const linkIndex = appState.products.findIndex(p => p.id === linkId);
+    if (linkIndex !== -1) {
+        appState.products[linkIndex] = {
+            ...appState.products[linkIndex],
+            url: linkUrl,
+            title: linkTitle,
+            description: linkDescription,
+            updated_at: new Date().toISOString()
+        };
+        
+        // Actualizar imagen si se cambió
+        const customImagePreview = document.getElementById('customImagePreview');
+        if (customImagePreview && customImagePreview.src && !customImagePreview.src.includes('placeholder')) {
+            appState.products[linkIndex].image_url = customImagePreview.src;
+        }
+        
+        saveToStorage();
+        renderProducts();
+        updatePreview();
+        
+        // Cerrar modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('linkFormModal'));
+        modal.hide();
+        
+        showToast('¡Enlace actualizado correctamente!', 'success');
+        
+        // Resetear el formulario para futuras creaciones
+        resetLinkForm();
+    }
+}
+
+function updateExistingProduct() {
+    if (!productFormData.title.trim()) {
+        showToast('El título es obligatorio', 'error');
+        return;
+    }
+    
+    if (!productFormData.price || parseFloat(productFormData.price) <= 0) {
+        showToast('El precio debe ser mayor a 0', 'error');
+        return;
+    }
+    
+    // Encontrar y actualizar el producto
+    const productIndex = appState.products.findIndex(p => p.id === productFormData.id);
+    if (productIndex !== -1) {
+        const updatedProduct = createProductFromForm();
+        updatedProduct.id = productFormData.id; // Mantener el ID original
+        updatedProduct.created_at = appState.products[productIndex].created_at; // Mantener fecha de creación
+        updatedProduct.updated_at = new Date().toISOString();
+        
+        appState.products[productIndex] = updatedProduct;
+        
+        saveToStorage();
+        renderProducts();
+        updatePreview();
+        
+        closeProductFormOverlay();
+        showToast('¡Producto actualizado correctamente!', 'success');
+        
+        // Resetear botón para futuras creaciones
+        const createButton = document.getElementById('createProductBtn');
+        if (createButton) {
+            createButton.innerHTML = '<i class="bi bi-check-circle"></i> Crear Producto';
+            createButton.onclick = function() {
+                createProduct();
+            };
+        }
+        
+        // Resetear título
+        document.getElementById('productFormTitle').textContent = 'Crear Producto Digital';
+    }
+}
+
+function resetLinkForm() {
+    // Resetear el formulario de enlaces para futuras creaciones
+    document.getElementById('linkFormModalLabel').textContent = 'Crear Nuevo Enlace';
+    
+    const createButton = document.querySelector('#linkFormModal .btn-primary');
+    if (createButton) {
+        createButton.textContent = 'Crear Enlace';
+        createButton.onclick = function() {
+            createLink();
+        };
+    }
+    
+    // Limpiar campos
+    document.getElementById('linkUrl').value = '';
+    document.getElementById('linkTitle').value = '';
+    document.getElementById('linkDescription').value = '';
+    
+    // Resetear preview de imagen
+    const customImagePreview = document.getElementById('customImagePreview');
+    if (customImagePreview) {
+        customImagePreview.src = '';
+        customImagePreview.style.display = 'none';
+    }
 }
 
 function deleteProduct(id) {
