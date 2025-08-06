@@ -888,7 +888,7 @@ function selectDigitalProductType(productType) {
     // Close type selection overlay
     closeProductTypeOverlay();
     
-    // Mostrar el formulario específico según el tipo
+    // Show specific form according to type
     if (productType === 'digital_product') {
         showProductFormOverlay();
     } else if (productType === 'consultation') {
