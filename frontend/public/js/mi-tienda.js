@@ -3633,8 +3633,8 @@ function setupCourseFormListeners() {
     const isActiveInput = document.getElementById('courseIsActive');
     
     // Course content inputs
-    const pageTitleInput = document.getElementById('coursePageTitle');
-    const pageDescriptionInput = document.getElementById('coursePageDescription');
+    const pageTitleInput = document.getElementById('courseContentTitle');
+    const pageDescriptionInput = document.getElementById('courseContentDescription');
     
     // Event listeners para actualización en tiempo real
     titleInput.addEventListener('input', function() {
