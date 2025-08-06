@@ -1,151 +1,423 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#000000" />
-        <meta name="description" content="A product of emergent.sh" />
-        <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-        <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Tienda - Gestión de Productos Digitales</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Panel Izquierdo: Formularios y configuración -->
+    <div class="left-panel">
+      <div class="left-panel-content">
+        <!-- Header -->
+        <div class="section-header">
+          <h1>Mi Tienda</h1>
+          <p>Configura tu tienda digital y productos</p>
+        </div>
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-        <title>Emergent | Fullstack App</title>
-    </head>
-    <body>
-        <noscript>You need to enable JavaScript to run this app.</noscript>
-        <div id="root"></div>
-        <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+        <!-- Navegación de secciones -->
+        <div class="section-tabs">
+          <button class="tab-btn active" data-section="profile">Perfil</button>
+          <button class="tab-btn" data-section="social">Redes</button>
+          <button class="tab-btn" data-section="products">Productos</button>
+        </div>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-        <a
-            id="emergent-badge"
-            target="_blank"
-            href="https://app.emergent.sh/?utm_source=emergent-badge"
-            style="
-                display: flex !important;
-                align-items: center !important;
-                position: fixed !important;
-                bottom: 20px;
-                right: 20px;
-                text-decoration: none;
-                padding: 6px 10px;
-                font-family: -apple-system, BlinkMacSystemFont,
-                    &quot;Segoe UI&quot;, Roboto, Oxygen, Ubuntu, Cantarell,
-                    &quot;Open Sans&quot;, &quot;Helvetica Neue&quot;,
-                    sans-serif !important;
-                font-size: 12px !important;
-                z-index: 9999 !important;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
-                border-radius: 8px !important;
-                background-color: #ffffff !important;
-                border: 1px solid rgba(255, 255, 255, 0.25) !important;
-            "
-        >
-            <div
-                style="display: flex; flex-direction: row; align-items: center"
-            >
-                <img
-                    style="width: 20px; height: 20px; margin-right: 8px"
-                    src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4"
-                />
-                <p
-                    style="
-                        color: #000000;
-                        font-family: -apple-system, BlinkMacSystemFont,
-                            &quot;Segoe UI&quot;, Roboto, Oxygen, Ubuntu,
-                            Cantarell, &quot;Open Sans&quot;,
-                            &quot;Helvetica Neue&quot;, sans-serif !important;
-                        font-size: 12px !important;
-                        align-items: center;
-                        margin-bottom: 0;
-                    "
-                >
-                    Made with Emergent
-                </p>
+        <!-- Sección de Perfil -->
+        <div class="section-content active" id="profile-section">
+          <h2>Información del Perfil</h2>
+          
+          <!-- Avatar -->
+          <div class="form-group avatar-section">
+            <label>Imagen de Perfil</label>
+            <div class="avatar-container">
+              <div class="avatar-preview" id="avatar-preview">
+                <span class="avatar-placeholder">👤</span>
+                <img id="avatar-img" class="avatar-img" style="display: none;" alt="Avatar">
+              </div>
+              <div class="avatar-controls">
+                <input type="file" id="avatar-input" accept="image/*" style="display: none;">
+                <button class="btn-secondary" onclick="document.getElementById('avatar-input').click()">
+                  <i data-lucide="upload"></i>
+                  Cambiar Avatar
+                </button>
+                <p class="form-hint">Recomendado: 400x400px</p>
+              </div>
             </div>
-        </a>
-        <script>
-            !(function (t, e) {
-                var o, n, p, r;
-                e.__SV ||
-                    ((window.posthog = e),
-                    (e._i = []),
-                    (e.init = function (i, s, a) {
-                        function g(t, e) {
-                            var o = e.split(".");
-                            2 == o.length && ((t = t[o[0]]), (e = o[1])),
-                                (t[e] = function () {
-                                    t.push(
-                                        [e].concat(
-                                            Array.prototype.slice.call(
-                                                arguments,
-                                                0,
-                                            ),
-                                        ),
-                                    );
-                                });
-                        }
-                        ((p = t.createElement("script")).type =
-                            "text/javascript"),
-                            (p.crossOrigin = "anonymous"),
-                            (p.async = !0),
-                            (p.src =
-                                s.api_host.replace(
-                                    ".i.posthog.com",
-                                    "-assets.i.posthog.com",
-                                ) + "/static/array.js"),
-                            (r =
-                                t.getElementsByTagName(
-                                    "script",
-                                )[0]).parentNode.insertBefore(p, r);
-                        var u = e;
-                        for (
-                            void 0 !== a ? (u = e[a] = []) : (a = "posthog"),
-                                u.people = u.people || [],
-                                u.toString = function (t) {
-                                    var e = "posthog";
-                                    return (
-                                        "posthog" !== a && (e += "." + a),
-                                        t || (e += " (stub)"),
-                                        e
-                                    );
-                                },
-                                u.people.toString = function () {
-                                    return u.toString(1) + ".people (stub)";
-                                },
-                                o =
-                                    "init me ws ys ps bs capture je Di ks register register_once register_for_session unregister unregister_for_session Ps getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty Es $s createPersonProfile Is opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Ss debug xs getPageViewId captureTraceFeedback captureTraceMetric".split(
-                                        " ",
-                                    ),
-                                n = 0;
-                            n < o.length;
-                            n++
-                        )
-                            g(u, o[n]);
-                        e._i.push([i, s, a]);
-                    }),
-                    (e.__SV = 1));
-            })(document, window.posthog || []);
-            posthog.init("phc_yJW1VjHGGwmCbbrtczfqqNxgBDbhlhOWcdzcIJEOTFE", {
-                api_host: "https://us.i.posthog.com",
-                person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well
-            });
-        </script>
-    </body>
+          </div>
+
+          <!-- Nombre para mostrar -->
+          <div class="form-group">
+            <label for="display-name">Nombre para mostrar</label>
+            <input type="text" id="display-name" placeholder="Trading Sharks" maxlength="50">
+            <span class="char-counter">0/50</span>
+            <p class="form-hint">Este es el nombre que verán tus visitantes</p>
+          </div>
+
+          <!-- Bio -->
+          <div class="form-group">
+            <label for="bio">Bio</label>
+            <textarea id="bio" placeholder="Cuéntanos sobre ti..." maxlength="160" rows="3"></textarea>
+            <span class="char-counter">0/160</span>
+            <p class="form-hint">Una breve descripción sobre ti o tu negocio</p>
+          </div>
+
+          <!-- Username -->
+          <div class="form-group">
+            <label for="username">Nombre de usuario</label>
+            <input type="text" id="username" placeholder="tradingsharks">
+            <p class="form-hint">Sin espacios. Este será tu URL público.</p>
+          </div>
+
+          <button class="btn-primary" onclick="saveProfile()">
+            <i data-lucide="save"></i>
+            Guardar Perfil
+          </button>
+        </div>
+
+        <!-- Sección de Redes Sociales -->
+        <div class="section-content" id="social-section">
+          <h2>Redes Sociales</h2>
+          
+          <div class="social-platforms">
+            <div class="social-group">
+              <div class="platform-item">
+                <div class="platform-icon" style="background: #E4405F;">
+                  <i data-lucide="instagram"></i>
+                </div>
+                <div class="platform-info">
+                  <label>Instagram</label>
+                  <input type="url" placeholder="https://instagram.com/tu_usuario" data-platform="instagram">
+                </div>
+              </div>
+
+              <div class="platform-item">
+                <div class="platform-icon" style="background: #000000;">
+                  <i data-lucide="music"></i>
+                </div>
+                <div class="platform-info">
+                  <label>TikTok</label>
+                  <input type="url" placeholder="https://tiktok.com/@tu_usuario" data-platform="tiktok">
+                </div>
+              </div>
+
+              <div class="platform-item">
+                <div class="platform-icon" style="background: #1877F2;">
+                  <i data-lucide="facebook"></i>
+                </div>
+                <div class="platform-info">
+                  <label>Facebook</label>
+                  <input type="url" placeholder="https://facebook.com/tu_usuario" data-platform="facebook">
+                </div>
+              </div>
+
+              <div class="platform-item">
+                <div class="platform-icon" style="background: #1DA1F2;">
+                  <i data-lucide="twitter"></i>
+                </div>
+                <div class="platform-info">
+                  <label>Twitter</label>
+                  <input type="url" placeholder="https://twitter.com/tu_usuario" data-platform="twitter">
+                </div>
+              </div>
+
+              <div class="platform-item">
+                <div class="platform-icon" style="background: #FF0000;">
+                  <i data-lucide="youtube"></i>
+                </div>
+                <div class="platform-info">
+                  <label>YouTube</label>
+                  <input type="url" placeholder="https://youtube.com/c/tu_canal" data-platform="youtube">
+                </div>
+              </div>
+
+              <div class="platform-item">
+                <div class="platform-icon" style="background: #0A66C2;">
+                  <i data-lucide="linkedin"></i>
+                </div>
+                <div class="platform-info">
+                  <label>LinkedIn</label>
+                  <input type="url" placeholder="https://linkedin.com/in/tu_usuario" data-platform="linkedin">
+                </div>
+              </div>
+            </div>
+
+            <div class="custom-socials">
+              <h3>Enlaces Personalizados</h3>
+              <div id="custom-social-list"></div>
+              <button class="btn-secondary add-custom-btn" onclick="addCustomSocial()">
+                <i data-lucide="plus"></i>
+                Añadir enlace personalizado
+              </button>
+            </div>
+          </div>
+
+          <button class="btn-primary" onclick="saveSocials()">
+            <i data-lucide="save"></i>
+            Guardar Enlaces
+          </button>
+        </div>
+
+        <!-- Sección de Productos -->
+        <div class="section-content" id="products-section">
+          <h2>Productos y Enlaces</h2>
+          
+          <div class="products-header">
+            <button class="btn-primary" onclick="openProductCreator()">
+              <i data-lucide="plus"></i>
+              Agregar Producto
+            </button>
+          </div>
+
+          <div class="products-list" id="products-list">
+            <!-- Los productos se cargarán dinámicamente -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel Derecho: Vista previa -->
+    <div class="right-panel">
+      <div class="preview-container">
+        <div class="phone-mockup">
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="preview-content" id="preview-content">
+                <div class="preview-header">
+                  <div class="preview-avatar" id="preview-avatar">
+                    <span>👤</span>
+                  </div>
+                  <h3 id="preview-name">Tu Nombre</h3>
+                  <p id="preview-bio">Tu bio aquí...</p>
+                  
+                  <div class="preview-social" id="preview-social">
+                    <!-- Enlaces sociales se mostrarán aquí -->
+                  </div>
+                </div>
+
+                <div class="preview-products" id="preview-products">
+                  <!-- Productos se mostrarán aquí -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="preview-info">
+          <p>Vista previa en tiempo real</p>
+          <p class="preview-hint">Los cambios se reflejan automáticamente</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Selección de Tipo de Producto -->
+  <div class="modal-overlay" id="product-type-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>¿Qué quieres crear?</h3>
+        <button class="modal-close" onclick="closeModal('product-type-modal')">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="product-type-grid">
+          <button class="product-type-card" onclick="selectProductType('email_capture')">
+            <div class="product-type-icon" style="background: linear-gradient(135deg, #3B82F6, #06B6D4);">
+              <i data-lucide="mail"></i>
+            </div>
+            <div class="product-type-info">
+              <h4>Recolectar E-mails</h4>
+              <p>Crea un formulario para capturar correos electrónicos</p>
+            </div>
+          </button>
+
+          <button class="product-type-card" onclick="selectProductType('digital_product')">
+            <div class="product-type-icon" style="background: linear-gradient(135deg, #8B5CF6, #EC4899);">
+              <i data-lucide="package"></i>
+            </div>
+            <div class="product-type-info">
+              <h4>Producto Digital</h4>
+              <p>Vende archivos digitales, PDFs, guías, plantillas</p>
+            </div>
+          </button>
+
+          <button class="product-type-card" onclick="selectProductType('consultation')">
+            <div class="product-type-icon" style="background: linear-gradient(135deg, #10B981, #059669);">
+              <i data-lucide="phone"></i>
+            </div>
+            <div class="product-type-info">
+              <h4>Llamada de Consultoría</h4>
+              <p>Ofrece sesiones 1 a 1 de coaching o mentoría</p>
+            </div>
+          </button>
+
+          <button class="product-type-card" onclick="selectProductType('course')">
+            <div class="product-type-icon" style="background: linear-gradient(135deg, #F59E0B, #DC2626);">
+              <i data-lucide="graduation-cap"></i>
+            </div>
+            <div class="product-type-info">
+              <h4>Curso Digital</h4>
+              <p>Crea y vende cursos con lecciones y material</p>
+            </div>
+          </button>
+
+          <button class="product-type-card" onclick="selectProductType('membership')">
+            <div class="product-type-icon" style="background: linear-gradient(135deg, #6366F1, #8B5CF6);">
+              <i data-lucide="crown"></i>
+            </div>
+            <div class="product-type-info">
+              <h4>Membresía Recurrente</h4>
+              <p>Acceso exclusivo con pagos recurrentes</p>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Formulario de Producto -->
+  <div class="modal-overlay product-form-modal" id="product-form-modal">
+    <div class="modal-content large">
+      <div class="modal-header">
+        <h3 id="product-form-title">Agregar Producto</h3>
+        <button class="modal-close" onclick="closeProductForm()">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="product-form-steps">
+          <div class="steps-header">
+            <div class="step active" data-step="1">1. Datos</div>
+            <div class="step" data-step="2">2. Contenido</div>
+            <div class="step" data-step="3" id="step-3-label">3. Configuración</div>
+          </div>
+          
+          <form id="product-form">
+            <!-- Paso 1: Datos básicos -->
+            <div class="form-step active" data-step="1">
+              <h4>Datos básicos del producto</h4>
+              <p class="step-description">Información principal que verán tus clientes</p>
+
+              <div class="form-group image-upload">
+                <label>Imagen del Producto</label>
+                <div class="image-upload-container">
+                  <div class="image-preview" id="product-image-preview">
+                    <i data-lucide="package"></i>
+                  </div>
+                  <div class="upload-controls">
+                    <input type="file" id="product-image-input" accept="image/*" style="display: none;">
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('product-image-input').click()">
+                      <i data-lucide="upload"></i>
+                      Subir Imagen
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="product-title">Título del Producto</label>
+                <input type="text" id="product-title" placeholder="Ej: Guía Completa de Marketing Digital" maxlength="50" required>
+                <span class="char-counter">0/50</span>
+              </div>
+
+              <div class="form-group">
+                <label for="product-subtitle">Subtítulo del Producto</label>
+                <textarea id="product-subtitle" placeholder="Un subtítulo breve y atractivo" maxlength="100" rows="2"></textarea>
+                <span class="char-counter">0/100</span>
+              </div>
+            </div>
+
+            <!-- Paso 2: Contenido y precio -->
+            <div class="form-step" data-step="2">
+              <h4>Contenido y precio</h4>
+              <p class="step-description">Descripción detallada y configuración de precios</p>
+
+              <div class="form-group">
+                <label for="product-description">Descripción del Producto</label>
+                <textarea id="product-description" placeholder="Describe tu producto en detalle..." rows="6"></textarea>
+              </div>
+
+              <div class="form-group price-group">
+                <label>Configuración de Precio</label>
+                <div class="price-inputs">
+                  <div class="price-input">
+                    <label for="product-price">Precio ($)</label>
+                    <input type="number" id="product-price" placeholder="9.99" min="0" step="0.01" required>
+                  </div>
+                  <div class="discount-controls">
+                    <label>
+                      <input type="checkbox" id="has-discount"> Precio con descuento
+                    </label>
+                    <input type="number" id="discount-price" placeholder="6.99" min="0" step="0.01" style="display: none;">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group file-upload" id="file-upload-section">
+                <label>Archivo del Producto (Descarga)</label>
+                <div class="file-upload-container">
+                  <input type="file" id="product-file-input" style="display: none;">
+                  <div class="file-upload-area" onclick="document.getElementById('product-file-input').click()">
+                    <i data-lucide="upload"></i>
+                    <p>Sube el archivo que recibirán tus clientes</p>
+                    <button type="button" class="btn-secondary">Seleccionar Archivo</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="button-text">Texto del Botón de Acción</label>
+                <input type="text" id="button-text" placeholder="Comprar ahora" value="Comprar ahora">
+              </div>
+            </div>
+
+            <!-- Paso 3: Configuración específica por tipo -->
+            <div class="form-step" data-step="3">
+              <div id="specific-config">
+                <!-- El contenido se cargará dinámicamente según el tipo de producto -->
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="prev-step-btn" onclick="previousStep()" style="display: none;">
+            <i data-lucide="arrow-left"></i>
+            Anterior
+          </button>
+          <div class="actions-right">
+            <button type="button" class="btn-secondary" onclick="closeProductForm()">
+              Cancelar
+            </button>
+            <button type="button" class="btn-primary" id="next-step-btn" onclick="nextStep()">
+              Siguiente
+              <i data-lucide="arrow-right"></i>
+            </button>
+            <button type="button" class="btn-primary" id="save-product-btn" onclick="saveProduct()" style="display: none;">
+              <i data-lucide="save"></i>
+              Guardar Producto
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/main.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/preview.js"></script>
+  
+  <script>
+    // Initialize Lucide icons
+    document.addEventListener('DOMContentLoaded', function() {
+      lucide.createIcons();
+    });
+  </script>
+</body>
 </html>
