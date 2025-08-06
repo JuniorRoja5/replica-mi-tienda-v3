@@ -5017,7 +5017,7 @@ function copyPublicLink() {
         
         // Copy to clipboard
         navigator.clipboard.writeText(linkInput.value).then(() => {
-            showToast('¡Enlace copiado al portapapeles!', 'success');
+            showToast('Link copied to clipboard!', 'success');
             
             // Efecto visual temporal
             linkInput.style.background = '#DEF7EC';
