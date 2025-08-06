@@ -1798,6 +1798,257 @@
         </div>
     </div>
 
+    <!-- Overlay para Curso Digital -->
+    <div class="profile-overlay" id="courseFormOverlay" style="display: none;">
+        <div class="overlay-header">
+            <h3 id="courseFormTitle">Crear Curso Digital</h3>
+            <button class="btn-close-overlay" onclick="closeCourseFormOverlay()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        
+        <!-- Navegación de tabs para curso -->
+        <div style="padding: 0 2rem; border-bottom: 1px solid #dee2e6; background: white; position: sticky; top: 80px; z-index: 5;">
+            <ul class="nav nav-tabs" id="courseTabs" role="tablist" style="border-bottom: none; margin: 0;">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="datos-course-tab" data-tab="datos" type="button" role="tab">
+                        <span class="tab-number">1.</span> Datos
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="contenido-course-tab" data-tab="contenido" type="button" role="tab">
+                        <span class="tab-number">2.</span> Contenido y Precio
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="curso-course-tab" data-tab="curso" type="button" role="tab">
+                        <span class="tab-number">3.</span> Curso
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="opciones-course-tab" data-tab="opciones" type="button" role="tab">
+                        <span class="tab-number">4.</span> Opciones
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="overlay-content">
+            <!-- Tab 1: Datos -->
+            <div class="course-tab-content-panel active" id="datos-course-panel">
+                <div class="mb-4">
+                    <h5 class="mb-3">Datos básicos del curso</h5>
+                    <p class="text-muted">Información principal que verán tus estudiantes</p>
+                </div>
+
+                <!-- Imagen del Curso -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Imagen del Curso</label>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="product-image-preview" id="courseImagePreview">
+                            <div class="course-image-placeholder">
+                                <i class="bi bi-mortarboard"></i>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column gap-2">
+                            <input type="file" id="courseImageInput" accept="image/*" style="display: none;">
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="document.getElementById('courseImageInput').click()">
+                                <i class="bi bi-upload"></i> Subir Imagen
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-search"></i> Buscar Imagen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Título del Curso -->
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label for="courseTitle" class="form-label fw-bold">Título del Curso</label>
+                        <small class="text-muted"><span id="courseTitleCounter">0</span>/50</small>
+                    </div>
+                    <input type="text" class="form-control" id="courseTitle" maxlength="50" 
+                           placeholder="Ej: Curso Completo de Marketing Digital">
+                </div>
+
+                <!-- Subtítulo del Curso -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label for="courseSubtitle" class="form-label fw-bold">Subtítulo del Curso</label>
+                        <small class="text-muted"><span id="courseSubtitleCounter">0</span>/100</small>
+                    </div>
+                    <textarea class="form-control" id="courseSubtitle" rows="2" maxlength="100" 
+                              placeholder="Un curso completo que te enseñará todo lo que necesitas saber"></textarea>
+                </div>
+            </div>
+
+            <!-- Tab 2: Contenido y Precio -->
+            <div class="course-tab-content-panel" id="contenido-course-panel" style="display: none;">
+                <div class="mb-4">
+                    <h5 class="mb-3">Contenido y Precio</h5>
+                    <p class="text-muted">Define el contenido y precio de tu curso</p>
+                </div>
+
+                <!-- Descripción del Curso -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label for="courseDescription" class="form-label fw-bold">Descripción</label>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="generateCourseAIDescription()">
+                            <i class="bi bi-stars"></i> Generar con IA
+                        </button>
+                    </div>
+                    <textarea class="form-control" id="courseDescription" rows="6" 
+                              placeholder="Este curso te enseñará todo lo que necesitas saber para alcanzar tus metas. Es la guía ideal si estás buscando:&#10;- Alcanzar tus sueños&#10;- Encontrar propósito en tu trabajo&#10;- Mejorar tus finanzas&#10;- Ser más feliz"></textarea>
+                </div>
+
+                <!-- Precio -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label for="coursePrice" class="form-label fw-bold">Precio ($)</label>
+                        <input type="number" class="form-control" id="coursePrice" min="0" step="0.01" 
+                               placeholder="0.00">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check form-switch mt-4">
+                            <input class="form-check-input" type="checkbox" id="courseHasDiscount">
+                            <label class="form-check-label" for="courseHasDiscount">
+                                <strong>Precio con descuento</strong>
+                            </label>
+                        </div>
+                        <input type="number" class="form-control mt-2" id="courseDiscountPrice" min="0" step="0.01" 
+                               placeholder="Precio con descuento" style="display: none;">
+                    </div>
+                </div>
+
+                <!-- Reseñas -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label class="form-label fw-bold">Reseñas de Estudiantes</label>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="addCourseReview()">
+                            <i class="bi bi-plus"></i> Agregar Reseña
+                        </button>
+                    </div>
+                    <div id="courseReviewsList">
+                        <div class="text-muted text-center py-3">
+                            <i class="bi bi-star display-6"></i>
+                            <p>No hay reseñas aún. Agrega algunas para aumentar la confianza.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Curso (ÚNICO DE CURSO DIGITAL) -->
+            <div class="course-tab-content-panel" id="curso-course-panel" style="display: none;">
+                <div class="mb-4">
+                    <h5 class="mb-3">Contenido del Curso</h5>
+                    <p class="text-muted">Define la página del curso y estructura de módulos/lecciones</p>
+                </div>
+
+                <!-- Configuración de la Página del Curso -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-browser-chrome me-2"></i>Página del Curso</h6>
+                    </div>
+                    <div class="card-body">
+                        <!-- Imagen de Cabecera del Curso -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Imagen de Cabecera</label>
+                            <p class="text-muted small">Esta imagen se mostrará en la página principal del curso</p>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="course-header-image-preview" id="courseHeaderImagePreview" 
+                                     style="width: 120px; height: 70px; border: 2px dashed #dee2e6; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f8f9fa;">
+                                    <i class="bi bi-image text-muted"></i>
+                                </div>
+                                <div class="d-flex flex-column gap-2">
+                                    <input type="file" id="courseHeaderImageInput" accept="image/*" style="display: none;">
+                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="document.getElementById('courseHeaderImageInput').click()">
+                                        <i class="bi bi-upload"></i> Subir Imagen
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm">
+                                        <i class="bi bi-search"></i> Buscar Imagen
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Título de la Página del Curso -->
+                        <div class="mb-3">
+                            <label for="courseContentTitle" class="form-label fw-bold">Título de la Página del Curso</label>
+                            <input type="text" class="form-control" id="courseContentTitle" 
+                                   placeholder="Ej: Domine el arte del trading desde cero">
+                        </div>
+
+                        <!-- Descripción de la Página del Curso -->
+                        <div class="mb-3">
+                            <label for="courseContentDescription" class="form-label fw-bold">Descripción de la Página del Curso</label>
+                            <textarea class="form-control" id="courseContentDescription" rows="3"
+                                      placeholder="Ej: En este curso aprenderás paso a paso los fundamentos, estrategias y herramientas necesarias para convertirte en un trader rentable."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Módulos y Lecciones -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0"><i class="bi bi-collection me-2"></i>Módulos y Lecciones</h6>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="addCourseModule()">
+                                <i class="bi bi-plus"></i> Añadir Módulo
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="courseModulesList">
+                            <!-- Se renderizará dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Opciones -->
+            <div class="course-tab-content-panel" id="opciones-course-panel" style="display: none;">
+                <div class="mb-4">
+                    <h5 class="mb-3">Opciones del Curso</h5>
+                    <p class="text-muted">Configuraciones adicionales</p>
+                </div>
+
+                <!-- Texto del Botón de Acción -->
+                <div class="mb-4">
+                    <label for="courseButtonText" class="form-label fw-bold">Texto del Botón de Acción</label>
+                    <input type="text" class="form-control" id="courseButtonText" 
+                           placeholder="Empezar curso" value="Empezar curso">
+                </div>
+
+                <!-- Estado Activo -->
+                <div class="mb-4">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="courseIsActive" checked>
+                        <label class="form-check-label" for="courseIsActive">
+                            <strong>Curso está activo</strong>
+                        </label>
+                    </div>
+                    <small class="form-text text-muted">Los cursos inactivos no serán visibles para los estudiantes</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navegación entre tabs -->
+        <div class="overlay-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeCourseFormOverlay()">
+                Cancelar
+            </button>
+            <button type="button" class="btn btn-outline-secondary" id="prevCourseTabBtn" onclick="previousCourseTab()" style="display: none;">
+                <i class="bi bi-arrow-left"></i> Anterior
+            </button>
+            <button type="button" class="btn btn-primary" id="nextCourseTabBtn" onclick="nextCourseTab()">
+                Siguiente <i class="bi bi-arrow-right"></i>
+            </button>
+            <button type="button" class="btn btn-success" id="createCourseBtn" onclick="createCourse()" style="display: none;">
+                <i class="bi bi-check-circle"></i> Crear Curso
+            </button>
+        </div>
+    </div>
     <!-- Modal de Compra -->
     <div class="modal fade" id="purchaseModal" tabindex="-1" style="display: none;">
         <div class="modal-dialog modal-lg modal-dialog-centered">
