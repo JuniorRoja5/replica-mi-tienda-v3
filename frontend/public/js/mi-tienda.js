@@ -5004,7 +5004,7 @@ window.testOverlay = function() {
 // Initialize application and clean state
 console.log('My Store application loaded');
 console.log('Using HTML + CSS + JS vanilla (compatible with Laravel Blade + Bootstrap)');
-console.log('Estado inicial:', appState);
+console.log('Initial state:', appState);
 
 // Función para copiar el enlace público
 function copyPublicLink() {
