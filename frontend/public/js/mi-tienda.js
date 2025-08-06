@@ -979,7 +979,7 @@ function resetProductForm() {
     document.getElementById('titleCounter').textContent = '0';
     document.getElementById('subtitleCounter').textContent = '0';
     
-    // Resetear reseñas
+    // Reset reviews
     document.getElementById('reviewsList').innerHTML = `
         <div class="text-muted text-center py-3">
             <i class="bi bi-star display-6"></i>
