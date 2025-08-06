@@ -791,7 +791,7 @@ let consultationFormData = {
         { id: 'name', label: 'Nombre completo', type: 'text', required: true },
         { id: 'email', label: 'Correo electrónico', type: 'email', required: true }
     ],
-    // CONFIGURACIONES ESPECÍFICAS DE CONSULTORÍA
+    // CONSULTATION-SPECIFIC CONFIGURATIONS
     availability_settings: {
         call_method: 'google_meet', // google_meet, zoom, custom
         custom_call_link: '',
