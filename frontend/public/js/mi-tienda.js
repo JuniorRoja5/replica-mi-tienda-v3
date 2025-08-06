@@ -1392,27 +1392,42 @@ function createProduct() {
     showToast('¡Producto creado correctamente!', 'success');
 }
 
-function createProductFromForm() {
-    return {
-        id: Date.now(),
-        type: 'product',
-        title: productFormData.title.trim(),
-        subtitle: productFormData.subtitle.trim(),
-        description: productFormData.description.trim(),
-        price: parseFloat(productFormData.price) || 0,
-        discount_price: productFormData.has_discount ? (parseFloat(productFormData.discount_price) || 0) : 0,
-        has_discount: productFormData.has_discount,
-        image_url: productFormData.image_url,
-        file_url: productFormData.file_url,
-        button_text: productFormData.button_text,
-        is_active: productFormData.is_active,
-        reviews: [...productFormData.reviews],
-        custom_fields: [...productFormData.custom_fields],
-        status: productFormData.is_active ? 'active' : 'inactive',
-        sales: 0,
-        sort_order: appState.products.length + 1,
-        created_at: new Date().toISOString()
-    };
+// Función global para manejar compras desde el preview
+window.handleProductPurchase = function() {
+    if (productFormData && productFormData.title) {
+        const product = productFormData;
+        showPurchaseModal(product);
+    }
+};
+
+// Mostrar modal de compra (placeholder para futura integración con Stripe)
+function showPurchaseModal(product) {
+    // TODO: Integrar con Stripe Embedded Checkout
+    // En Laravel backend, esto se manejará con:
+    // 1. API para crear sesión de Stripe
+    // 2. Modal embebido con Stripe Elements
+    // 3. Webhook para confirmar pago
+    // 4. Animación de confeti tras éxito
+    
+    const displayPrice = product.has_discount && product.discount_price > 0 
+        ? product.discount_price 
+        : product.price;
+    
+    const message = `¡Funcionalidad de compra!
+    
+Producto: ${product.title}
+Precio: $${displayPrice}
+
+En producción con Laravel + Stripe:
+✅ Modal de pago embebido
+✅ Procesamiento seguro 
+✅ Animación de confeti
+✅ Descarga automática`;
+
+    alert(message);
+    
+    // Simulación de éxito (reemplazar con lógica real de Stripe)
+    // showConfettiAnimation();
 }
 
 function showLinkFormModal() {
