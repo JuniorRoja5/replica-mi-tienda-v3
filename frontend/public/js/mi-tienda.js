@@ -622,7 +622,7 @@ function setupOverlayListeners() {
         updatePreview();
     };
     
-    // Bio - actualización en tiempo real
+    // Bio - real-time update
     const handleBioChange = function() {
         appState.profile.bio = this.value;
         bioCounter.textContent = this.value.length;
