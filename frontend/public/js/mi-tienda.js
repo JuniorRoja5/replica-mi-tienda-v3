@@ -2447,7 +2447,7 @@ function showConsultationTab(tabName) {
     });
     document.getElementById(`consultation-${tabName}-panel`).style.display = 'block';
     
-    // Actualizar botones de navegación
+    // Update navigation buttons
     updateConsultationTabNavigation();
 }
 
