@@ -394,13 +394,20 @@ function handleProductClick(productId, productType) {
     const product = appState.products.find(p => p.id === productId);
     if (!product) return;
     
+    console.log('Product clicked:', product);
+    
     if (productType === 'link') {
         // Open link in new tab
-        window.open(product.url, '_blank');
+        if (product.url) {
+            window.open(product.url, '_blank');
+        }
     } else if (productType === 'product') {
-        // Handle product click - could open a modal, redirect, etc.
-        console.log('Product clicked:', product);
-        showToast(`Clicked on product: ${product.title}`, 'info');
+        // Navigate to sales page for digital products
+        const username = appState.profile.username || 'user';
+        const productUrl = `public-product.html?p=${product.id}&u=${username}`;
+        
+        // NOTA: En Laravel backend, esto sería una ruta como /products/{slug} o /p/{id}
+        window.open(productUrl, '_blank');
     }
 }
 
