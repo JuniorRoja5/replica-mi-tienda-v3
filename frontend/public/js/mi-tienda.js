@@ -2435,7 +2435,7 @@ function resetConsultationForm() {
 function showConsultationTab(tabName) {
     currentProductTab = tabName;
     
-    // Actualizar navegación de tabs
+    // Update tab navigation
     document.querySelectorAll('#consultationTabs .nav-link').forEach(tab => {
         tab.classList.remove('active');
     });
