@@ -283,19 +283,34 @@ function updatePreview() {
                     <div class="preview-product">
                         <div class="preview-product-content">
                             <div class="preview-product-icon ${product.type}">
-                                ${product.image_url && product.type === 'link' ? 
-                                    `<img src="${product.image_url}" alt="${product.title}" style="width: 100%; height: 100%; object-fit: contain; border-radius: 0.5rem;">` :
+                                ${product.image_url && (product.type === 'link' || product.type === 'product') ? 
+                                    `<img src="${product.image_url}" alt="${product.title}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0.5rem;">` :
                                     `<i class="bi bi-${getProductIcon(product.type)}"></i>`
                                 }
                             </div>
                             <div class="preview-product-info">
                                 <h4>${truncateText(product.title, 35)}</h4>
-                                ${product.description && product.type !== 'link' ? `<p>${truncateText(product.description, 50)}</p>` : ''}
+                                ${product.subtitle && product.type === 'product' ? `<p style="font-size: 0.75rem; color: #a0aec0; margin: 0.2rem 0;">${truncateText(product.subtitle, 40)}</p>` : ''}
+                                ${product.description && product.type !== 'link' ? `<p style="margin-top: 0.25rem;">${truncateText(product.description, 45)}</p>` : ''}
                             </div>
                             ${product.type !== 'link' && product.price > 0 ? `
-                                <div class="preview-product-price">$${product.price}</div>
+                                <div class="preview-product-price">
+                                    ${product.has_discount && product.discount_price > 0 ? 
+                                        `<div style="text-decoration: line-through; font-size: 0.8rem; color: #a0aec0;">$${product.price}</div>
+                                         <div style="color: #48bb78;">$${product.discount_price}</div>` :
+                                        `$${product.price}`
+                                    }
+                                </div>
                             ` : ''}
                         </div>
+                        ${product.reviews && product.reviews.length > 0 ? `
+                            <div style="margin-top: 0.5rem; display: flex; align-items: center; gap: 0.25rem;">
+                                <div style="color: #ffc107; font-size: 0.75rem;">
+                                    ${Array.from({length: 5}, (_, i) => `<i class="bi bi-star${i < Math.round(product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length) ? '-fill' : ''}"></i>`).join('')}
+                                </div>
+                                <span style="font-size: 0.75rem; color: #a0aec0;">(${product.reviews.length})</span>
+                            </div>
+                        ` : ''}
                     </div>
                 `).join('')}
             </div>
