@@ -4956,3 +4956,43 @@ window.testOverlay = function() {
 console.log('Aplicación Mi Tienda cargada');
 console.log('Usando HTML + CSS + JS vanilla (compatible con Laravel Blade + Bootstrap)');
 console.log('Estado inicial:', appState);
+
+// Función para copiar el enlace público
+function copyPublicLink() {
+    const linkInput = document.getElementById('publicLinkInput');
+    
+    try {
+        // Seleccionar el texto
+        linkInput.select();
+        linkInput.setSelectionRange(0, 99999); // Para dispositivos móviles
+        
+        // Copiar al portapapeles
+        navigator.clipboard.writeText(linkInput.value).then(() => {
+            showToast('¡Enlace copiado al portapapeles!', 'success');
+            
+            // Efecto visual temporal
+            linkInput.style.background = '#DEF7EC';
+            linkInput.style.borderColor = '#10B981';
+            setTimeout(() => {
+                linkInput.style.background = '#F9FAFB';
+                linkInput.style.borderColor = '#E5E7EB';
+            }, 1000);
+        }).catch(() => {
+            // Fallback para navegadores antiguos
+            document.execCommand('copy');
+            showToast('¡Enlace copiado!', 'success');
+        });
+    } catch (err) {
+        // Fallback adicional
+        showToast('Por favor, selecciona y copia el enlace manualmente', 'info');
+    }
+}
+
+// Actualizar el enlace público cuando cambie el username
+function updatePublicLink() {
+    const username = document.getElementById('profileUsername').textContent.replace('@', '');
+    const publicLinkInput = document.getElementById('publicLinkInput');
+    if (publicLinkInput) {
+        publicLinkInput.value = `https://clickmy.link/u/${username}`;
+    }
+}
