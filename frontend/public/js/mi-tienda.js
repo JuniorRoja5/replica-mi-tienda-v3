@@ -5019,7 +5019,7 @@ function copyPublicLink() {
         navigator.clipboard.writeText(linkInput.value).then(() => {
             showToast('Link copied to clipboard!', 'success');
             
-            // Efecto visual temporal
+            // Temporary visual effect
             linkInput.style.background = '#DEF7EC';
             linkInput.style.borderColor = '#10B981';
             setTimeout(() => {
