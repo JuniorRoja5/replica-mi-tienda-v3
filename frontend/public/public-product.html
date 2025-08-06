@@ -448,8 +448,9 @@
             document.getElementById('productContainer').style.display = 'block';
 
             // Set page title
-            document.getElementById('pageTitle').textContent = productData.title;
-            document.title = productData.title;
+            const pageTitle = productData.type === 'consultation' ? productData.title + ' - Consultoría' : productData.title;
+            document.getElementById('pageTitle').textContent = pageTitle;
+            document.title = pageTitle;
 
             // Back button
             const username = profileData.username || 'user';
