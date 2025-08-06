@@ -4256,6 +4256,585 @@ function createCourseFromForm() {
 
 // ============== FIN FUNCIONES PARA CURSO DIGITAL ==============
 
+// ============== FUNCIONES PRINCIPALES PARA MEMBRESÍA RECURRENTE ==============
+
+// Variables globales para membresía
+let currentMembershipTab = 'datos';
+
+function showMembershipFormOverlay() {
+    // Resetear formulario
+    resetMembershipForm();
+    
+    // Mostrar el overlay
+    document.getElementById('membershipFormOverlay').style.display = 'block';
+    
+    // Configurar tab inicial
+    currentMembershipTab = 'datos';
+    showMembershipTab('datos');
+    
+    // Configurar event listeners
+    setupMembershipFormListeners();
+    
+    // Activar preview inmediatamente
+    updatePreviewWithMembership();
+}
+
+function closeMembershipFormOverlay() {
+    document.getElementById('membershipFormOverlay').style.display = 'none';
+    removeMembershipFormListeners();
+    
+    // Limpiar datos temporales de preview
+    localStorage.removeItem('tempMembershipPreview');
+    
+    // Volver al preview normal del perfil
+    updatePreview();
+}
+
+function resetMembershipForm() {
+    membershipFormData = {
+        title: '',
+        subtitle: '',
+        description: '',
+        price: '',
+        discount_price: '',
+        has_discount: false,
+        image_url: '',
+        button_text: 'Subscribirse',
+        is_active: true,
+        reviews: [],
+        custom_fields: [
+            { id: 'name', label: 'Nombre completo', type: 'text', required: true },
+            { id: 'email', label: 'Correo electrónico', type: 'email', required: true }
+        ],
+        billing_settings: {
+            frequency: 'monthly',
+            has_end_date: false,
+            end_after_months: 12
+        }
+    };
+    
+    // Limpiar formularios
+    document.getElementById('membershipTitle').value = '';
+    document.getElementById('membershipSubtitle').value = '';
+    document.getElementById('membershipDescription').value = '';
+    document.getElementById('membershipPrice').value = '';
+    document.getElementById('membershipDiscountPrice').value = '';
+    document.getElementById('membershipHasDiscount').checked = false;
+    document.getElementById('membershipButtonText').value = 'Subscribirse';
+    document.getElementById('membershipIsActive').checked = true;
+    
+    // Billing settings
+    document.getElementById('membershipFrequency').value = 'monthly';
+    document.getElementById('membershipHasEndDate').checked = false;
+    document.getElementById('membershipEndAfterMonths').value = '12';
+    
+    // Resetear imagen
+    document.getElementById('membershipImagePreview').innerHTML = `
+        <div class="product-image-placeholder">
+            <i class="bi bi-crown"></i>
+        </div>
+    `;
+    
+    // Resetear contadores
+    document.getElementById('membershipTitleCounter').textContent = '0';
+    document.getElementById('membershipSubtitleCounter').textContent = '0';
+    
+    // Resetear reseñas
+    document.getElementById('membershipReviewsList').innerHTML = `
+        <div class="text-muted text-center py-3">
+            <i class="bi bi-star display-6"></i>
+            <p>No hay reseñas aún. Agrega algunas para aumentar la confianza.</p>
+        </div>
+    `;
+}
+
+function setupMembershipFormListeners() {
+    // Títulos con actualización en tiempo real
+    const titleInput = document.getElementById('membershipTitle');
+    const subtitleInput = document.getElementById('membershipSubtitle');
+    const descriptionInput = document.getElementById('membershipDescription');
+    const priceInput = document.getElementById('membershipPrice');
+    const discountPriceInput = document.getElementById('membershipDiscountPrice');
+    const hasDiscountInput = document.getElementById('membershipHasDiscount');
+    const buttonTextInput = document.getElementById('membershipButtonText');
+    const isActiveInput = document.getElementById('membershipIsActive');
+    
+    // Billing settings inputs
+    const frequencyInput = document.getElementById('membershipFrequency');
+    const hasEndDateInput = document.getElementById('membershipHasEndDate');
+    const endAfterMonthsInput = document.getElementById('membershipEndAfterMonths');
+    
+    // Event listeners para actualización en tiempo real
+    titleInput.addEventListener('input', function() {
+        membershipFormData.title = this.value;
+        document.getElementById('membershipTitleCounter').textContent = this.value.length;
+        updatePreviewWithMembership();
+    });
+    
+    subtitleInput.addEventListener('input', function() {
+        membershipFormData.subtitle = this.value;
+        document.getElementById('membershipSubtitleCounter').textContent = this.value.length;
+        updatePreviewWithMembership();
+    });
+    
+    descriptionInput.addEventListener('input', function() {
+        membershipFormData.description = this.value;
+        updatePreviewWithMembership();
+    });
+    
+    priceInput.addEventListener('input', function() {
+        membershipFormData.price = this.value;
+        updatePreviewWithMembership();
+    });
+    
+    discountPriceInput.addEventListener('input', function() {
+        membershipFormData.discount_price = this.value;
+        updatePreviewWithMembership();
+    });
+    
+    hasDiscountInput.addEventListener('change', function() {
+        membershipFormData.has_discount = this.checked;
+        document.getElementById('membershipDiscountPrice').style.display = this.checked ? 'block' : 'none';
+        updatePreviewWithMembership();
+    });
+    
+    buttonTextInput.addEventListener('input', function() {
+        membershipFormData.button_text = this.value;
+        updatePreviewWithMembership();
+    });
+    
+    isActiveInput.addEventListener('change', function() {
+        membershipFormData.is_active = this.checked;
+        updatePreviewWithMembership();
+    });
+    
+    // Billing settings listeners
+    frequencyInput.addEventListener('change', function() {
+        membershipFormData.billing_settings.frequency = this.value;
+        updatePreviewWithMembership();
+    });
+    
+    hasEndDateInput.addEventListener('change', function() {
+        membershipFormData.billing_settings.has_end_date = this.checked;
+        document.getElementById('membershipEndAfterMonths').style.display = this.checked ? 'block' : 'none';
+        updatePreviewWithMembership();
+    });
+    
+    endAfterMonthsInput.addEventListener('input', function() {
+        membershipFormData.billing_settings.end_after_months = parseInt(this.value) || 12;
+        updatePreviewWithMembership();
+    });
+    
+    // Navegación de tabs
+    document.querySelectorAll('#membershipTabs button').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabName = this.getAttribute('data-tab');
+            showMembershipTab(tabName);
+        });
+    });
+    
+    // Upload de imagen principal
+    document.getElementById('membershipImageInput').addEventListener('change', handleMembershipImageUpload);
+}
+
+function removeMembershipFormListeners() {
+    // Remover listeners si es necesario
+    const titleInput = document.getElementById('membershipTitle');
+    const subtitleInput = document.getElementById('membershipSubtitle');
+    
+    if (titleInput) {
+        const newTitleInput = titleInput.cloneNode(true);
+        titleInput.parentNode.replaceChild(newTitleInput, titleInput);
+    }
+    
+    if (subtitleInput) {
+        const newSubtitleInput = subtitleInput.cloneNode(true);
+        subtitleInput.parentNode.replaceChild(newSubtitleInput, subtitleInput);
+    }
+}
+
+function showMembershipTab(tabName) {
+    currentMembershipTab = tabName;
+    
+    // Actualizar navegación de tabs
+    document.querySelectorAll('#membershipTabs .nav-link').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.getElementById(`${tabName}-membership-tab`).classList.add('active');
+    
+    // Mostrar panel correspondiente
+    document.querySelectorAll('.membership-tab-content-panel').forEach(panel => {
+        panel.style.display = 'none';
+    });
+    document.getElementById(`${tabName}-membership-panel`).style.display = 'block';
+    
+    // Actualizar botones de navegación
+    updateMembershipTabNavigation();
+}
+
+function updateMembershipTabNavigation() {
+    const prevBtn = document.getElementById('prevMembershipTabBtn');
+    const nextBtn = document.getElementById('nextMembershipTabBtn');
+    const createBtn = document.getElementById('createMembershipBtn');
+    
+    switch(currentMembershipTab) {
+        case 'datos':
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'block';
+            createBtn.style.display = 'none';
+            break;
+        case 'contenido':
+            prevBtn.style.display = 'block';
+            nextBtn.style.display = 'block';
+            createBtn.style.display = 'none';
+            break;
+        case 'opciones':
+            prevBtn.style.display = 'block';
+            nextBtn.style.display = 'none';
+            createBtn.style.display = 'block';
+            
+            // Verificar si estamos en modo edición
+            if (membershipFormData.id) {
+                createBtn.innerHTML = '<i class="bi bi-check-circle"></i> Actualizar Membresía';
+                createBtn.onclick = function() {
+                    updateExistingMembership();
+                };
+            } else {
+                createBtn.innerHTML = '<i class="bi bi-check-circle"></i> Crear Membresía';
+                createBtn.onclick = function() {
+                    createMembership();
+                };
+            }
+            break;
+    }
+}
+
+function nextMembershipTab() {
+    switch(currentMembershipTab) {
+        case 'datos':
+            showMembershipTab('contenido');
+            break;
+        case 'contenido':
+            showMembershipTab('opciones');
+            break;
+    }
+}
+
+function previousMembershipTab() {
+    switch(currentMembershipTab) {
+        case 'contenido':
+            showMembershipTab('datos');
+            break;
+        case 'opciones':
+            showMembershipTab('contenido');
+            break;
+    }
+}
+
+function handleMembershipImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Validar que sea una imagen
+    if (!file.type.startsWith('image/')) {
+        showToast('Por favor selecciona un archivo de imagen válido', 'error');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        membershipFormData.image_url = e.target.result;
+        document.getElementById('membershipImagePreview').innerHTML = `
+            <img src="${e.target.result}" alt="Imagen de la membresía">
+        `;
+        updatePreviewWithMembership();
+        showToast('¡Imagen subida correctamente!', 'success');
+    };
+    reader.readAsDataURL(file);
+}
+
+function updatePreviewWithMembership() {
+    if (!membershipFormData || !membershipFormData.title) {
+        // Si no hay datos de membresía, mostrar preview normal
+        updatePreview();
+        return;
+    }
+
+    // Durante la edición de membresía, mostrar la página de membresía simulada en el preview
+    const previewContent = document.getElementById('previewContent');
+    if (!previewContent) {
+        console.warn('Preview content element not found');
+        return;
+    }
+    
+    const username = appState.profile.username || 'usuario';
+    const profileName = appState.profile.name || 'Tu Nombre';
+    
+    // Crear una versión temporal de la membresía para preview
+    const tempMembership = {
+        id: membershipFormData.id || 'preview',
+        type: 'membership',
+        title: membershipFormData.title || 'Nueva Membresía',
+        subtitle: membershipFormData.subtitle || '',
+        description: membershipFormData.description || '',
+        price: parseFloat(membershipFormData.price) || 0,
+        discount_price: membershipFormData.has_discount ? (parseFloat(membershipFormData.discount_price) || 0) : 0,
+        has_discount: membershipFormData.has_discount,
+        image_url: membershipFormData.image_url || '',
+        button_text: membershipFormData.button_text || 'Subscribirse',
+        is_active: membershipFormData.is_active !== false,
+        reviews: membershipFormData.reviews || [],
+        custom_fields: membershipFormData.custom_fields || [],
+        billing_settings: membershipFormData.billing_settings || {}
+    };
+    
+    // Mostrar la página de membresía en lugar del perfil general
+    const displayPrice = tempMembership.has_discount && tempMembership.discount_price > 0 
+        ? tempMembership.discount_price 
+        : tempMembership.price;
+    const originalPrice = tempMembership.has_discount && tempMembership.discount_price > 0 
+        ? tempMembership.price 
+        : null;
+    
+    // Obtener el texto de frecuencia
+    const getFrequencyText = (frequency) => {
+        const frequencies = {
+            'daily': 'diario',
+            'weekly': 'semanal', 
+            'monthly': 'mensual',
+            'quarterly': 'trimestral',
+            'semi_annually': 'semestral',
+            'annually': 'anual'
+        };
+        return frequencies[frequency] || 'mensual';
+    };
+    
+    const frequencyText = getFrequencyText(tempMembership.billing_settings.frequency);
+    
+    // HTML de la página de membresía simulada
+    previewContent.innerHTML = `
+        <div style="
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            overflow-y: auto;
+        ">
+            <!-- Header con botón de regreso -->
+            <div style="
+                position: sticky;
+                top: 0;
+                background: rgba(26, 26, 26, 0.95);
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid #333;
+                padding: 1rem;
+                z-index: 10;
+            ">
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    color: #a0a0a0;
+                    font-size: 0.95rem;
+                    cursor: pointer;
+                ">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Volver al perfil</span>
+                </div>
+            </div>
+
+            <!-- Contenido de la membresía -->
+            <div style="padding: 2rem 1.5rem; padding-bottom: 80px;">
+                <!-- Imagen de la membresía -->
+                ${tempMembership.image_url ? `
+                    <div style="width: 100%; height: 200px; border-radius: 1rem; overflow: hidden; margin-bottom: 2rem; background: #2a2a2a; display: flex; align-items: center; justify-content: center;">
+                        <img src="${tempMembership.image_url}" alt="${tempMembership.title}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                ` : `
+                    <div style="width: 100%; height: 200px; border-radius: 1rem; background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); display: flex; align-items: center; justify-content: center; margin-bottom: 2rem; color: white; font-size: 4rem;">
+                        <i class="bi bi-crown"></i>
+                    </div>
+                `}
+
+                <!-- Información de la membresía -->
+                <div style="margin-bottom: 2rem;">
+                    <h1 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2;">
+                        ${tempMembership.title}
+                    </h1>
+                    
+                    ${tempMembership.subtitle ? `
+                        <p style="font-size: 1.1rem; color: #a0a0a0; margin-bottom: 1rem; line-height: 1.4;">
+                            ${tempMembership.subtitle}
+                        </p>
+                    ` : ''}
+                    
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; color: #a0a0a0;">
+                            <i class="bi bi-arrow-repeat"></i>
+                            <span style="font-size: 0.9rem;">Facturación ${frequencyText}</span>
+                        </div>
+                        ${tempMembership.billing_settings.has_end_date ? `
+                            <div style="display: flex; align-items: center; gap: 0.5rem; color: #a0a0a0;">
+                                <i class="bi bi-calendar-check"></i>
+                                <span style="font-size: 0.9rem;">Finaliza en ${tempMembership.billing_settings.end_after_months} meses</span>
+                            </div>
+                        ` : `
+                            <div style="display: flex; align-items: center; gap: 0.5rem; color: #a0a0a0;">
+                                <i class="bi bi-infinity"></i>
+                                <span style="font-size: 0.9rem;">Sin límite de tiempo</span>
+                            </div>
+                        `}
+                    </div>
+                </div>
+
+                <!-- Precio -->
+                ${tempMembership.price > 0 ? `
+                    <div style="margin-bottom: 2rem;">
+                        <span style="font-size: 2rem; font-weight: 700; color: #fbbf24;">
+                            $${displayPrice}
+                        </span>
+                        <span style="color: #a0a0a0; font-size: 1rem; margin-left: 0.5rem;">
+                            / ${frequencyText}
+                        </span>
+                        ${originalPrice ? `
+                            <div style="margin-top: 0.5rem;">
+                                <span style="font-size: 1.2rem; color: #666; text-decoration: line-through; margin-right: 1rem;">
+                                    $${originalPrice} / ${frequencyText}
+                                </span>
+                                <span style="background: #dc2626; color: white; font-size: 0.85rem; padding: 0.25rem 0.75rem; border-radius: 2rem; font-weight: 600;">
+                                    -${Math.round(((originalPrice - displayPrice) / originalPrice) * 100)}%
+                                </span>
+                            </div>
+                        ` : ''}
+                    </div>
+                ` : ''}
+
+                <!-- Descripción -->
+                ${tempMembership.description ? `
+                    <div style="line-height: 1.6; color: #d0d0d0; margin-bottom: 2rem; white-space: pre-line;">
+                        ${tempMembership.description}
+                    </div>
+                ` : ''}
+
+                <!-- Beneficios de membresía (simulados) -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="bi bi-star-fill" style="color: #fbbf24;"></i>
+                        ¿Qué incluye tu membresía?
+                    </h3>
+                    <div style="space-y: 0.75rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #2a2a2a; border-radius: 0.5rem; margin-bottom: 0.75rem;">
+                            <i class="bi bi-check-circle-fill" style="color: #10b981;"></i>
+                            <span>Acceso completo a todo el contenido premium</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #2a2a2a; border-radius: 0.5rem; margin-bottom: 0.75rem;">
+                            <i class="bi bi-check-circle-fill" style="color: #10b981;"></i>
+                            <span>Comunidad privada exclusiva</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #2a2a2a; border-radius: 0.5rem; margin-bottom: 0.75rem;">
+                            <i class="bi bi-check-circle-fill" style="color: #10b981;"></i>
+                            <span>Actualizaciones y contenido nuevo cada semana</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: #2a2a2a; border-radius: 0.5rem;">
+                            <i class="bi bi-check-circle-fill" style="color: #10b981;"></i>
+                            <span>Soporte prioritario y mentoría personalizada</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón de suscripción -->
+                <div style="
+                    background: rgba(26, 26, 26, 0.95);
+                    border-top: 1px solid #333;
+                    border-radius: 0.75rem;
+                    padding: 1rem;
+                    margin-top: 2rem;
+                ">
+                    <button style="
+                        width: 100%;
+                        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+                        border: none;
+                        color: white;
+                        font-size: 1rem;
+                        font-weight: 600;
+                        padding: 0.875rem;
+                        border-radius: 0.5rem;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 0.5rem;
+                    " onclick="parent.postMessage({type: 'openPurchaseModal', product: ${JSON.stringify(tempMembership).replace(/"/g, '&quot;')}}, '*')">
+                        <i class="bi bi-crown"></i>
+                        <span>${tempMembership.button_text || `Subscribirse por $${displayPrice}/${frequencyText}`}</span>
+                    </button>
+                    ${tempMembership.billing_settings.has_end_date ? `
+                        <p style="text-align: center; color: #a0a0a0; font-size: 0.85rem; margin-top: 0.75rem; margin-bottom: 0;">
+                            Se cancelará automáticamente después de ${tempMembership.billing_settings.end_after_months} meses
+                        </p>
+                    ` : `
+                        <p style="text-align: center; color: #a0a0a0; font-size: 0.85rem; margin-top: 0.75rem; margin-bottom: 0;">
+                            Cancela en cualquier momento
+                        </p>
+                    `}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function createMembership() {
+    if (!membershipFormData.title.trim()) {
+        showToast('El título es obligatorio', 'error');
+        return;
+    }
+    
+    if (!membershipFormData.price || parseFloat(membershipFormData.price) <= 0) {
+        showToast('El precio debe ser mayor a 0', 'error');
+        return;
+    }
+    
+    const newMembership = createMembershipFromForm();
+    
+    appState.products.push(newMembership);
+    saveToStorage();
+    renderProducts();
+    updatePreview();
+    
+    closeMembershipFormOverlay();
+    showToast('¡Membresía creada correctamente!', 'success');
+}
+
+function createMembershipFromForm() {
+    return {
+        id: membershipFormData.id || Date.now(),
+        type: 'membership',
+        title: membershipFormData.title.trim(),
+        subtitle: membershipFormData.subtitle.trim(),
+        description: membershipFormData.description.trim(),
+        price: parseFloat(membershipFormData.price) || 0,
+        discount_price: membershipFormData.has_discount ? (parseFloat(membershipFormData.discount_price) || 0) : 0,
+        has_discount: membershipFormData.has_discount,
+        image_url: membershipFormData.image_url,
+        button_text: membershipFormData.button_text || 'Subscribirse',
+        is_active: membershipFormData.is_active,
+        reviews: [...membershipFormData.reviews],
+        custom_fields: [...membershipFormData.custom_fields],
+        billing_settings: {
+            frequency: membershipFormData.billing_settings.frequency,
+            has_end_date: membershipFormData.billing_settings.has_end_date,
+            end_after_months: membershipFormData.billing_settings.end_after_months
+        },
+        sales: 0,
+        sort_order: appState.products.length + 1,
+        status: membershipFormData.is_active ? 'active' : 'inactive',
+        created_at: new Date().toISOString()
+    };
+}
+
+// ============== FIN FUNCIONES PARA MEMBRESÍA RECURRENTE ==============
+
 // Exportar funciones para uso en Blade (Laravel)
 window.MiTienda = {
     showProfileModal,
