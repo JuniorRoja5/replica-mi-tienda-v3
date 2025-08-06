@@ -102,38 +102,92 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: Fix the "Llamada de Consultoría" navigation so that when users click on a consultation product from the iframe preview, it navigates to the proper consultation page (similar to how digital products navigate to their sales page).
+user_problem_statement: Implement the "Curso Digital" (Digital Course) functionality following the same pattern as existing product types. The course should have 4 tabs (Datos, Contenido y Precio, Curso, Opciones) with specific course configuration including modules, lessons, and course content page setup. Navigation should work from iframe preview to course page.
 
 frontend:
-  - task: "Fix consultation navigation in handleProductClick function"
+  - task: "Add course product type support in selectDigitalProductType function"
     implemented: true
-    working: true
+    working: "needs_testing"
     file: "/app/frontend/public/js/mi-tienda.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         -working: "implemented"
         -agent: "main"
-        -comment: "Added consultation type handling to both handleProductClick and handleProductClickFromIframe functions. Now consultation products will navigate to public-product.html?c={productId}&u={username} instead of being ignored."
-        -working: true
-        -agent: "testing"
-        -comment: "TESTED SUCCESSFULLY: Consultation navigation is working correctly. JavaScript functions handleProductClick and handleProductClickFromIframe properly handle 'consultation' type products and generate correct URLs (public-product.html?c=ID&u=username). Consultation products can be created and appear in preview with telephone icons and 'CONSULTORÍA' labels."
+        -comment: "Added 'course' case to selectDigitalProductType function to call showCourseFormOverlay(). Also added courseFormData global state with course-specific structure including course_content with modules/lessons."
         
-  - task: "Update public-product.html to handle consultation products"
+  - task: "Implement course form overlay and tab navigation"
     implemented: true
-    working: true
+    working: "needs_testing"
+    file: "/app/frontend/public/js/mi-tienda.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        -working: "implemented"
+        -agent: "main"
+        -comment: "Added complete course form system: showCourseFormOverlay(), closeCourseFormOverlay(), resetCourseForm(), setupCourseFormListeners(), showCourseTab(), updateCourseTabNavigation(), nextCourseTab(), previousCourseTab(). Includes 4-tab navigation (datos, contenido, curso, opciones)."
+        
+  - task: "Implement course modules and lessons management"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/public/js/mi-tienda.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        -working: "implemented"
+        -agent: "main"
+        -comment: "Added course content management functions: addCourseModule(), removeCourseModule(), updateCourseModule(), addCourseLesson(), removeCourseLesson(), updateCourseLesson(), renderCourseModules(). Supports dynamic module/lesson creation with titles, descriptions, video URLs, and attachments."
+        
+  - task: "Add course navigation support in handleProductClick functions"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/public/js/mi-tienda.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        -working: "implemented"
+        -agent: "main"
+        -comment: "Updated both handleProductClick() and handleProductClickFromIframe() to handle 'course' type. Courses navigate to public-product.html?course={productId}&u={username}."
+        
+  - task: "Implement course preview and creation functionality"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/public/js/mi-tienda.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        -working: "implemented"
+        -agent: "main"
+        -comment: "Added updatePreviewWithCourse() function to show course preview in iframe with course modules, pricing, and course-specific UI. Added createCourse(), createCourseFromForm(), and saveAsCourseAsDraft() functions."
+        
+  - task: "Create course form HTML overlay"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/public/mi-tienda.html"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        -working: "implemented"
+        -agent: "main"
+        -comment: "Added complete courseFormOverlay HTML with 4 tabs: Datos (basic info), Contenido y Precio (content & pricing), Curso (course-specific with modules/lessons management), Opciones (additional settings). Includes all necessary form inputs and navigation."
+        
+  - task: "Update public-product.html to handle course products"
+    implemented: true
+    working: "needs_testing"
     file: "/app/frontend/public/public-product.html"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         -working: "implemented"
         -agent: "main"
-        -comment: "Modified loadProductData to accept both 'p' (product) and 'c' (consultation) URL parameters. Added type validation and updated UI elements for consultation-specific interface (calendar icon, 'Agendar llamada' text)."
-        -working: true
-        -agent: "testing"
-        -comment: "TESTED SUCCESSFULLY: public-product.html correctly handles consultation URLs (?c=ID&u=username). The loadProductData function properly detects consultation parameters, validates product types, and shows consultation-specific UI elements. URL parameter handling and type validation are working correctly."
+        -comment: "Updated loadProductData() to handle 'course' URL parameter, added type validation for courses, updated displayProduct() to show course-specific button ('Empezar curso' with play icon), and updated handlePurchase() with course enrollment functionality."
 
 metadata:
   created_by: "main_agent"
@@ -142,13 +196,18 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Add course product type support in selectDigitalProductType function"
+    - "Implement course form overlay and tab navigation"
+    - "Implement course modules and lessons management"
+    - "Add course navigation support in handleProductClick functions"
+    - "Implement course preview and creation functionality"
+    - "Create course form HTML overlay"
+    - "Update public-product.html to handle course products"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
     -agent: "main"
-    -message: "I have implemented the consultation navigation fix by updating both JavaScript files. The mi-tienda.js now properly handles 'consultation' type products in handleProductClick functions, and public-product.html can now process both product ('p') and consultation ('c') URL parameters. Need to test if clicking on consultation products in the iframe now properly navigates to the consultation booking page."
-    -agent: "testing"
-    -message: "CONSULTATION NAVIGATION TESTING COMPLETED SUCCESSFULLY! Both tasks are working correctly. The handleProductClick functions in mi-tienda.js properly generate consultation URLs (public-product.html?c=ID&u=username), and public-product.html correctly handles these URLs with proper type validation and consultation-specific UI elements. Consultation products can be created, appear in preview with correct icons, and navigation works as expected. Implementation is fully functional."
+    -message: "I have implemented the complete 'Curso Digital' functionality following the same pattern as consultation and product. The implementation includes: 1) Added courseFormData global state with course_content structure (modules/lessons), 2) Created complete course form overlay with 4 tabs in mi-tienda.html, 3) Added all necessary JavaScript functions for course management including module/lesson CRUD operations, 4) Updated navigation to handle 'course' type products, 5) Modified public-product.html to display course-specific interface. The course tab includes course page configuration (header image, title, description) and dynamic modules/lessons management. Need to test if creating courses works correctly and navigation from iframe to course page functions properly."
