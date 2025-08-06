@@ -663,6 +663,9 @@ function showProductFormOverlay() {
     
     // Configurar event listeners
     setupProductFormListeners();
+    
+    // Activar preview inmediatamente
+    updatePreviewWithProduct();
 }
 
 function closeProductFormOverlay() {
