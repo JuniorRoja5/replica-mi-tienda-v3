@@ -4954,9 +4954,3 @@ window.testOverlay = function() {
 console.log('Aplicación Mi Tienda cargada');
 console.log('Usando HTML + CSS + JS vanilla (compatible con Laravel Blade + Bootstrap)');
 console.log('Estado inicial:', appState);
-
-// Inicializar estado limpio
-document.addEventListener('DOMContentLoaded', function() {
-    initializeCleanState();
-    console.log('Estado limpio inicializado');
-});
