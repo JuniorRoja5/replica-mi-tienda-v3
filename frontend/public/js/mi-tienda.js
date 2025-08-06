@@ -1043,7 +1043,7 @@ function setupProductFormListeners() {
         updatePreviewWithProduct();
     });
     
-    // Navegación de tabs
+    // Tab navigation
     document.querySelectorAll('#productTabs button').forEach(tab => {
         tab.addEventListener('click', function() {
             const tabName = this.getAttribute('data-tab');
