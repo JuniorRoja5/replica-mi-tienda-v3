@@ -4936,6 +4936,20 @@ window.MiTienda = {
     }
 };
 
+// Función de prueba para debug
+window.testOverlay = function() {
+    console.log('Test Overlay function called');
+    const overlay = document.getElementById('productTypeOverlay');
+    if (overlay) {
+        console.log('Overlay element found');
+        overlay.style.display = 'block';
+        console.log('Overlay display set to block');
+    } else {
+        console.log('ERROR: Overlay element not found');
+        alert('ERROR: Overlay element not found');
+    }
+};
+
 // Inicializar aplicación y estado limpio
 console.log('Aplicación Mi Tienda cargada');
 console.log('Usando HTML + CSS + JS vanilla (compatible con Laravel Blade + Bootstrap)');
