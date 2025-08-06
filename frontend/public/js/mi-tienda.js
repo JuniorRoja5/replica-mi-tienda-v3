@@ -4934,5 +4934,13 @@ window.MiTienda = {
     }
 };
 
-console.log('Mi Tienda v2.1 - Listo para Laravel Blade + Bootstrap');
+// Inicializar aplicación y estado limpio
+console.log('Aplicación Mi Tienda cargada');
+console.log('Usando HTML + CSS + JS vanilla (compatible con Laravel Blade + Bootstrap)');
 console.log('Estado inicial:', appState);
+
+// Inicializar estado limpio
+document.addEventListener('DOMContentLoaded', function() {
+    initializeCleanState();
+    console.log('Estado limpio inicializado');
+});
