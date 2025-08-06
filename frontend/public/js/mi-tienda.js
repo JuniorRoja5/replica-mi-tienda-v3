@@ -115,10 +115,10 @@ function initializeApp() {
 
 // Handle purchases from public view (iframe preview)
 function handlePurchaseFromPublicView(product) {
-    // NOTA IMPORTANTE: En la implementación real con Laravel:
-    // - Este modal aparecerá en la página pública: https://dominio/u/usuario
-    // - NO en la plataforma de construcción (mi-tienda.html)
-    // - El usuario final verá el modal al hacer clic en "comprar" en la vCard pública
+    // IMPORTANT NOTE: In the real implementation with Laravel:
+    // - This modal will appear on the public page: https://domain/u/user
+    // - NOT on the builder platform (mi-tienda.html)
+    // - The end user will see the modal when clicking "buy" on the public vCard
     
     console.log('🛒 Compra desde vista pública:', product);
     showPurchaseModal(product);
