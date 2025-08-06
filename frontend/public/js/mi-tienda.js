@@ -1430,6 +1430,29 @@ En producción con Laravel + Stripe:
     // showConfettiAnimation();
 }
 
+function createProductFromForm() {
+    return {
+        id: Date.now(),
+        type: 'product',
+        title: productFormData.title.trim(),
+        subtitle: productFormData.subtitle.trim(),
+        description: productFormData.description.trim(),
+        price: parseFloat(productFormData.price) || 0,
+        discount_price: productFormData.has_discount ? (parseFloat(productFormData.discount_price) || 0) : 0,
+        has_discount: productFormData.has_discount,
+        image_url: productFormData.image_url,
+        file_url: productFormData.file_url,
+        button_text: productFormData.button_text,
+        is_active: productFormData.is_active,
+        reviews: [...productFormData.reviews],
+        custom_fields: [...productFormData.custom_fields],
+        status: productFormData.is_active ? 'active' : 'inactive',
+        sales: 0,
+        sort_order: appState.products.length + 1,
+        created_at: new Date().toISOString()
+    };
+}
+
 function showLinkFormModal() {
     // Resetear formulario
     document.getElementById('linkForm').reset();
