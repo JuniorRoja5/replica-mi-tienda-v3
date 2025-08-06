@@ -3505,6 +3505,730 @@ function generateCourseAIDescription() {
     showToast('¡Descripción generada con IA!', 'success');
 }
 
+// ============== FUNCIONES PRINCIPALES PARA CURSO DIGITAL ==============
+
+// Variables globales para curso
+let currentCourseTab = 'datos';
+
+function showCourseFormOverlay() {
+    // Resetear formulario
+    resetCourseForm();
+    
+    // Mostrar el overlay
+    document.getElementById('courseFormOverlay').style.display = 'block';
+    
+    // Configurar tab inicial
+    currentCourseTab = 'datos';
+    showCourseTab('datos');
+    
+    // Configurar event listeners
+    setupCourseFormListeners();
+    
+    // Activar preview inmediatamente
+    updatePreviewWithCourse();
+}
+
+function closeCourseFormOverlay() {
+    document.getElementById('courseFormOverlay').style.display = 'none';
+    removeCourseFormListeners();
+    
+    // Limpiar datos temporales de preview
+    localStorage.removeItem('tempCoursePreview');
+    
+    // Volver al preview normal del perfil
+    updatePreview();
+}
+
+function resetCourseForm() {
+    courseFormData = {
+        title: '',
+        subtitle: '',
+        description: '',
+        price: '',
+        discount_price: '',
+        has_discount: false,
+        image_url: '',
+        button_text: 'Empezar curso',
+        is_active: true,
+        reviews: [],
+        custom_fields: [
+            { id: 'name', label: 'Nombre completo', type: 'text', required: true },
+            { id: 'email', label: 'Correo electrónico', type: 'email', required: true }
+        ],
+        course_content: {
+            header_image_url: '',
+            title: '',
+            description: '',
+            modules: [
+                { 
+                    id: 'm_' + Date.now() + '_1', 
+                    title: 'Introducción', 
+                    lessons: [
+                        { 
+                            id: 'l_' + Date.now() + '_1', 
+                            title: 'Bienvenida al curso', 
+                            description: 'En esta lección te damos la bienvenida y explicamos cómo navegar el curso.', 
+                            video_url: '', 
+                            attachments: [] 
+                        }
+                    ] 
+                }
+            ]
+        }
+    };
+    
+    // Limpiar formularios
+    document.getElementById('courseTitle').value = '';
+    document.getElementById('courseSubtitle').value = '';
+    document.getElementById('courseDescription').value = '';
+    document.getElementById('coursePrice').value = '';
+    document.getElementById('courseDiscountPrice').value = '';
+    document.getElementById('courseHasDiscount').checked = false;
+    document.getElementById('courseButtonText').value = 'Empezar curso';
+    document.getElementById('courseIsActive').checked = true;
+    
+    // Course content
+    document.getElementById('coursePageTitle').value = '';
+    document.getElementById('coursePageDescription').value = '';
+    
+    // Resetear imagen
+    document.getElementById('courseImagePreview').innerHTML = `
+        <div class="product-image-placeholder">
+            <i class="bi bi-mortarboard"></i>
+        </div>
+    `;
+    
+    // Resetear imagen header del curso
+    document.getElementById('courseHeaderImagePreview').innerHTML = `
+        <div class="product-image-placeholder">
+            <i class="bi bi-image"></i>
+        </div>
+    `;
+    
+    // Resetear contadores
+    document.getElementById('courseTitleCounter').textContent = '0';
+    document.getElementById('courseSubtitleCounter').textContent = '0';
+    
+    // Resetear reseñas
+    document.getElementById('courseReviewsList').innerHTML = `
+        <div class="text-muted text-center py-3">
+            <i class="bi bi-star display-6"></i>
+            <p>No hay reseñas aún. Agrega algunas para aumentar la confianza.</p>
+        </div>
+    `;
+    
+    // Renderizar módulos iniciales
+    renderCourseModules();
+}
+
+function setupCourseFormListeners() {
+    // Títulos con actualización en tiempo real
+    const titleInput = document.getElementById('courseTitle');
+    const subtitleInput = document.getElementById('courseSubtitle');
+    const descriptionInput = document.getElementById('courseDescription');
+    const priceInput = document.getElementById('coursePrice');
+    const discountPriceInput = document.getElementById('courseDiscountPrice');
+    const hasDiscountInput = document.getElementById('courseHasDiscount');
+    const buttonTextInput = document.getElementById('courseButtonText');
+    const isActiveInput = document.getElementById('courseIsActive');
+    
+    // Course content inputs
+    const pageTitleInput = document.getElementById('coursePageTitle');
+    const pageDescriptionInput = document.getElementById('coursePageDescription');
+    
+    // Event listeners para actualización en tiempo real
+    titleInput.addEventListener('input', function() {
+        courseFormData.title = this.value;
+        document.getElementById('courseTitleCounter').textContent = this.value.length;
+        updatePreviewWithCourse();
+    });
+    
+    subtitleInput.addEventListener('input', function() {
+        courseFormData.subtitle = this.value;
+        document.getElementById('courseSubtitleCounter').textContent = this.value.length;
+        updatePreviewWithCourse();
+    });
+    
+    descriptionInput.addEventListener('input', function() {
+        courseFormData.description = this.value;
+        updatePreviewWithCourse();
+    });
+    
+    priceInput.addEventListener('input', function() {
+        courseFormData.price = this.value;
+        updatePreviewWithCourse();
+    });
+    
+    discountPriceInput.addEventListener('input', function() {
+        courseFormData.discount_price = this.value;
+        updatePreviewWithCourse();
+    });
+    
+    hasDiscountInput.addEventListener('change', function() {
+        courseFormData.has_discount = this.checked;
+        document.getElementById('courseDiscountPrice').style.display = this.checked ? 'block' : 'none';
+        updatePreviewWithCourse();
+    });
+    
+    buttonTextInput.addEventListener('input', function() {
+        courseFormData.button_text = this.value;
+        updatePreviewWithCourse();
+    });
+    
+    isActiveInput.addEventListener('change', function() {
+        courseFormData.is_active = this.checked;
+        updatePreviewWithCourse();
+    });
+    
+    // Course content listeners
+    pageTitleInput.addEventListener('input', function() {
+        courseFormData.course_content.title = this.value;
+        updatePreviewWithCourse();
+    });
+    
+    pageDescriptionInput.addEventListener('input', function() {
+        courseFormData.course_content.description = this.value;
+        updatePreviewWithCourse();
+    });
+    
+    // Navegación de tabs
+    document.querySelectorAll('#courseTabs button').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabName = this.getAttribute('data-tab');
+            showCourseTab(tabName);
+        });
+    });
+    
+    // Upload de imagen principal
+    document.getElementById('courseImageInput').addEventListener('change', handleCourseImageUpload);
+    
+    // Upload de imagen header
+    document.getElementById('courseHeaderImageInput').addEventListener('change', handleCourseHeaderImageUpload);
+}
+
+function removeCourseFormListeners() {
+    // Remover listeners si es necesario
+    const titleInput = document.getElementById('courseTitle');
+    const subtitleInput = document.getElementById('courseSubtitle');
+    
+    if (titleInput) {
+        const newTitleInput = titleInput.cloneNode(true);
+        titleInput.parentNode.replaceChild(newTitleInput, titleInput);
+    }
+    
+    if (subtitleInput) {
+        const newSubtitleInput = subtitleInput.cloneNode(true);
+        subtitleInput.parentNode.replaceChild(newSubtitleInput, subtitleInput);
+    }
+}
+
+function showCourseTab(tabName) {
+    currentCourseTab = tabName;
+    
+    // Actualizar navegación de tabs
+    document.querySelectorAll('#courseTabs .nav-link').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.getElementById(`${tabName}-course-tab`).classList.add('active');
+    
+    // Mostrar panel correspondiente
+    document.querySelectorAll('.course-tab-content-panel').forEach(panel => {
+        panel.style.display = 'none';
+    });
+    document.getElementById(`${tabName}-course-panel`).style.display = 'block';
+    
+    // Actualizar botones de navegación
+    updateCourseTabNavigation();
+}
+
+function updateCourseTabNavigation() {
+    const prevBtn = document.getElementById('prevCourseTabBtn');
+    const nextBtn = document.getElementById('nextCourseTabBtn');
+    const createBtn = document.getElementById('createCourseBtn');
+    
+    switch(currentCourseTab) {
+        case 'datos':
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'block';
+            createBtn.style.display = 'none';
+            break;
+        case 'contenido':
+            prevBtn.style.display = 'block';
+            nextBtn.style.display = 'block';
+            createBtn.style.display = 'none';
+            break;
+        case 'curso':
+            prevBtn.style.display = 'block';
+            nextBtn.style.display = 'block';
+            createBtn.style.display = 'none';
+            break;
+        case 'opciones':
+            prevBtn.style.display = 'block';
+            nextBtn.style.display = 'none';
+            createBtn.style.display = 'block';
+            
+            // Verificar si estamos en modo edición
+            if (courseFormData.id) {
+                createBtn.innerHTML = '<i class="bi bi-check-circle"></i> Actualizar Curso';
+                createBtn.onclick = function() {
+                    updateExistingCourse();
+                };
+            } else {
+                createBtn.innerHTML = '<i class="bi bi-check-circle"></i> Crear Curso';
+                createBtn.onclick = function() {
+                    createCourse();
+                };
+            }
+            break;
+    }
+}
+
+function nextCourseTab() {
+    switch(currentCourseTab) {
+        case 'datos':
+            showCourseTab('contenido');
+            break;
+        case 'contenido':
+            showCourseTab('curso');
+            break;
+        case 'curso':
+            showCourseTab('opciones');
+            break;
+    }
+}
+
+function previousCourseTab() {
+    switch(currentCourseTab) {
+        case 'contenido':
+            showCourseTab('datos');
+            break;
+        case 'curso':
+            showCourseTab('contenido');
+            break;
+        case 'opciones':
+            showCourseTab('curso');
+            break;
+    }
+}
+
+function handleCourseImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Validar que sea una imagen
+    if (!file.type.startsWith('image/')) {
+        showToast('Por favor selecciona un archivo de imagen válido', 'error');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        courseFormData.image_url = e.target.result;
+        document.getElementById('courseImagePreview').innerHTML = `
+            <img src="${e.target.result}" alt="Imagen del curso">
+        `;
+        updatePreviewWithCourse();
+        showToast('¡Imagen subida correctamente!', 'success');
+    };
+    reader.readAsDataURL(file);
+}
+
+function handleCourseHeaderImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Validar que sea una imagen
+    if (!file.type.startsWith('image/')) {
+        showToast('Por favor selecciona un archivo de imagen válido', 'error');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        courseFormData.course_content.header_image_url = e.target.result;
+        document.getElementById('courseHeaderImagePreview').innerHTML = `
+            <img src="${e.target.result}" alt="Imagen header del curso">
+        `;
+        updatePreviewWithCourse();
+        showToast('¡Imagen header subida correctamente!', 'success');
+    };
+    reader.readAsDataURL(file);
+}
+
+// Funciones de módulos y lecciones
+function addCourseModule() {
+    const newModule = {
+        id: 'm_' + Date.now(),
+        title: 'Nuevo módulo',
+        lessons: []
+    };
+    
+    courseFormData.course_content.modules.push(newModule);
+    renderCourseModules();
+    updatePreviewWithCourse();
+}
+
+function removeCourseModule(moduleId) {
+    courseFormData.course_content.modules = courseFormData.course_content.modules.filter(m => m.id !== moduleId);
+    renderCourseModules();
+    updatePreviewWithCourse();
+}
+
+function updateCourseModule(moduleId, field, value) {
+    const module = courseFormData.course_content.modules.find(m => m.id === moduleId);
+    if (module) {
+        module[field] = value;
+        updatePreviewWithCourse();
+    }
+}
+
+function addCourseLesson(moduleId) {
+    const module = courseFormData.course_content.modules.find(m => m.id === moduleId);
+    if (module) {
+        const newLesson = {
+            id: 'l_' + Date.now(),
+            title: 'Nueva lección',
+            description: '',
+            video_url: '',
+            attachments: []
+        };
+        
+        module.lessons.push(newLesson);
+        renderCourseModules();
+        updatePreviewWithCourse();
+    }
+}
+
+function removeCourseLesson(moduleId, lessonId) {
+    const module = courseFormData.course_content.modules.find(m => m.id === moduleId);
+    if (module) {
+        module.lessons = module.lessons.filter(l => l.id !== lessonId);
+        renderCourseModules();
+        updatePreviewWithCourse();
+    }
+}
+
+function updateCourseLesson(moduleId, lessonId, field, value) {
+    const module = courseFormData.course_content.modules.find(m => m.id === moduleId);
+    if (module) {
+        const lesson = module.lessons.find(l => l.id === lessonId);
+        if (lesson) {
+            lesson[field] = value;
+            updatePreviewWithCourse();
+        }
+    }
+}
+
+function renderCourseModules() {
+    const modulesList = document.getElementById('courseModulesList');
+    if (!modulesList) return;
+    
+    modulesList.innerHTML = courseFormData.course_content.modules.map((module, moduleIndex) => `
+        <div class="course-module-item mb-4" data-module-id="${module.id}">
+            <div class="course-module-header">
+                <div class="d-flex gap-2 align-items-center mb-3">
+                    <input type="text" class="form-control fw-semibold" 
+                           value="${module.title}" 
+                           onchange="updateCourseModule('${module.id}', 'title', this.value)"
+                           placeholder="Título del módulo">
+                    <button type="button" class="btn btn-sm btn-outline-danger" 
+                            onclick="removeCourseModule('${module.id}')">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="course-lessons-list" id="lessons-${module.id}">
+                ${module.lessons.map((lesson, lessonIndex) => `
+                    <div class="course-lesson-item p-3 border rounded mb-2" data-lesson-id="${lesson.id}">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <input type="text" class="form-control form-control-sm fw-semibold" 
+                                   value="${lesson.title}" 
+                                   onchange="updateCourseLesson('${module.id}', '${lesson.id}', 'title', this.value)"
+                                   placeholder="Título de la lección">
+                            <button type="button" class="btn btn-sm btn-outline-danger ms-2" 
+                                    onclick="removeCourseLesson('${module.id}', '${lesson.id}')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                        
+                        <textarea class="form-control form-control-sm mb-2" 
+                                  rows="2" 
+                                  placeholder="Descripción de la lección..."
+                                  onchange="updateCourseLesson('${module.id}', '${lesson.id}', 'description', this.value)">${lesson.description}</textarea>
+                        
+                        <input type="url" class="form-control form-control-sm" 
+                               value="${lesson.video_url}" 
+                               onchange="updateCourseLesson('${module.id}', '${lesson.id}', 'video_url', this.value)"
+                               placeholder="URL del video (YouTube, Vimeo, etc.)">
+                    </div>
+                `).join('')}
+                
+                <button type="button" class="btn btn-sm btn-outline-primary" 
+                        onclick="addCourseLesson('${module.id}')">
+                    <i class="bi bi-plus"></i> Agregar lección
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function updatePreviewWithCourse() {
+    if (!courseFormData || !courseFormData.title) {
+        // Si no hay datos del curso, mostrar preview normal
+        updatePreview();
+        return;
+    }
+
+    // Durante la edición del curso, mostrar la página del curso simulada en el preview
+    const previewContent = document.getElementById('previewContent');
+    if (!previewContent) {
+        console.warn('Preview content element not found');
+        return;
+    }
+    
+    const username = appState.profile.username || 'usuario';
+    const profileName = appState.profile.name || 'Tu Nombre';
+    
+    // Crear una versión temporal del curso para preview
+    const tempCourse = {
+        id: courseFormData.id || 'preview',
+        type: 'course',
+        title: courseFormData.title || 'Nuevo Curso Digital',
+        subtitle: courseFormData.subtitle || '',
+        description: courseFormData.description || '',
+        price: parseFloat(courseFormData.price) || 0,
+        discount_price: courseFormData.has_discount ? (parseFloat(courseFormData.discount_price) || 0) : 0,
+        has_discount: courseFormData.has_discount,
+        image_url: courseFormData.image_url || '',
+        button_text: courseFormData.button_text || 'Empezar curso',
+        is_active: courseFormData.is_active !== false,
+        reviews: courseFormData.reviews || [],
+        custom_fields: courseFormData.custom_fields || [],
+        course_content: courseFormData.course_content || {}
+    };
+    
+    // Mostrar la página del curso en lugar del perfil general
+    const displayPrice = tempCourse.has_discount && tempCourse.discount_price > 0 
+        ? tempCourse.discount_price 
+        : tempCourse.price;
+    const originalPrice = tempCourse.has_discount && tempCourse.discount_price > 0 
+        ? tempCourse.price 
+        : null;
+    
+    // Generar módulos del curso
+    const courseLessonsCount = tempCourse.course_content.modules 
+        ? tempCourse.course_content.modules.reduce((total, module) => total + (module.lessons ? module.lessons.length : 0), 0)
+        : 0;
+    
+    const courseModulesHTML = tempCourse.course_content.modules ? tempCourse.course_content.modules.map(module => `
+        <div style="background: #2a2a2a; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem;">
+            <h4 style="color: white; margin-bottom: 0.75rem; font-size: 1rem; font-weight: 600;">${module.title}</h4>
+            ${module.lessons ? module.lessons.map((lesson, index) => `
+                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; margin-bottom: 0.5rem; background: #1a1a1a; border-radius: 0.5rem;">
+                    <div style="background: #8b5cf6; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600;">
+                        ${index + 1}
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="color: white; font-weight: 500; font-size: 0.9rem;">${lesson.title}</div>
+                        ${lesson.description ? `<div style="color: #a0a0a0; font-size: 0.8rem; margin-top: 0.25rem;">${lesson.description}</div>` : ''}
+                    </div>
+                    <i class="bi bi-play-circle" style="color: #8b5cf6; font-size: 1.2rem;"></i>
+                </div>
+            `).join('') : ''}
+        </div>
+    `).join('') : '';
+    
+    // HTML de la página del curso simulada
+    previewContent.innerHTML = `
+        <div style="
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            overflow-y: auto;
+        ">
+            <!-- Header con botón de regreso -->
+            <div style="
+                position: sticky;
+                top: 0;
+                background: rgba(26, 26, 26, 0.95);
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid #333;
+                padding: 1rem;
+                z-index: 10;
+            ">
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    color: #a0a0a0;
+                    font-size: 0.95rem;
+                    cursor: pointer;
+                ">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Volver al perfil</span>
+                </div>
+            </div>
+
+            <!-- Contenido del curso -->
+            <div style="padding: 2rem 1.5rem; padding-bottom: 80px;">
+                <!-- Imagen del curso -->
+                ${tempCourse.image_url ? `
+                    <div style="width: 100%; height: 200px; border-radius: 1rem; overflow: hidden; margin-bottom: 2rem; background: #2a2a2a; display: flex; align-items: center; justify-content: center;">
+                        <img src="${tempCourse.image_url}" alt="${tempCourse.title}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                ` : `
+                    <div style="width: 100%; height: 200px; border-radius: 1rem; background: #2a2a2a; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem; color: #666; font-size: 3rem;">
+                        <i class="bi bi-mortarboard"></i>
+                    </div>
+                `}
+
+                <!-- Información del curso -->
+                <div style="margin-bottom: 2rem;">
+                    <h1 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2;">
+                        ${tempCourse.title}
+                    </h1>
+                    
+                    ${tempCourse.subtitle ? `
+                        <p style="font-size: 1.1rem; color: #a0a0a0; margin-bottom: 1rem; line-height: 1.4;">
+                            ${tempCourse.subtitle}
+                        </p>
+                    ` : ''}
+                    
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; color: #a0a0a0;">
+                            <i class="bi bi-collection"></i>
+                            <span style="font-size: 0.9rem;">${tempCourse.course_content.modules ? tempCourse.course_content.modules.length : 0} módulos</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; color: #a0a0a0;">
+                            <i class="bi bi-play-circle"></i>
+                            <span style="font-size: 0.9rem;">${courseLessonsCount} lecciones</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Precio -->
+                ${tempCourse.price > 0 ? `
+                    <div style="margin-bottom: 2rem;">
+                        <span style="font-size: 2rem; font-weight: 700; color: #10b981;">
+                            $${displayPrice}
+                        </span>
+                        ${originalPrice ? `
+                            <span style="font-size: 1.2rem; color: #666; text-decoration: line-through; margin-left: 1rem; vertical-align: top; margin-top: 0.5rem; display: inline-block;">
+                                $${originalPrice}
+                            </span>
+                            <span style="background: #dc2626; color: white; font-size: 0.85rem; padding: 0.25rem 0.75rem; border-radius: 2rem; font-weight: 600; margin-left: 1rem; vertical-align: top; margin-top: 0.75rem; display: inline-block;">
+                                -${Math.round(((originalPrice - displayPrice) / originalPrice) * 100)}%
+                            </span>
+                        ` : ''}
+                    </div>
+                ` : ''}
+
+                <!-- Descripción -->
+                ${tempCourse.description ? `
+                    <div style="line-height: 1.6; color: #d0d0d0; margin-bottom: 2rem; white-space: pre-line;">
+                        ${tempCourse.description}
+                    </div>
+                ` : ''}
+
+                <!-- Contenido del curso -->
+                ${courseModulesHTML ? `
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-collection" style="color: #8b5cf6;"></i>
+                            Contenido del curso
+                        </h3>
+                        ${courseModulesHTML}
+                    </div>
+                ` : ''}
+
+                <!-- Botón de compra -->
+                <div style="
+                    background: rgba(26, 26, 26, 0.95);
+                    border-top: 1px solid #333;
+                    border-radius: 0.75rem;
+                    padding: 1rem;
+                    margin-top: 2rem;
+                ">
+                    <button style="
+                        width: 100%;
+                        background: #8b5cf6;
+                        border: none;
+                        color: white;
+                        font-size: 1rem;
+                        font-weight: 600;
+                        padding: 0.875rem;
+                        border-radius: 0.5rem;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 0.5rem;
+                    " onclick="parent.postMessage({type: 'openPurchaseModal', product: ${JSON.stringify(tempCourse).replace(/"/g, '&quot;')}}, '*')">
+                        <i class="bi bi-mortarboard"></i>
+                        <span>${tempCourse.button_text || (tempCourse.price > 0 ? `Inscribirse por $${displayPrice}` : 'Empezar Gratis')}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function createCourse() {
+    if (!courseFormData.title.trim()) {
+        showToast('El título es obligatorio', 'error');
+        return;
+    }
+    
+    if (!courseFormData.price || parseFloat(courseFormData.price) <= 0) {
+        showToast('El precio debe ser mayor a 0', 'error');
+        return;
+    }
+    
+    const newCourse = createCourseFromForm();
+    
+    appState.products.push(newCourse);
+    saveToStorage();
+    renderProducts();
+    updatePreview();
+    
+    closeCourseFormOverlay();
+    showToast('¡Curso creado correctamente!', 'success');
+}
+
+function createCourseFromForm() {
+    return {
+        id: courseFormData.id || Date.now(),
+        type: 'course',
+        title: courseFormData.title.trim(),
+        subtitle: courseFormData.subtitle.trim(),
+        description: courseFormData.description.trim(),
+        price: parseFloat(courseFormData.price) || 0,
+        discount_price: courseFormData.has_discount ? (parseFloat(courseFormData.discount_price) || 0) : 0,
+        has_discount: courseFormData.has_discount,
+        image_url: courseFormData.image_url,
+        button_text: courseFormData.button_text || 'Empezar curso',
+        is_active: courseFormData.is_active,
+        reviews: [...courseFormData.reviews],
+        custom_fields: [...courseFormData.custom_fields],
+        course_content: {
+            header_image_url: courseFormData.course_content.header_image_url,
+            title: courseFormData.course_content.title,
+            description: courseFormData.course_content.description,
+            modules: courseFormData.course_content.modules.map(module => ({
+                ...module,
+                lessons: [...module.lessons]
+            }))
+        },
+        sales: 0,
+        sort_order: appState.products.length + 1,
+        status: courseFormData.is_active ? 'active' : 'inactive',
+        created_at: new Date().toISOString()
+    };
+}
+
 // ============== FIN FUNCIONES PARA CURSO DIGITAL ==============
 
 // Exportar funciones para uso en Blade (Laravel)
