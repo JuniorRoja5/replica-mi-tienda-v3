@@ -5001,7 +5001,7 @@ window.testOverlay = function() {
 };
 */
 
-// Inicializar aplicación y estado limpio
+// Initialize application and clean state
 console.log('Aplicación Mi Tienda cargada');
 console.log('Usando HTML + CSS + JS vanilla (compatible con Laravel Blade + Bootstrap)');
 console.log('Estado inicial:', appState);
