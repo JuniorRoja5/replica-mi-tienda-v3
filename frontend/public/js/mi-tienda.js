@@ -224,6 +224,11 @@ function saveToStorage() {
     }
 }
 
+/* === ACTUALIZACIÓN UI DEL PERFIL ===
+ * INTEGRACIÓN LARAVEL: Conectar con Model User
+ * Campos requeridos en DB: name, username, bio, avatar_url
+ * API endpoint: GET /api/profile  
+ */
 function updateProfileUI() {
     document.getElementById('profileName').textContent = appState.profile.name;
     document.getElementById('profileUsername').textContent = '@' + appState.profile.username;
