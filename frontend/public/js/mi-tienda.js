@@ -147,7 +147,7 @@ function handleProductClickFromIframe(productId, productType) {
         // NOTE: In Laravel backend, this will be a route like /u/{username}/course/{id} or /courses/{id}
         window.open(`public-product.html?course=${product.id}&u=${username}`, '_blank');
     } else if (productType === 'membership') {
-        // Navegar a la página de membresía
+        // Navigate to membership page
         const username = appState.profile.username || 'user';
         // NOTA: En Laravel backend, esto será una ruta como /u/{username}/membership/{id} o /memberships/{id}
         window.open(`public-product.html?membership=${product.id}&u=${username}`, '_blank');
