@@ -200,7 +200,7 @@ function saveToStorage() {
             // Limpiar datos temporales
             localStorage.removeItem('tempProductPreview');
             
-            // Intentar guardar sin imágenes grandes
+            // Try to save without large images
             try {
                 const minimalData = {
                     profile: {
