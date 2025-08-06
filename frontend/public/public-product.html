@@ -374,15 +374,16 @@
 
         function loadProductData() {
             try {
-                // Get product ID from URL parameters (supports 'p' for product, 'c' for consultation, 'course' for course)
+                // Get product ID from URL parameters (supports 'p' for product, 'c' for consultation, 'course' for course, 'membership' for membership)
                 const urlParams = new URLSearchParams(window.location.search);
-                const productId = urlParams.get('p') || urlParams.get('c') || urlParams.get('course');
+                const productId = urlParams.get('p') || urlParams.get('c') || urlParams.get('course') || urlParams.get('membership');
                 const isConsultation = !!urlParams.get('c');
                 const isCourse = !!urlParams.get('course');
+                const isMembership = !!urlParams.get('membership');
                 const username = urlParams.get('u');
                 const isPreview = urlParams.get('preview') === 'true';
 
-                const productType = isConsultation ? 'consultation' : (isCourse ? 'course' : 'product');
+                const productType = isConsultation ? 'consultation' : (isCourse ? 'course' : (isMembership ? 'membership' : 'product'));
                 console.log('Loading', productType, ':', productId, 'for user:', username, 'preview:', isPreview);
 
                 if (!productId) {
