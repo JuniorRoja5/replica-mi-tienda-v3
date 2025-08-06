@@ -668,7 +668,7 @@ function setupOverlayListeners() {
         }
     });
     
-    // Guardar referencias para poder removerlos después
+    // Save references to be able to remove them later
     nameInput._handleNameChange = handleNameChange;
     usernameInput._handleUsernameChange = handleUsernameChange;
     bioInput._handleBioChange = handleBioChange;
