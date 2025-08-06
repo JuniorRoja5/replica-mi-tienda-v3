@@ -1,32 +1,32 @@
 /* ========================================
-   MI TIENDA BUILDER - JAVASCRIPT CORE
-   Compatible con Laravel Blade + Bootstrap 5
+   MY STORE BUILDER - JAVASCRIPT CORE
+   Compatible with Laravel Blade + Bootstrap 5
    ======================================== */
 
-/* === PARA DESARROLLADOR LARAVEL === 
+/* === FOR LARAVEL DEVELOPER === 
  * 
- * INTEGRACIÓN REQUERIDA:
- * 1. Reemplazar localStorage con API calls a Laravel
- * 2. Agregar CSRF tokens para formularios  
- * 3. Modificar loadProducts() para usar Route::apiResource
- * 4. Actualizar saveProduct() para POST /api/products
- * 5. Conectar updateProfileUI() con PUT /api/profile
+ * REQUIRED INTEGRATION:
+ * 1. Replace localStorage with Laravel API calls
+ * 2. Add CSRF tokens for forms  
+ * 3. Modify loadProducts() to use Route::apiResource
+ * 4. Update saveProduct() for POST /api/products
+ * 5. Connect updateProfileUI() with PUT /api/profile
  * 
- * VARIABLES GLOBALES IMPORTANTES:
- * - appState: Estado principal de la aplicación
- * - productFormData: Datos del formulario de productos
- * - courseFormData: Datos específicos de cursos
- * - membershipFormData: Datos específicos de membresías
+ * IMPORTANT GLOBAL VARIABLES:
+ * - appState: Main application state
+ * - productFormData: Product form data
+ * - courseFormData: Course-specific data
+ * - membershipFormData: Membership-specific data
  * 
- * FUNCIONES CRÍTICAS A INTEGRAR:
- * - getCurrentUser(): Debe usar auth()->user()
- * - loadProducts(): Debe usar API /api/products  
- * - saveProduct(): Debe usar API POST con CSRF
- * - updatePreview(): Mantener como está (solo UI)
+ * CRITICAL FUNCTIONS TO INTEGRATE:
+ * - getCurrentUser(): Should use auth()->user()
+ * - loadProducts(): Should use API /api/products  
+ * - saveProduct(): Should use API POST with CSRF
+ * - updatePreview(): Keep as is (UI only)
  */
 
-// === ESTADO GLOBAL DE LA APLICACIÓN ===
-// NOTA LARAVEL: Reemplazar con datos de auth()->user() y $user->products()
+// === GLOBAL APPLICATION STATE ===
+// LARAVEL NOTE: Replace with data from auth()->user() and $user->products()
 let appState = {
     profile: {
         name: 'Trading Sharks',
