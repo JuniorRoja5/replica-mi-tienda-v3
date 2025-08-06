@@ -5003,7 +5003,7 @@ window.testOverlay = function() {
 
 // Initialize application and clean state
 console.log('My Store application loaded');
-console.log('Usando HTML + CSS + JS vanilla (compatible con Laravel Blade + Bootstrap)');
+console.log('Using HTML + CSS + JS vanilla (compatible with Laravel Blade + Bootstrap)');
 console.log('Estado inicial:', appState);
 
 // Función para copiar el enlace público
