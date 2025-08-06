@@ -120,7 +120,7 @@ mkdir -p public/css
 <script src="{{ asset('js/builder/mi-tienda.js') }}"></script>
 ```
 
-### **PASO 3: Crear Route**
+### **PASO 4: Crear Route**
 ```php
 // routes/web.php
 Route::get('/mi-tienda', function() {
@@ -128,7 +128,7 @@ Route::get('/mi-tienda', function() {
 })->middleware('auth');
 ```
 
-### **PASO 4: Verificar**
+### **PASO 5: Verificar**
 ```bash
 # Acceder a: http://tu-dominio/mi-tienda
 # Debe mostrar el builder funcionando
