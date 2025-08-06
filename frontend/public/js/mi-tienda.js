@@ -4674,7 +4674,7 @@ function updatePreviewWithMembership() {
     
     const frequencyText = getFrequencyText(tempMembership.billing_settings.frequency);
     
-    // HTML de la página de membresía simulada
+    // HTML for simulated membership page
     previewContent.innerHTML = `
         <div style="
             background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
