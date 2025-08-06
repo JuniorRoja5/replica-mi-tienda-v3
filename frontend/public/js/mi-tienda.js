@@ -108,6 +108,11 @@ function handleProductClickFromIframe(productId, productType) {
         // Navegar a la página de ventas del producto
         const username = appState.profile.username || 'user';
         window.open(`public-product.html?p=${product.id}&u=${username}`, '_blank');
+    } else if (productType === 'consultation') {
+        // Navegar a la página de consultoría (agendamiento)
+        const username = appState.profile.username || 'user';
+        // NOTA: En Laravel backend, esto será una ruta como /u/{username}/c/{id} o /consultation/{id}
+        window.open(`public-product.html?c=${product.id}&u=${username}`, '_blank');
     }
 }
 
