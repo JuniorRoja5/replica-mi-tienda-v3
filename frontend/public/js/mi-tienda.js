@@ -885,7 +885,7 @@ let membershipFormData = {
 };
 
 function selectDigitalProductType(productType) {
-    // Cerrar la vista superpuesta de selección de tipo
+    // Close type selection overlay
     closeProductTypeOverlay();
     
     // Mostrar el formulario específico según el tipo
