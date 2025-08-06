@@ -4618,7 +4618,7 @@ function handleMembershipImageUpload(event) {
 
 function updatePreviewWithMembership() {
     if (!membershipFormData || !membershipFormData.title) {
-        // Si no hay datos de membresía, mostrar preview normal
+        // If there's no membership data, show normal preview
         updatePreview();
         return;
     }
