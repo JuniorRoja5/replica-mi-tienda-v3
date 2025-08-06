@@ -2547,7 +2547,7 @@ function setupConsultationFormListeners() {
         updatePreviewWithConsultation();
     });
     
-    // Navegación de tabs
+    // Tab navigation
     document.querySelectorAll('#consultationTabs button').forEach(tab => {
         tab.addEventListener('click', function() {
             const tabName = this.getAttribute('data-tab');
