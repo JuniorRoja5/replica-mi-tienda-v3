@@ -77,6 +77,10 @@ function initializeApp() {
     window.addEventListener('message', function(event) {
         if (event.data.type === 'productClick') {
             handleProductClickFromIframe(event.data.productId, event.data.productType);
+        } else if (event.data.type === 'openPurchaseModal') {
+            // El usuario final hace clic en "comprar" desde el preview (vista pública)
+            // Esto simula lo que pasaría en https://dominio/u/usuario
+            handlePurchaseFromPublicView(event.data.product);
         }
     });
 }
