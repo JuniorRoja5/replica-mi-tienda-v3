@@ -615,7 +615,7 @@ function setupOverlayListeners() {
         updatePreview();
     };
     
-    // Username - actualización en tiempo real
+    // Username - real-time update
     const handleUsernameChange = function() {
         appState.profile.username = this.value;
         updateProfileUI();
