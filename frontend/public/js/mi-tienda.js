@@ -4425,7 +4425,7 @@ function setupMembershipFormListeners() {
     const hasEndDateInput = document.getElementById('membershipHasEndDate');
     const endAfterMonthsInput = document.getElementById('membershipEndAfterMonths');
     
-    // Event listeners para actualización en tiempo real
+    // Event listeners for real-time update
     titleInput.addEventListener('input', function() {
         membershipFormData.title = this.value;
         document.getElementById('membershipTitleCounter').textContent = this.value.length;
