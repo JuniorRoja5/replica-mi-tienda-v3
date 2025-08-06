@@ -812,7 +812,7 @@ let consultationFormData = {
     }
 };
 
-// Estado específico para curso digital (nuevo)
+// Specific state for digital course (new)
 let courseFormData = {
     title: '',
     subtitle: '',
