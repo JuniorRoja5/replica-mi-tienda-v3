@@ -493,10 +493,23 @@
                 const originalPriceEl = document.getElementById('originalPrice');
                 const discountBadge = document.getElementById('discountBadge');
 
+                let frequencyText = '';
+                if (productData.type === 'membership' && productData.billing_settings) {
+                    const frequencies = {
+                        'daily': ' / día',
+                        'weekly': ' / semana', 
+                        'monthly': ' / mes',
+                        'quarterly': ' / trimestre',
+                        'semi_annually': ' / semestre',
+                        'annually': ' / año'
+                    };
+                    frequencyText = frequencies[productData.billing_settings.frequency] || ' / mes';
+                }
+
                 if (productData.has_discount && productData.discount_price > 0) {
                     // Show discounted price
-                    currentPriceEl.textContent = `$${productData.discount_price}`;
-                    originalPriceEl.textContent = `$${productData.price}`;
+                    currentPriceEl.textContent = `$${productData.discount_price}${frequencyText}`;
+                    originalPriceEl.textContent = `$${productData.price}${frequencyText}`;
                     originalPriceEl.style.display = 'inline-block';
                     
                     // Calculate discount percentage
@@ -505,7 +518,7 @@
                     discountBadge.style.display = 'inline-block';
                 } else {
                     // Show regular price
-                    currentPriceEl.textContent = `$${productData.price}`;
+                    currentPriceEl.textContent = `$${productData.price}${frequencyText}`;
                 }
 
                 priceSection.style.display = 'block';
