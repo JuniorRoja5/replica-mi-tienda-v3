@@ -416,8 +416,9 @@
                 // Find the product - convert both to string for comparison
                 const product = appData.products.find(p => p.id.toString() === productId.toString());
                 if (!product) {
-                    console.log('Product/Consultation not found. Available products:', appData.products.map(p => ({id: p.id, title: p.title, type: p.type})));
-                    showError(isConsultation ? 'Consultoría no encontrada' : 'Producto no encontrado');
+                    console.log('Product/Consultation/Course not found. Available products:', appData.products.map(p => ({id: p.id, title: p.title, type: p.type})));
+                    const errorMessage = isConsultation ? 'Consultoría no encontrada' : (isCourse ? 'Curso no encontrado' : 'Producto no encontrado');
+                    showError(errorMessage);
                     return;
                 }
 
@@ -426,13 +427,17 @@
                     console.log('URL expects consultation but product type is:', product.type);
                     showError('Tipo de producto incorrecto');
                     return;
-                } else if (!isConsultation && product.type === 'consultation') {
-                    console.log('URL expects product but found consultation');
+                } else if (isCourse && product.type !== 'course') {
+                    console.log('URL expects course but product type is:', product.type);
+                    showError('Tipo de producto incorrecto');
+                    return;
+                } else if (!isConsultation && !isCourse && (product.type === 'consultation' || product.type === 'course')) {
+                    console.log('URL expects product but found:', product.type);
                     showError('Tipo de producto incorrecto');
                     return;
                 }
 
-                console.log(isConsultation ? 'Consultation found:' : 'Product found:', product);
+                console.log(productType + ' found:', product);
                 productData = product;
                 displayProduct();
 
