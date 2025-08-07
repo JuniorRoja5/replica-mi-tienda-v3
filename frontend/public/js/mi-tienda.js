@@ -112,12 +112,12 @@ let currentDesignSettings = null;
  * Sets up communication with the Design Customizer
  */
 function initializeDesignIntegration() {
-    // Listen for design updates from Design Customizer
+    // Listen for design updates from Design Customizer via PostMessage
     window.addEventListener('message', function(event) {
-        if (event.data.type === 'DESIGN_UPDATE') {
+        if (event.data.type === 'DESIGN_UPDATE' && event.data.settings) {
             const designSettings = event.data.settings;
             applyDesignSettings(designSettings);
-            console.log('Design updated from Design Customizer:', designSettings);
+            console.log('✅ Design updated from Design Customizer via PostMessage:', designSettings);
         } else if (event.data.type === 'productClick') {
             handleProductClickFromIframe(event.data.productId, event.data.productType);
         } else if (event.data.type === 'openPurchaseModal') {
@@ -126,6 +126,53 @@ function initializeDesignIntegration() {
             handlePurchaseFromPublicView(event.data.product);
         }
     });
+    
+    // Listen for design updates via custom events (same-origin communication)
+    window.addEventListener('designUpdate', function(event) {
+        if (event.detail && event.detail.design_settings) {
+            const designSettings = event.detail.design_settings;
+            applyDesignSettings(designSettings);
+            console.log('✅ Design updated from Design Customizer via custom event:', designSettings);
+        }
+    });
+    
+    // Listen for localStorage changes (for cross-tab communication)
+    window.addEventListener('storage', function(event) {
+        if (event.key === 'pending_design_update' && event.newValue) {
+            try {
+                const updateData = JSON.parse(event.newValue);
+                if (updateData.design_settings && updateData.source === 'diseno-customizer') {
+                    applyDesignSettings(updateData.design_settings);
+                    console.log('✅ Design updated from Design Customizer via localStorage:', updateData.design_settings);
+                    
+                    // Clear the pending update
+                    localStorage.removeItem('pending_design_update');
+                }
+            } catch (error) {
+                console.error('Error parsing design update from localStorage:', error);
+            }
+        }
+    });
+    
+    // Check for any pending design updates on initialization
+    try {
+        const pendingUpdate = localStorage.getItem('pending_design_update');
+        if (pendingUpdate) {
+            const updateData = JSON.parse(pendingUpdate);
+            if (updateData.design_settings && updateData.source === 'diseno-customizer') {
+                // Apply the pending update if it's recent (within 5 seconds)
+                const age = Date.now() - updateData.timestamp;
+                if (age < 5000) {
+                    applyDesignSettings(updateData.design_settings);
+                    console.log('✅ Applied pending design update on initialization:', updateData.design_settings);
+                }
+                // Clear the pending update
+                localStorage.removeItem('pending_design_update');
+            }
+        }
+    } catch (error) {
+        console.error('Error checking for pending design updates:', error);
+    }
     
     // Load design settings from localStorage if available
     const savedDesignSettings = localStorage.getItem('applied_design_settings');
@@ -141,7 +188,7 @@ function initializeDesignIntegration() {
         applyDefaultDesignSettings();
     }
     
-    console.log('Design integration initialized successfully');
+    console.log('🎨 Design integration initialized successfully with multiple communication methods');
 }
 
 /**
