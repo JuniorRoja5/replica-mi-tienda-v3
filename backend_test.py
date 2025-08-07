@@ -223,13 +223,16 @@ class BackendTester:
             cors_origin = response.headers.get('access-control-allow-origin')
             cors_methods = response.headers.get('access-control-allow-methods')
             cors_headers = response.headers.get('access-control-allow-headers')
+            cors_credentials = response.headers.get('access-control-allow-credentials')
             
-            if cors_origin == '*' and cors_methods and cors_headers:
+            # For PostMessage communication, we need permissive CORS
+            if cors_origin == '*' and cors_credentials == 'true':
                 self.log_test("PostMessage CORS Support", True, "CORS properly configured for iframe communication", 
-                            f"Methods: {cors_methods}, Headers: {cors_headers}")
+                            f"Origin: {cors_origin}, Credentials: {cors_credentials}, Methods: {cors_methods}")
                 return True
             else:
-                self.log_test("PostMessage CORS Support", False, f"CORS headers insufficient: Origin={cors_origin}, Methods={cors_methods}")
+                self.log_test("PostMessage CORS Support", False, f"CORS configuration needs improvement for PostMessage", 
+                            f"Origin: {cors_origin}, Credentials: {cors_credentials}")
                 return False
                 
         except requests.exceptions.RequestException as e:
