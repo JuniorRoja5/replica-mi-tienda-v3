@@ -91,6 +91,7 @@ async def serve_mi_tienda_api():
 app.mount("/dashboard-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="dashboard-assets")
 app.mount("/ingresos-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="ingresos-assets")
 app.mount("/diseno-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="diseno-assets")
+app.mount("/mi-tienda-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="mi-tienda-assets")
 
 app.add_middleware(
     CORSMiddleware,
