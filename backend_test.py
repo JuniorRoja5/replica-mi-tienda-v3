@@ -280,6 +280,9 @@ class BackendTester:
             self.test_status_endpoint_get,
             self.test_status_endpoint_post,
             self.test_cors_headers,
+            self.test_design_integration_routes,
+            self.test_static_file_serving,
+            self.test_postmessage_cors_support,
             self.test_data_persistence
         ]
         
