@@ -1263,23 +1263,69 @@ const DisenoNavigation = {
 const MiTiendaIntegration = {
     /**
      * Apply design settings to Mi Tienda iframe
-     * This function would be called to update the Mi Tienda iframe with new design settings
+     * This function communicates with Mi Tienda to apply new design settings in real-time
      */
     applyDesignToMiTienda: function(designSettings) {
-        // In the actual integration, this would communicate with the Mi Tienda iframe
-        // to apply the new design settings in real-time
+        const message = {
+            type: 'DESIGN_UPDATE',
+            settings: designSettings,
+            timestamp: Date.now(),
+            source: 'diseno-customizer'
+        };
         
-        // Example implementation:
-        const miTiendaIframe = parent.document.getElementById('mi-tienda-iframe');
-        if (miTiendaIframe) {
-            const message = {
-                type: 'DESIGN_UPDATE',
-                settings: designSettings
-            };
-            miTiendaIframe.contentWindow.postMessage(message, '*');
+        // Method 1: Try to find Mi Tienda iframe in parent window
+        try {
+            if (window.parent && window.parent !== window) {
+                const miTiendaIframe = window.parent.document.getElementById('mi-tienda-iframe');
+                if (miTiendaIframe && miTiendaIframe.contentWindow) {
+                    miTiendaIframe.contentWindow.postMessage(message, '*');
+                    console.log('✅ Design applied to Mi Tienda via parent iframe:', designSettings);
+                    return true;
+                }
+            }
+        } catch (error) {
+            console.warn('Cannot access parent document (cross-origin):', error.message);
         }
         
-        console.log('Applied design to Mi Tienda:', designSettings);
+        // Method 2: Send message to all windows (for cases where Mi Tienda is in another tab)
+        try {
+            // Send to parent window
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage(message, '*');
+            }
+            
+            // Send to opener (if Diseño was opened from Mi Tienda)
+            if (window.opener) {
+                window.opener.postMessage(message, '*');
+            }
+            
+            // Send to top window
+            if (window.top && window.top !== window) {
+                window.top.postMessage(message, '*');
+            }
+        } catch (error) {
+            console.warn('Error sending design update message:', error.message);
+        }
+        
+        // Method 3: Store in localStorage for Mi Tienda to pick up
+        try {
+            const storageData = {
+                design_settings: designSettings,
+                timestamp: Date.now(),
+                source: 'diseno-customizer'
+            };
+            localStorage.setItem('pending_design_update', JSON.stringify(storageData));
+            
+            // Dispatch a custom event for same-origin communication
+            window.dispatchEvent(new CustomEvent('designUpdate', {
+                detail: storageData
+            }));
+        } catch (error) {
+            console.warn('Error storing design update in localStorage:', error.message);
+        }
+        
+        console.log('🎨 Design update sent to Mi Tienda via multiple methods:', designSettings);
+        return true;
     },
     
     /**
