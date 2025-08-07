@@ -154,110 +154,35 @@ backend:
         -comment: "✅ STATIC FILE SERVING OPERATIONAL: Frontend accessible at main URL (HTTP 200), JavaScript files (mi-tienda.js) serving correctly, CSS files (styles.css) serving correctly, backend properly supporting the frontend static HTML/CSS/JavaScript application infrastructure."
 
 frontend:
-  - task: "Add course product type support in selectDigitalProductType function"
+  - task: "Create Dashboard HTML page with analytics layout"
     implemented: true
-    working: true
-    file: "/app/frontend/public/js/mi-tienda.js"
-    stuck_count: 0
+    working: false
+    file: "/app/frontend/public/dashboard.html"
+    stuck_count: 1
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         -working: "implemented"
         -agent: "main"
-        -comment: "Added 'course' case to selectDigitalProductType function to call showCourseFormOverlay(). Also added courseFormData global state with course-specific structure including course_content with modules/lessons."
-        -working: true
+        -comment: "Created dashboard.html with responsive layout (mobile and desktop), period selector, stats cards, chart container, and calendar modal. HTML structure matches Dashboard.jsx from React."
+        -working: false
         -agent: "main"
-        -comment: "CONFIRMED WORKING: Course product type selection opens the course form overlay successfully. Course form displays with 4 tabs and proper navigation."
+        -comment: "Page showing loading skeletons instead of dashboard content. Resources may not be loading correctly. Need to debug JavaScript loading and chart functionality."
         
-  - task: "Implement course form overlay and tab navigation"
+  - task: "Create Dashboard JavaScript functionality"
     implemented: true
-    working: true
-    file: "/app/frontend/public/js/mi-tienda.js"
-    stuck_count: 0
+    working: false
+    file: "/app/frontend/public/js/dashboard.js"
+    stuck_count: 1
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         -working: "implemented"
         -agent: "main"
-        -comment: "Added complete course form system: showCourseFormOverlay(), closeCourseFormOverlay(), resetCourseForm(), setupCourseFormListeners(), showCourseTab(), updateCourseTabNavigation(), nextCourseTab(), previousCourseTab(). Includes 4-tab navigation (datos, contenido, curso, opciones)."
-        -working: true
+        -comment: "Created comprehensive dashboard.js with all functionality from React Dashboard.jsx: data loading, stats calculation, chart creation (Chart.js), period selection, calendar modal, responsive behavior, Laravel integration helpers."
+        -working: false
         -agent: "main"
-        -comment: "CONFIRMED WORKING: All 4 tabs navigation working perfectly. Course form opens, tab switching works, form fields populate correctly, live preview updates in real-time."
-        
-  - task: "Implement course modules and lessons management"
-    implemented: true
-    working: true
-    file: "/app/frontend/public/js/mi-tienda.js"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        -working: "implemented"
-        -agent: "main"
-        -comment: "Added course content management functions: addCourseModule(), removeCourseModule(), updateCourseModule(), addCourseLesson(), removeCourseLesson(), updateCourseLesson(), renderCourseModules(). Supports dynamic module/lesson creation with titles, descriptions, video URLs, and attachments."
-        -working: true
-        -agent: "main"
-        -comment: "CONFIRMED WORKING: Module management fully functional. Can add/remove modules, modules appear with lessons, live preview updates module count correctly (1 módulos -> 2 módulos when adding)."
-        
-  - task: "Add course navigation support in handleProductClick functions"
-    implemented: true
-    working: true
-    file: "/app/frontend/public/js/mi-tienda.js"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        -working: "implemented"
-        -agent: "main"
-        -comment: "Updated both handleProductClick() and handleProductClickFromIframe() to handle 'course' type. Courses navigate to public-product.html?course={productId}&u={username}."
-        -working: true
-        -agent: "main"
-        -comment: "CONFIRMED WORKING: Course navigation logic implemented. Courses display in preview with proper click handlers. Navigation URL pattern matches other product types."
-        
-  - task: "Implement course preview and creation functionality"
-    implemented: true
-    working: true
-    file: "/app/frontend/public/js/mi-tienda.js"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        -working: "implemented"
-        -agent: "main"
-        -comment: "Added updatePreviewWithCourse() function to show course preview in iframe with course modules, pricing, and course-specific UI. Added createCourse(), createCourseFromForm(), and saveAsCourseAsDraft() functions."
-        -working: true
-        -agent: "main"
-        -comment: "CONFIRMED WORKING: Live preview works perfectly with real-time updates. Course creation completes successfully with green toast message. Courses appear in product list with proper icons, pricing, and labels."
-        
-  - task: "Create course form HTML overlay"
-    implemented: true
-    working: true
-    file: "/app/frontend/public/mi-tienda.html"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        -working: "implemented"
-        -agent: "main"
-        -comment: "Added complete courseFormOverlay HTML with 4 tabs: Datos (basic info), Contenido y Precio (content & pricing), Curso (course-specific with modules/lessons management), Opciones (additional settings). Includes all necessary form inputs and navigation."
-        -working: true
-        -agent: "main"
-        -comment: "CONFIRMED WORKING: All HTML form elements working correctly with proper IDs. Form displays beautifully with all 4 tabs, proper styling, and all input fields functional."
-        
-  - task: "Update public-product.html to handle course products"
-    implemented: true
-    working: true
-    file: "/app/frontend/public/public-product.html"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        -working: "implemented"
-        -agent: "main"
-        -comment: "Updated loadProductData() to handle 'course' URL parameter, added type validation for courses, updated displayProduct() to show course-specific button ('Empezar curso' with play icon), and updated handlePurchase() with course enrollment functionality."
-        -working: true
-        -agent: "main"
-        -comment: "CONFIRMED WORKING: Course navigation URLs correctly configured. Course products ready for public display with course-specific UI elements and functionality."
+        -comment: "JavaScript not executing properly - dashboard stuck in loading state. Possible issues: Chart.js loading, Lucide icons, async data loading, or DOM initialization problems."
 
 metadata:
   created_by: "main_agent"
