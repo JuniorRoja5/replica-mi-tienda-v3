@@ -1821,6 +1821,18 @@ function updatePreviewWithProduct() {
         ? tempProduct.price 
         : null;
     
+    // Get current design settings or use defaults
+    const designSettings = getCurrentDesignSettings() || {
+        background: '#000000',
+        background_type: 'solid',
+        text_color: '#FFFFFF',
+        text_secondary_color: '#A0A0A0',
+        font_family: 'Inter',
+        button_color: 'rgba(255, 255, 255, 0.1)',
+        button_font_color: '#FFFFFF',
+        button_hover_color: 'rgba(255, 255, 255, 0.15)'
+    };
+    
     // Generar reseñas válidas
     const validReviews = (tempProduct.reviews || []).filter(review => 
         review.customer_name && review.customer_name.trim() !== '' && 
@@ -1833,32 +1845,32 @@ function updatePreviewWithProduct() {
         ).join('');
         
         return `
-            <div style="background: #2a2a2a; padding: 1rem; border-radius: 0.75rem; margin-bottom: 0.75rem;">
+            <div style="background: ${designSettings.button_color}; padding: 1rem; border-radius: 0.75rem; margin-bottom: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.1);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                    <span style="font-weight: 600; font-size: 0.9rem; color: white;">${review.customer_name}</span>
+                    <span style="font-weight: 600; font-size: 0.9rem; color: ${designSettings.text_color};">${review.customer_name}</span>
                     <div style="font-size: 0.85rem;">${stars}</div>
                 </div>
-                <p style="color: #a0a0a0; font-size: 0.9rem; margin: 0;">${review.comment}</p>
+                <p style="color: ${designSettings.text_secondary_color}; font-size: 0.9rem; margin: 0;">${review.comment}</p>
             </div>
         `;
     }).join('') : '';
     
-    // HTML de la página de ventas simulada
+    // HTML de la página de ventas simulada - USANDO ESTILOS DINÁMICOS DEL DISEÑO
     previewContent.innerHTML = `
-        <div style="
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            color: white;
+        <div class="sales-page-preview" style="
+            background: ${designSettings.background};
+            color: ${designSettings.text_color};
             min-height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            font-family: ${designSettings.font_family}, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
             overflow-y: auto;
         ">
             <!-- Header con botón de regreso -->
             <div style="
                 position: sticky;
                 top: 0;
-                background: rgba(26, 26, 26, 0.95);
+                background: ${designSettings.background}CC;
                 backdrop-filter: blur(10px);
-                border-bottom: 1px solid #333;
+                border-bottom: 1px solid ${designSettings.text_secondary_color}40;
                 padding: 1rem;
                 z-index: 10;
             ">
@@ -1866,7 +1878,7 @@ function updatePreviewWithProduct() {
                     display: flex;
                     align-items: center;
                     gap: 0.5rem;
-                    color: #a0a0a0;
+                    color: ${designSettings.text_secondary_color};
                     font-size: 0.95rem;
                     cursor: pointer;
                 ">
@@ -1879,23 +1891,23 @@ function updatePreviewWithProduct() {
             <div style="padding: 2rem 1.5rem; padding-bottom: 80px;">
                 <!-- Imagen del producto -->
                 ${tempProduct.image_url ? `
-                    <div style="width: 100%; height: 200px; border-radius: 1rem; overflow: hidden; margin-bottom: 2rem; background: #2a2a2a; display: flex; align-items: center; justify-content: center;">
+                    <div style="width: 100%; height: 200px; border-radius: 1rem; overflow: hidden; margin-bottom: 2rem; background: ${designSettings.button_color}; display: flex; align-items: center; justify-content: center;">
                         <img src="${tempProduct.image_url}" alt="${tempProduct.title}" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                 ` : `
-                    <div style="width: 100%; height: 200px; border-radius: 1rem; background: #2a2a2a; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem; color: #666; font-size: 3rem;">
+                    <div style="width: 100%; height: 200px; border-radius: 1rem; background: ${designSettings.button_color}; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem; color: ${designSettings.text_secondary_color}; font-size: 3rem;">
                         <i class="bi bi-box-seam"></i>
                     </div>
                 `}
 
                 <!-- Información del producto -->
                 <div style="margin-bottom: 2rem;">
-                    <h1 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2;">
+                    <h1 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.2; color: ${designSettings.text_color}; font-family: ${designSettings.font_family};">
                         ${tempProduct.title}
                     </h1>
                     
                     ${tempProduct.subtitle ? `
-                        <p style="font-size: 1.1rem; color: #a0a0a0; margin-bottom: 1.5rem; line-height: 1.4;">
+                        <p style="font-size: 1.1rem; color: ${designSettings.text_secondary_color}; margin-bottom: 1.5rem; line-height: 1.4; font-family: ${designSettings.font_family};">
                             ${tempProduct.subtitle}
                         </p>
                     ` : ''}
@@ -1904,14 +1916,14 @@ function updatePreviewWithProduct() {
                 <!-- Precio -->
                 ${tempProduct.price > 0 ? `
                     <div style="margin-bottom: 2rem;">
-                        <span style="font-size: 2rem; font-weight: 700; color: #10b981;">
+                        <span style="font-size: 2rem; font-weight: 700; color: ${designSettings.text_color}; font-family: ${designSettings.font_family};">
                             $${displayPrice}
                         </span>
                         ${originalPrice ? `
-                            <span style="font-size: 1.2rem; color: #666; text-decoration: line-through; margin-left: 1rem; vertical-align: top; margin-top: 0.5rem; display: inline-block;">
+                            <span style="font-size: 1.2rem; color: ${designSettings.text_secondary_color}; text-decoration: line-through; margin-left: 1rem; vertical-align: top; margin-top: 0.5rem; display: inline-block; font-family: ${designSettings.font_family};">
                                 $${originalPrice}
                             </span>
-                            <span style="background: #dc2626; color: white; font-size: 0.85rem; padding: 0.25rem 0.75rem; border-radius: 2rem; font-weight: 600; margin-left: 1rem; vertical-align: top; margin-top: 0.75rem; display: inline-block;">
+                            <span style="background: #dc2626; color: white; font-size: 0.85rem; padding: 0.25rem 0.75rem; border-radius: 2rem; font-weight: 600; margin-left: 1rem; vertical-align: top; margin-top: 0.75rem; display: inline-block; font-family: ${designSettings.font_family};">
                                 -${Math.round(((originalPrice - displayPrice) / originalPrice) * 100)}%
                             </span>
                         ` : ''}
@@ -1920,7 +1932,7 @@ function updatePreviewWithProduct() {
 
                 <!-- Descripción -->
                 ${tempProduct.description ? `
-                    <div style="line-height: 1.6; color: #d0d0d0; margin-bottom: 2rem; white-space: pre-line;">
+                    <div style="line-height: 1.6; color: ${designSettings.text_secondary_color}; margin-bottom: 2rem; white-space: pre-line; font-family: ${designSettings.font_family};">
                         ${tempProduct.description}
                     </div>
                 ` : ''}
@@ -1928,7 +1940,7 @@ function updatePreviewWithProduct() {
                 <!-- Reseñas -->
                 ${reviewsHTML ? `
                     <div style="margin-bottom: 2rem;">
-                        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: ${designSettings.text_color}; font-family: ${designSettings.font_family};">
                             <i class="bi bi-star-fill" style="color: #fbbf24;"></i>
                             Reseñas de clientes
                         </h3>
@@ -1938,17 +1950,17 @@ function updatePreviewWithProduct() {
 
                 <!-- Botón de compra integrado (no fixed) -->
                 <div style="
-                    background: rgba(26, 26, 26, 0.95);
-                    border-top: 1px solid #333;
+                    background: ${designSettings.background}F0;
+                    border-top: 1px solid ${designSettings.text_secondary_color}40;
                     border-radius: 0.75rem;
                     padding: 1rem;
                     margin-top: 2rem;
                 ">
-                    <button style="
+                    <button class="sales-preview-button" style="
                         width: 100%;
-                        background: #8b5cf6;
+                        background: ${designSettings.button_color};
                         border: none;
-                        color: white;
+                        color: ${designSettings.button_font_color};
                         font-size: 1rem;
                         font-weight: 600;
                         padding: 0.875rem;
@@ -1959,6 +1971,8 @@ function updatePreviewWithProduct() {
                         align-items: center;
                         justify-content: center;
                         gap: 0.5rem;
+                        font-family: ${designSettings.font_family};
+                        border: 1px solid rgba(255, 255, 255, 0.1);
                     " onclick="parent.postMessage({type: 'openPurchaseModal', product: ${JSON.stringify(tempProduct).replace(/"/g, '&quot;')}}, '*')">
                         <i class="bi bi-cart-plus"></i>
                         <span>${tempProduct.button_text || (tempProduct.price > 0 ? `Comprar por $${displayPrice}` : 'Obtener Gratis')}</span>
@@ -1967,6 +1981,8 @@ function updatePreviewWithProduct() {
             </div>
         </div>
     `;
+    
+    console.log('🛍️ Sales page preview updated with design settings:', designSettings);
 }
 
 function saveAsDraft() {
