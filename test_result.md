@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: Create a "Dashboard Home" (marketing landing page) and "Dashboard" (analytics panel) based on provided React code, implementing the same functionality and aesthetics in vanilla HTML/CSS/JS. Both pages should be fully functional, responsive, and compatible with Laravel Blade integration.
+user_problem_statement: Complete the real-time interaction between the "Diseño" (Design) section and "Mi Tienda" by implementing JavaScript listeners in mi-tienda.js to receive and apply design changes from the Design Customizer. The integration should enable live design preview updates when users modify themes, colors, or fonts in the Diseño section.
 
 backend:
   - task: "Backend Server Infrastructure"
@@ -111,11 +111,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         -working: true
         -agent: "testing"
         -comment: "✅ BACKEND INFRASTRUCTURE FULLY OPERATIONAL: FastAPI server running on correct port, all API endpoints (/api/, /api/status GET/POST) responding correctly, CORS properly configured for cross-origin requests, MongoDB integration working with data persistence verified. Backend supporting frontend application successfully."
+        -working: "needs_testing"
+        -agent: "main"
+        -comment: "Backend needs retesting after implementing Design-Mi Tienda integration. Added enhanced PostMessage communication and localStorage synchronization for real-time design updates."
         
   - task: "API Endpoints Functionality"
     implemented: true
@@ -123,83 +126,55 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         -working: true
         -agent: "testing"
         -comment: "✅ ALL API ENDPOINTS WORKING: Root endpoint (/api/) returns correct 'Hello World' response, Status GET endpoint returns proper list format, Status POST endpoint creates records with UUID and timestamp correctly, all endpoints responding with proper HTTP status codes."
-        
-  - task: "Database Integration and Data Persistence"
-    implemented: true
-    working: true
-    file: "/app/backend/server.py"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        -working: true
-        -agent: "testing"
-        -comment: "✅ DATABASE INTEGRATION WORKING: MongoDB connection established successfully, data persistence verified through create-and-retrieve test cycle, status check records properly stored and retrieved with correct UUID generation and timestamp handling."
-        
-  - task: "Static File Serving and Frontend Support"
-    implemented: true
-    working: true
-    file: "/app/backend/server.py"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        -working: true
-        -agent: "testing"
-        -comment: "✅ STATIC FILE SERVING OPERATIONAL: Frontend accessible at main URL (HTTP 200), JavaScript files (mi-tienda.js) serving correctly, CSS files (styles.css) serving correctly, backend properly supporting the frontend static HTML/CSS/JavaScript application infrastructure."
+        -working: "needs_testing"
+        -agent: "main"
+        -comment: "API endpoints need retesting after implementing design integration features. Backend should support serving both Diseño and Mi Tienda pages correctly."
 
 frontend:
-  - task: "Create Dashboard HTML page with analytics layout"
+  - task: "Design-Mi Tienda Real-time Integration"
     implemented: true
-    working: true
-    file: "/app/frontend/public/dashboard.html"
+    working: "needs_testing"
+    file: "/app/frontend/public/js/diseno.js, /app/frontend/public/js/mi-tienda.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         -working: "implemented"
         -agent: "main"
-        -comment: "Created dashboard.html with responsive layout (mobile and desktop), period selector, stats cards, chart container, and calendar modal. HTML structure matches Dashboard.jsx from React."
-        -working: true
-        -agent: "testing"
-        -comment: "✅ DASHBOARD FULLY FUNCTIONAL: Complete responsive dashboard with mobile/desktop layouts, period selection, stats cards, Chart.js integration, calendar modal. Accessible via backend route http://localhost:8001/dashboard. All interactive features working perfectly."
-        
-  - task: "Create Dashboard JavaScript functionality"
+        -comment: "🎨 DESIGN-MI TIENDA INTEGRATION COMPLETED: 1) Enhanced handleDesignChange() in diseno.js to trigger Mi Tienda updates, 2) Improved MiTiendaIntegration.applyDesignToMiTienda() with multiple communication methods (PostMessage, localStorage, custom events), 3) Enhanced initializeDesignIntegration() in mi-tienda.js with comprehensive listeners for PostMessage, custom events, localStorage changes, and pending updates, 4) Added real-time design application with multiple fallback communication methods for cross-iframe, cross-tab, and same-origin scenarios."
+
+  - task: "Mi Tienda Design Listeners and Application"
     implemented: true
-    working: true
-    file: "/app/frontend/public/js/dashboard.js"
+    working: "needs_testing"
+    file: "/app/frontend/public/js/mi-tienda.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         -working: "implemented"
         -agent: "main"
-        -comment: "Created comprehensive dashboard.js with all functionality from React Dashboard.jsx: data loading, stats calculation, chart creation (Chart.js), period selection, calendar modal, responsive behavior, Laravel integration helpers."
-        -working: true
-        -agent: "testing"
-        -comment: "✅ ALL JAVASCRIPT FUNCTIONALITY WORKING: Data loading simulation, Chart.js charts with animation, period selector (7D/14D/Este mes/Custom), calendar modal with date inputs, responsive design, Laravel integration helpers. Perfectly replicates React Dashboard.jsx behavior."
+        -comment: "✅ COMPREHENSIVE DESIGN LISTENERS IMPLEMENTED: 1) PostMessage listener for 'DESIGN_UPDATE' events from Design Customizer, 2) Custom event listener for same-origin communication, 3) localStorage change listener for cross-tab communication, 4) Pending update checker on initialization, 5) Enhanced applyDesignSettings() function with CSS custom properties and dynamic style injection, 6) Multiple communication methods ensure design changes work in all scenarios (iframe, separate tabs, same origin)."
 
 metadata:
   created_by: "main_agent"
-  version: "1.0"
-  test_sequence: 0
+  version: "2.0"
+  test_sequence: 1
   run_ui: false
 
 test_plan:
   current_focus:
-    - "Dashboard implementation COMPLETED successfully ✅"
-    - "All dashboard functionality working perfectly ✅"  
+    - "Design-Mi Tienda Real-time Integration"
+    - "Mi Tienda Design Listeners and Application"
+    - "Backend support for design integration features"
   stuck_tasks: []
   test_all: false
-  test_priority: "completed"
+  test_priority: "high_first"
 
 agent_communication:
     -agent: "main"
-    -message: "🎉 DASHBOARD IMPLEMENTATION COMPLETED SUCCESSFULLY! ✅ Created a fully functional dashboard based on React Dashboard.jsx with ALL required features: 1) Complete responsive HTML layout (mobile/desktop) with period selector, stats cards, chart container, and calendar modal, 2) Full JavaScript functionality: data loading simulation, Chart.js bar charts with animation, period selection (7D/14D/Este mes/Rango personalizado), calendar modal with custom date ranges, stats calculation with change indicators, 3) Perfect visual match to React version with green charts, proper styling, smooth animations, 4) Laravel integration helpers included, 5) Accessible via backend route http://localhost:8001/dashboard. Dashboard successfully replicates all functionality from Dashboard.jsx in vanilla HTML/CSS/JS compatible with Laravel Blade."
-    -agent: "testing"
-    -message: "✅ COMPREHENSIVE DASHBOARD TESTING COMPLETED - ALL FUNCTIONALITY VERIFIED! Dashboard implementation is 100% working: Responsive layouts (mobile/desktop), interactive period selector, stats cards with change indicators (revenue/visits/leads), Chart.js bar charts showing 'Visitas por día', calendar modal with custom date range selection, smooth animations, proper data loading. All features from React Dashboard.jsx successfully replicated in vanilla JavaScript. Backend route serving dashboard correctly at http://localhost:8001/dashboard. Ready for Laravel Blade integration."
+    -message: "🎨 DESIGN-MI TIENDA INTEGRATION IMPLEMENTATION COMPLETED! ✅ Successfully implemented the missing real-time communication between Diseño and Mi Tienda sections: 1) Enhanced diseno.js handleDesignChange() to automatically send design updates to Mi Tienda via MiTiendaIntegration.applyDesignToMiTienda(), 2) Implemented robust multi-method communication (PostMessage for iframes, localStorage for cross-tab, custom events for same-origin), 3) Enhanced mi-tienda.js initializeDesignIntegration() with comprehensive listeners for all communication methods, 4) Added pending update checking and fallback mechanisms, 5) Real-time design application with CSS custom properties and dynamic style injection. Integration now supports all scenarios: iframe embedding, separate tabs, and same-origin communication. Ready for testing to verify real-time design changes flow from Diseño to Mi Tienda."
