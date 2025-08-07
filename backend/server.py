@@ -1,4 +1,6 @@
 from fastapi import FastAPI, APIRouter
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -54,6 +56,15 @@ async def get_status_checks():
 
 # Include the router in the main app
 app.include_router(api_router)
+
+# Serve dashboard directly from backend
+@app.get("/dashboard")
+async def serve_dashboard():
+    dashboard_path = Path(__file__).parent.parent / "frontend" / "public" / "dashboard.html"
+    return FileResponse(dashboard_path, media_type="text/html")
+
+# Mount static files for dashboard assets
+app.mount("/dashboard-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="dashboard-assets")
 
 app.add_middleware(
     CORSMiddleware,
