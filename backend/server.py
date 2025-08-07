@@ -75,6 +75,18 @@ async def serve_diseno():
     diseno_path = Path(__file__).parent.parent / "frontend" / "public" / "diseno.html"
     return FileResponse(diseno_path, media_type="text/html")
 
+# Serve diseno (design) page via API route for Design-Mi Tienda integration
+@api_router.get("/diseno")
+async def serve_diseno_api():
+    diseno_path = Path(__file__).parent.parent / "frontend" / "public" / "diseno.html"
+    return FileResponse(diseno_path, media_type="text/html")
+
+# Serve mi-tienda page via API route for Design-Mi Tienda integration
+@api_router.get("/mi-tienda")
+async def serve_mi_tienda_api():
+    mi_tienda_path = Path(__file__).parent.parent / "frontend" / "public" / "mi-tienda.html"
+    return FileResponse(mi_tienda_path, media_type="text/html")
+
 # Mount static files for dashboard and ingresos assets
 app.mount("/dashboard-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="dashboard-assets")
 app.mount("/ingresos-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="ingresos-assets")
