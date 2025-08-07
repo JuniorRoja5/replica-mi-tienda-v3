@@ -802,6 +802,126 @@ sistema de compras de la página principal.`;
                 window.location.href = 'mi-tienda.html';
             }
         }
+
+        /* ========================================
+           DESIGN SYSTEM INTEGRATION
+           Apply design settings from Diseño section
+           ======================================== */
+        
+        /**
+         * Apply design settings to public product page
+         * @param {Object} settings - Design settings from the design system
+         */
+        function applyDesignSettings(settings) {
+            if (!settings || typeof settings !== 'object') {
+                console.warn('Invalid design settings received:', settings);
+                return;
+            }
+            
+            // Update CSS custom properties for real-time design changes
+            const root = document.documentElement;
+            
+            // Apply design settings to CSS variables
+            root.style.setProperty('--design-background', settings.background || '#000000');
+            root.style.setProperty('--design-text-color', settings.text_color || '#FFFFFF');
+            root.style.setProperty('--design-text-secondary', settings.text_secondary_color || '#A0A0A0');
+            root.style.setProperty('--design-button-bg', settings.button_color || 'rgba(255, 255, 255, 0.1)');
+            root.style.setProperty('--design-button-text', settings.button_font_color || '#FFFFFF');
+            root.style.setProperty('--design-button-hover', settings.button_hover_color || 'rgba(255, 255, 255, 0.15)');
+            root.style.setProperty('--design-font-family', settings.font_family || 'Inter');
+            
+            console.log('🎨 Design settings applied to public product page:', settings);
+        }
+
+        /**
+         * Load design settings from localStorage
+         */
+        function loadDesignSettings() {
+            try {
+                // Try to load from applied_design_settings (from Mi Tienda)
+                const savedDesignSettings = localStorage.getItem('applied_design_settings');
+                if (savedDesignSettings) {
+                    const settings = JSON.parse(savedDesignSettings);
+                    applyDesignSettings(settings);
+                    return;
+                }
+                
+                // Try to load from pending_design_update (from Diseño)
+                const pendingUpdate = localStorage.getItem('pending_design_update');
+                if (pendingUpdate) {
+                    const updateData = JSON.parse(pendingUpdate);
+                    if (updateData.design_settings) {
+                        applyDesignSettings(updateData.design_settings);
+                        return;
+                    }
+                }
+                
+                // Apply default dark theme if no settings found
+                applyDefaultDesignSettings();
+                
+            } catch (error) {
+                console.error('Error loading design settings:', error);
+                applyDefaultDesignSettings();
+            }
+        }
+
+        /**
+         * Apply default design settings (dark theme)
+         */
+        function applyDefaultDesignSettings() {
+            const defaultSettings = {
+                theme_id: 'dark',
+                theme_name: 'Tema Oscuro',
+                background: '#000000',
+                background_type: 'solid',
+                text_color: '#FFFFFF',
+                text_secondary_color: '#A0A0A0',
+                font_family: 'Inter',
+                button_color: 'rgba(255, 255, 255, 0.1)',
+                button_font_color: '#FFFFFF',
+                button_hover_color: 'rgba(255, 255, 255, 0.15)'
+            };
+            
+            applyDesignSettings(defaultSettings);
+        }
+
+        /**
+         * Initialize design system integration
+         */
+        function initializeDesignSystem() {
+            // Load design settings on page load
+            loadDesignSettings();
+            
+            // Listen for storage changes (when design is updated from other tabs)
+            window.addEventListener('storage', function(event) {
+                if (event.key === 'applied_design_settings' && event.newValue) {
+                    try {
+                        const settings = JSON.parse(event.newValue);
+                        applyDesignSettings(settings);
+                        console.log('✅ Design updated from storage change');
+                    } catch (error) {
+                        console.error('Error applying design from storage:', error);
+                    }
+                }
+                
+                if (event.key === 'pending_design_update' && event.newValue) {
+                    try {
+                        const updateData = JSON.parse(event.newValue);
+                        if (updateData.design_settings && updateData.source === 'diseno-customizer') {
+                            applyDesignSettings(updateData.design_settings);
+                            console.log('✅ Design updated from Diseño section');
+                        }
+                    } catch (error) {
+                        console.error('Error applying pending design update:', error);
+                    }
+                }
+            });
+            
+            console.log('🎨 Design system integration initialized for public product page');
+        }
+
+        // Initialize design system when DOM is ready
+        document.addEventListener('DOMContentLoaded', initializeDesignSystem);
     </script>
 </body>
 </html>
