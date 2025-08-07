@@ -78,14 +78,30 @@ async def serve_diseno():
 # Serve diseno (design) page via API route for Design-Mi Tienda integration
 @api_router.get("/diseno")
 async def serve_diseno_api():
-    diseno_path = Path(__file__).parent.parent / "frontend" / "public" / "diseno.html"
-    return FileResponse(diseno_path, media_type="text/html")
+    try:
+        diseno_path = Path(__file__).parent.parent / "frontend" / "public" / "diseno.html"
+        logger.info(f"Serving diseno from: {diseno_path}")
+        if not diseno_path.exists():
+            logger.error(f"Diseno file not found at: {diseno_path}")
+            return {"error": "File not found"}
+        return FileResponse(diseno_path, media_type="text/html")
+    except Exception as e:
+        logger.error(f"Error serving diseno: {e}")
+        return {"error": str(e)}
 
 # Serve mi-tienda page via API route for Design-Mi Tienda integration
 @api_router.get("/mi-tienda")
 async def serve_mi_tienda_api():
-    mi_tienda_path = Path(__file__).parent.parent / "frontend" / "public" / "mi-tienda.html"
-    return FileResponse(mi_tienda_path, media_type="text/html")
+    try:
+        mi_tienda_path = Path(__file__).parent.parent / "frontend" / "public" / "mi-tienda.html"
+        logger.info(f"Serving mi-tienda from: {mi_tienda_path}")
+        if not mi_tienda_path.exists():
+            logger.error(f"Mi-tienda file not found at: {mi_tienda_path}")
+            return {"error": "File not found"}
+        return FileResponse(mi_tienda_path, media_type="text/html")
+    except Exception as e:
+        logger.error(f"Error serving mi-tienda: {e}")
+        return {"error": str(e)}
 
 # Mount static files for dashboard and ingresos assets
 app.mount("/dashboard-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="dashboard-assets")
