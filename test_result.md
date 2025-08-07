@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: Implement the "Curso Digital" (Digital Course) functionality following the same pattern as existing product types. The course should have 4 tabs (Datos, Contenido y Precio, Curso, Opciones) with specific course configuration including modules, lessons, and course content page setup. Navigation should work from iframe preview to course page.
+user_problem_statement: Create a "Dashboard Home" (marketing landing page) and "Dashboard" (analytics panel) based on provided React code, implementing the same functionality and aesthetics in vanilla HTML/CSS/JS. Both pages should be fully functional, responsive, and compatible with Laravel Blade integration.
 
 backend:
   - task: "Backend Server Infrastructure"
