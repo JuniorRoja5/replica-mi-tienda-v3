@@ -125,6 +125,8 @@ app.mount("/dashboard-assets", StaticFiles(directory=Path(__file__).parent.paren
 app.mount("/ingresos-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="ingresos-assets")
 app.mount("/diseno-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="diseno-assets")
 app.mount("/mi-tienda-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="mi-tienda-assets")
+app.mount("/customers-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="customers-assets")
+app.mount("/statistics-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="statistics-assets")
 
 app.add_middleware(
     CORSMiddleware,
