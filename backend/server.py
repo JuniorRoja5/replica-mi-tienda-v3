@@ -108,6 +108,18 @@ async def serve_diseno():
     diseno_path = Path(__file__).parent.parent / "frontend" / "public" / "diseno.html"
     return FileResponse(diseno_path, media_type="text/html")
 
+# Serve customers page directly from backend
+@app.get("/customers")
+async def serve_customers():
+    customers_path = Path(__file__).parent.parent / "frontend" / "public" / "customers.html"
+    return FileResponse(customers_path, media_type="text/html")
+
+# Serve statistics page directly from backend
+@app.get("/statistics")
+async def serve_statistics():
+    statistics_path = Path(__file__).parent.parent / "frontend" / "public" / "statistics.html"
+    return FileResponse(statistics_path, media_type="text/html")
+
 # Mount static files for dashboard and ingresos assets
 app.mount("/dashboard-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="dashboard-assets")
 app.mount("/ingresos-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="ingresos-assets")
