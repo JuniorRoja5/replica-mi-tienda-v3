@@ -1007,7 +1007,10 @@ function handleDesignChange(newDesignSettings) {
     // Update preview in real-time
     updatePreview();
     
-    console.log('Design changed:', newDesignSettings);
+    // Apply design changes to Mi Tienda in real-time
+    MiTiendaIntegration.applyDesignToMiTienda(newDesignSettings);
+    
+    console.log('Design changed and applied to Mi Tienda:', newDesignSettings);
 }
 
 /**
