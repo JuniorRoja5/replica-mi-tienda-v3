@@ -148,7 +148,7 @@ frontend:
         -agent: "main"
         -comment: "🎨 DESIGN-MI TIENDA INTEGRATION COMPLETED: 1) Enhanced handleDesignChange() in diseno.js to trigger Mi Tienda updates, 2) Improved MiTiendaIntegration.applyDesignToMiTienda() with multiple communication methods (PostMessage, localStorage, custom events), 3) Enhanced initializeDesignIntegration() in mi-tienda.js with comprehensive listeners for PostMessage, custom events, localStorage changes, and pending updates, 4) Added real-time design application with multiple fallback communication methods for cross-iframe, cross-tab, and same-origin scenarios."
 
-  - task: "Mi Tienda Design Listeners and Application"
+  - task: "Product Sales Page Preview Integration with Design System"
     implemented: true
     working: "needs_testing"
     file: "/app/frontend/public/js/mi-tienda.js"
@@ -158,7 +158,7 @@ frontend:
     status_history:
         -working: "implemented"
         -agent: "main"
-        -comment: "✅ COMPREHENSIVE DESIGN LISTENERS IMPLEMENTED: 1) PostMessage listener for 'DESIGN_UPDATE' events from Design Customizer, 2) Custom event listener for same-origin communication, 3) localStorage change listener for cross-tab communication, 4) Pending update checker on initialization, 5) Enhanced applyDesignSettings() function with CSS custom properties and dynamic style injection, 6) Multiple communication methods ensure design changes work in all scenarios (iframe, separate tabs, same origin)."
+        -comment: "🛍️ SALES PAGE PREVIEW DESIGN INTEGRATION FIXED: Modified updatePreviewWithProduct() function to use dynamic design settings instead of hardcoded CSS. Now when creating products in Mi Tienda, the sales page preview respects the design choices from the Diseño section. Key changes: 1) Replaced hardcoded backgrounds/colors with getCurrentDesignSettings() values, 2) Applied font family from design settings, 3) Used button colors from design system, 4) Added sales-page-preview class for proper styling, 5) Fixed CSS conflicts between sales page and design customization. Preview now shows transparent/inherited backgrounds that properly reflect Diseño customizations."
 
 metadata:
   created_by: "main_agent"
