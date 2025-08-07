@@ -222,6 +222,53 @@ class BackendTester:
         except requests.exceptions.RequestException as e:
             self.log_test("PostMessage CORS Support", False, f"CORS test failed: {str(e)}")
             return False
+    
+    def test_data_persistence(self):
+        """Test data persistence by creating and retrieving a record"""
+        try:
+            # Create a test record
+            test_data = {
+                "client_name": f"persistence_test_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            }
+            
+            # POST the record
+            post_response = requests.post(
+                f"{self.api_url}/status", 
+                json=test_data,
+                headers={'Content-Type': 'application/json'},
+                timeout=10
+            )
+            
+            if post_response.status_code != 200:
+                self.log_test("Data Persistence", False, f"Failed to create test record: {post_response.status_code}")
+                return False
+            
+            created_record = post_response.json()
+            created_id = created_record.get('id')
+            
+            # GET all records and verify our record exists
+            get_response = requests.get(f"{self.api_url}/status", timeout=10)
+            if get_response.status_code != 200:
+                self.log_test("Data Persistence", False, f"Failed to retrieve records: {get_response.status_code}")
+                return False
+            
+            all_records = get_response.json()
+            found_record = None
+            for record in all_records:
+                if record.get('id') == created_id:
+                    found_record = record
+                    break
+            
+            if found_record and found_record.get('client_name') == test_data['client_name']:
+                self.log_test("Data Persistence", True, "Data persistence working correctly", f"Record persisted with ID: {created_id}")
+                return True
+            else:
+                self.log_test("Data Persistence", False, "Created record not found in database")
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            self.log_test("Data Persistence", False, f"Persistence test failed: {str(e)}")
+            return False
         """Test data persistence by creating and retrieving a record"""
         try:
             # Create a test record
