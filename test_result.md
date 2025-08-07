@@ -183,6 +183,8 @@ metadata:
 
 test_plan:
   current_focus:
+    - "Font Selection System Bug Fixes"
+    - "Public Product Page Design System Integration"
     - "Backend Server Infrastructure"
     - "API Endpoints Functionality"
   stuck_tasks: []
