@@ -135,10 +135,10 @@ function hideLoadingState() {
         loadingState.style.display = 'none';
     }
     if (mobileLayout) {
-        mobileLayout.style.display = 'block';
+        mobileLayout.style.display = '';  // Let CSS handle responsive behavior
     }
     if (desktopLayout) {
-        desktopLayout.style.display = 'block';
+        desktopLayout.style.display = '';  // Let CSS handle responsive behavior
     }
     isLoading = false;
 }
