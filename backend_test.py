@@ -131,7 +131,97 @@ class BackendTester:
             self.log_test("CORS Configuration", False, f"CORS test failed: {str(e)}")
             return False
     
-    def test_data_persistence(self):
+    def test_design_integration_routes(self):
+        """Test Design-Mi Tienda integration routes"""
+        try:
+            # Test /api/diseno route
+            diseno_response = requests.get(f"{self.api_url}/diseno", timeout=10)
+            if diseno_response.status_code == 200:
+                content = diseno_response.text
+                if 'diseno' in content.lower() or 'diseño' in content.lower():
+                    self.log_test("API Diseno Route", True, "Design page served correctly via API route")
+                else:
+                    self.log_test("API Diseno Route", False, "Design page content not found")
+                    return False
+            else:
+                self.log_test("API Diseno Route", False, f"HTTP {diseno_response.status_code}: {diseno_response.text}")
+                return False
+            
+            # Test /api/mi-tienda route
+            mi_tienda_response = requests.get(f"{self.api_url}/mi-tienda", timeout=10)
+            if mi_tienda_response.status_code == 200:
+                content = mi_tienda_response.text
+                if 'mi-tienda' in content.lower() or 'tienda' in content.lower():
+                    self.log_test("API Mi-Tienda Route", True, "Mi Tienda page served correctly via API route")
+                else:
+                    self.log_test("API Mi-Tienda Route", False, "Mi Tienda page content not found")
+                    return False
+            else:
+                self.log_test("API Mi-Tienda Route", False, f"HTTP {mi_tienda_response.status_code}: {mi_tienda_response.text}")
+                return False
+                
+            return True
+            
+        except requests.exceptions.RequestException as e:
+            self.log_test("Design Integration Routes", False, f"Request failed: {str(e)}")
+            return False
+    
+    def test_static_file_serving(self):
+        """Test static file serving for JavaScript integration"""
+        try:
+            # Test JavaScript files are accessible
+            js_files = [
+                "/js/diseno.js",
+                "/js/mi-tienda.js"
+            ]
+            
+            for js_file in js_files:
+                response = requests.get(f"{self.backend_url}/diseno-assets{js_file}", timeout=10)
+                if response.status_code == 200:
+                    content = response.text
+                    if 'function' in content or 'const' in content or 'let' in content:
+                        self.log_test(f"Static JS File {js_file}", True, "JavaScript file served correctly")
+                    else:
+                        self.log_test(f"Static JS File {js_file}", False, "JavaScript content not found")
+                        return False
+                else:
+                    self.log_test(f"Static JS File {js_file}", False, f"HTTP {response.status_code}")
+                    return False
+            
+            return True
+            
+        except requests.exceptions.RequestException as e:
+            self.log_test("Static File Serving", False, f"Request failed: {str(e)}")
+            return False
+    
+    def test_postmessage_cors_support(self):
+        """Test CORS configuration for PostMessage communication"""
+        try:
+            # Test preflight request for PostMessage scenarios
+            headers = {
+                'Origin': 'https://example.com',
+                'Access-Control-Request-Method': 'GET',
+                'Access-Control-Request-Headers': 'Content-Type'
+            }
+            
+            response = requests.options(f"{self.api_url}/diseno", headers=headers, timeout=10)
+            
+            # Check CORS headers for PostMessage support
+            cors_origin = response.headers.get('access-control-allow-origin')
+            cors_methods = response.headers.get('access-control-allow-methods')
+            cors_headers = response.headers.get('access-control-allow-headers')
+            
+            if cors_origin == '*' and cors_methods and cors_headers:
+                self.log_test("PostMessage CORS Support", True, "CORS properly configured for iframe communication", 
+                            f"Methods: {cors_methods}, Headers: {cors_headers}")
+                return True
+            else:
+                self.log_test("PostMessage CORS Support", False, f"CORS headers insufficient: Origin={cors_origin}, Methods={cors_methods}")
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            self.log_test("PostMessage CORS Support", False, f"CORS test failed: {str(e)}")
+            return False
         """Test data persistence by creating and retrieving a record"""
         try:
             # Create a test record
