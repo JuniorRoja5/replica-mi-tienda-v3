@@ -21,29 +21,41 @@
     <link href="css/enhanced-design.css" rel="stylesheet">
     
     <style>
+        /* === CSS VARIABLES FOR DESIGN SYSTEM === */
+        :root {
+            --design-background: #000000;
+            --design-text-color: #FFFFFF;
+            --design-text-secondary: #A0A0A0;
+            --design-button-bg: rgba(255, 255, 255, 0.1);
+            --design-button-text: #FFFFFF;
+            --design-button-hover: rgba(255, 255, 255, 0.15);
+            --design-font-family: 'Inter';
+        }
+        
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--design-background);
             min-height: 100vh;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: var(--design-font-family), -apple-system, BlinkMacSystemFont, sans-serif;
             margin: 0;
             padding: 0;
+            color: var(--design-text-color);
         }
 
         .product-container {
             max-width: 600px;
             margin: 0 auto;
             min-height: 100vh;
-            background: #1a1a1a;
-            color: white;
+            background: var(--design-background);
+            color: var(--design-text-color);
             position: relative;
         }
 
         .header-bar {
             position: sticky;
             top: 0;
-            background: rgba(26, 26, 26, 0.95);
+            background: var(--design-background)CC;
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid var(--design-text-secondary)40;
             z-index: 100;
             padding: 1rem;
         }
@@ -51,17 +63,18 @@
         .back-button {
             background: none;
             border: none;
-            color: #a0a0a0;
+            color: var(--design-text-secondary);
             display: flex;
             align-items: center;
             gap: 0.5rem;
             font-size: 0.95rem;
             transition: color 0.2s ease;
             text-decoration: none;
+            font-family: var(--design-font-family);
         }
 
         .back-button:hover {
-            color: white;
+            color: var(--design-text-color);
         }
 
         .product-content {
@@ -75,14 +88,14 @@
             border-radius: 1rem;
             object-fit: cover;
             margin-bottom: 2rem;
-            background: #2a2a2a;
+            background: var(--design-button-bg);
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .product-image-placeholder {
-            color: #666;
+            color: var(--design-text-secondary);
             font-size: 3rem;
         }
 
@@ -91,13 +104,16 @@
             font-weight: 700;
             margin-bottom: 0.5rem;
             line-height: 1.2;
+            color: var(--design-text-color);
+            font-family: var(--design-font-family);
         }
 
         .product-subtitle {
             font-size: 1.1rem;
-            color: #a0a0a0;
+            color: var(--design-text-secondary);
             margin-bottom: 1.5rem;
             line-height: 1.4;
+            font-family: var(--design-font-family);
         }
 
         .price-section {
