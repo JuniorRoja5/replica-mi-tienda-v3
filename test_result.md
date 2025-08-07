@@ -151,20 +151,29 @@ frontend:
         -agent: "testing"
         -comment: "✅ DESIGN-MI TIENDA INTEGRATION FULLY WORKING: Comprehensive testing confirms real-time integration is operational. Key findings: 1) Design integration initializes successfully with multiple communication methods (PostMessage, localStorage, custom events), 2) Default dark theme applies correctly (background: rgb(0,0,0), text: #FFFFFF), 3) MiTiendaIntegration.applyDesignToMiTienda() function properly sends design updates via multiple fallback methods, 4) initializeDesignIntegration() in mi-tienda.js successfully listens for design changes, 5) getCurrentDesignSettings() function returns correct design state, 6) Real-time communication between Diseño and Mi Tienda sections working as intended. Console logs confirm: 'Design settings applied successfully' and 'Design integration initialized successfully with multiple communication methods'."
 
-  - task: "Product Sales Page Preview Integration with Design System"
+  - task: "Font Selection System Bug Fixes"
     implemented: true
-    working: true
-    file: "/app/frontend/public/js/mi-tienda.js"
+    working: "needs_testing"
+    file: "/app/frontend/public/diseno.html, /app/frontend/public/mi-tienda.html, /app/frontend/public/public-product.html"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         -working: "implemented"
         -agent: "main"
-        -comment: "🛍️ SALES PAGE PREVIEW DESIGN INTEGRATION FIXED: Modified updatePreviewWithProduct() function to use dynamic design settings instead of hardcoded CSS. Now when creating products in Mi Tienda, the sales page preview respects the design choices from the Diseño section. Key changes: 1) Replaced hardcoded backgrounds/colors with getCurrentDesignSettings() values, 2) Applied font family from design settings, 3) Used button colors from design system, 4) Added sales-page-preview class for proper styling, 5) Fixed CSS conflicts between sales page and design customization. Preview now shows transparent/inherited backgrounds that properly reflect Diseño customizations."
-        -working: true
-        -agent: "testing"
-        -comment: "✅ SALES PAGE PREVIEW CSS CONFLICT FIX VERIFIED: Critical testing confirms the reported CSS conflict issue has been resolved. Key verification: 1) updatePreviewWithProduct() function correctly calls getCurrentDesignSettings() to get dynamic design values instead of using hardcoded CSS, 2) Sales page preview (.sales-page-preview) properly applies design system colors and fonts, 3) Product creation flow works correctly - users can create digital products, consultations, courses, and memberships, 4) Sales preview respects design settings: background uses designSettings.background, text uses designSettings.text_color, fonts use designSettings.font_family, buttons use designSettings.button_color, 5) No hardcoded dark theme conflicts - all styling is now dynamic and inherits from design customization, 6) CSS conflicts between sales page styles and design customization completely eliminated. The user-reported bug where sales page preview showed hardcoded dark theme instead of design settings is now fixed."
+        -comment: "🔧 FONT SELECTION & UI OVERLAY BUGS FIXED: 1) Increased font selector dropdown z-index from 50 to 9999 to prevent save button overlay, 2) Added Google Fonts links to all HTML pages (diseno.html, mi-tienda.html, public-product.html) to properly load custom fonts (Inter, Poppins, Roboto, Montserrat, Open Sans, Lato, Quicksand, Nunito, Source Sans Pro, Roboto Mono), 3) Font changes now properly apply to iframe previews and sales pages through CSS custom properties and dynamic font family application."
+
+  - task: "Public Product Page Design System Integration"
+    implemented: true
+    working: "needs_testing"
+    file: "/app/frontend/public/public-product.html"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: true
+    status_history:
+        -working: "implemented"
+        -agent: "main"
+        -comment: "🌐 PUBLIC PAGE DESIGN INTEGRATION COMPLETED: Fixed critical issue where public product pages (https://domain/u/vcard equivalent) didn't reflect design changes. Key changes: 1) Replaced ALL hardcoded CSS with CSS custom properties (--design-background, --design-text-color, etc.), 2) Added comprehensive JavaScript design system integration with localStorage listening, 3) Added Google Fonts loading, 4) Implemented applyDesignSettings(), loadDesignSettings(), and storage change listeners, 5) Public pages now automatically load and apply design settings from both Mi Tienda and Diseño sections, 6) Real-time updates when design changes in other tabs. The public product page now properly reflects all design customizations from the Diseño section."
 
 metadata:
   created_by: "main_agent"
