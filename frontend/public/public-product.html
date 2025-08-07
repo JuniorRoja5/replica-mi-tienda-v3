@@ -218,18 +218,18 @@
             transform: translateX(-50%);
             max-width: 600px;
             width: 100%;
-            background: rgba(26, 26, 26, 0.95);
+            background: var(--design-background)F0;
             backdrop-filter: blur(10px);
-            border-top: 1px solid #333;
+            border-top: 1px solid var(--design-text-secondary)40;
             padding: 1.5rem;
             z-index: 100;
         }
 
         .purchase-button {
             width: 100%;
-            background: #8b5cf6;
-            border: none;
-            color: white;
+            background: var(--design-button-bg);
+            border: 1px solid var(--design-text-secondary)40;
+            color: var(--design-button-text);
             font-size: 1.1rem;
             font-weight: 600;
             padding: 1rem;
@@ -239,10 +239,12 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            font-family: var(--design-font-family);
+            cursor: pointer;
         }
 
         .purchase-button:hover {
-            background: #7c3aed;
+            background: var(--design-button-hover);
             transform: translateY(-2px);
         }
 
@@ -258,11 +260,13 @@
             text-align: center;
             min-height: 100vh;
             padding: 2rem;
+            color: var(--design-text-color);
+            background: var(--design-background);
         }
 
         .error-icon, .loading-spinner {
             font-size: 4rem;
-            color: #666;
+            color: var(--design-text-secondary);
             margin-bottom: 1rem;
         }
 
@@ -278,6 +282,16 @@
         .error-title {
             font-size: 1.5rem;
             font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--design-text-color);
+            font-family: var(--design-font-family);
+        }
+
+        .error-message {
+            color: var(--design-text-secondary);
+            margin-bottom: 2rem;
+            font-family: var(--design-font-family);
+        }
             margin-bottom: 0.5rem;
         }
 
