@@ -483,9 +483,9 @@ class BackendTester:
             self.test_customers_static_assets,
             self.test_statistics_static_assets,
             self.test_all_html_routes,
+            self.test_frontend_routing_architecture,
             self.test_design_integration_routes,
             self.test_static_file_serving,
-            self.test_postmessage_cors_support,
             self.test_data_persistence
         ]
         
