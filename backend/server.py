@@ -69,9 +69,16 @@ async def serve_ingresos():
     ingresos_path = Path(__file__).parent.parent / "frontend" / "public" / "ingresos.html"
     return FileResponse(ingresos_path, media_type="text/html")
 
+# Serve diseno (design) page directly from backend
+@app.get("/diseno")
+async def serve_diseno():
+    diseno_path = Path(__file__).parent.parent / "frontend" / "public" / "diseno.html"
+    return FileResponse(diseno_path, media_type="text/html")
+
 # Mount static files for dashboard and ingresos assets
 app.mount("/dashboard-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="dashboard-assets")
 app.mount("/ingresos-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="ingresos-assets")
+app.mount("/diseno-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="diseno-assets")
 
 app.add_middleware(
     CORSMiddleware,
