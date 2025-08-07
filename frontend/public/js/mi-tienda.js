@@ -95,7 +95,373 @@ document.addEventListener('DOMContentLoaded', function() {
     updatePreview();
     initializeDragAndDrop();
     setupEventListeners();
+    // Initialize design integration
+    initializeDesignIntegration();
 });
+
+/* ========================================
+   DESIGN CUSTOMIZER INTEGRATION
+   Real-time communication with diseno.html
+   ======================================== */
+
+// Global design state
+let currentDesignSettings = null;
+
+/**
+ * Initialize design integration system
+ * Sets up communication with the Design Customizer
+ */
+function initializeDesignIntegration() {
+    // Listen for design updates from Design Customizer
+    window.addEventListener('message', function(event) {
+        if (event.data.type === 'DESIGN_UPDATE') {
+            const designSettings = event.data.settings;
+            applyDesignSettings(designSettings);
+            console.log('Design updated from Design Customizer:', designSettings);
+        } else if (event.data.type === 'productClick') {
+            handleProductClickFromIframe(event.data.productId, event.data.productType);
+        } else if (event.data.type === 'openPurchaseModal') {
+            // The end user clicks "buy" from the preview (public view)
+            // This simulates what would happen at https://domain/u/user
+            handlePurchaseFromPublicView(event.data.product);
+        }
+    });
+    
+    // Load design settings from localStorage if available
+    const savedDesignSettings = localStorage.getItem('applied_design_settings');
+    if (savedDesignSettings) {
+        try {
+            const settings = JSON.parse(savedDesignSettings);
+            applyDesignSettings(settings);
+        } catch (error) {
+            console.error('Error loading saved design settings:', error);
+        }
+    } else {
+        // Apply default dark theme if no settings saved
+        applyDefaultDesignSettings();
+    }
+    
+    console.log('Design integration initialized successfully');
+}
+
+/**
+ * Apply design settings to Mi Tienda
+ * Updates CSS custom properties and refreshes preview
+ * @param {Object} settings - Design settings object from Design Customizer
+ */
+function applyDesignSettings(settings) {
+    if (!settings || typeof settings !== 'object') {
+        console.warn('Invalid design settings received:', settings);
+        return;
+    }
+    
+    currentDesignSettings = settings;
+    
+    // Update CSS custom properties for real-time design changes
+    const root = document.documentElement;
+    
+    // Background settings
+    root.style.setProperty('--design-background', settings.background || '#000000');
+    root.style.setProperty('--design-text-color', settings.text_color || '#FFFFFF');
+    root.style.setProperty('--design-text-secondary', settings.text_secondary_color || '#A0A0A0');
+    root.style.setProperty('--design-button-bg', settings.button_color || 'rgba(255, 255, 255, 0.1)');
+    root.style.setProperty('--design-button-text', settings.button_font_color || '#FFFFFF');
+    root.style.setProperty('--design-button-hover', settings.button_hover_color || 'rgba(255, 255, 255, 0.15)');
+    root.style.setProperty('--design-font-family', settings.font_family || 'Inter');
+    
+    // Apply background type specific styles
+    if (settings.background_type === 'gradient' && settings.background.includes('gradient')) {
+        root.style.setProperty('--design-background-type', 'gradient');
+    } else {
+        root.style.setProperty('--design-background-type', 'solid');
+    }
+    
+    // Inject dynamic styles for preview content
+    injectDynamicDesignStyles(settings);
+    
+    // Update preview with new design
+    updatePreview();
+    
+    // Store settings for persistence
+    localStorage.setItem('applied_design_settings', JSON.stringify(settings));
+    
+    console.log('Design settings applied successfully:', settings);
+}
+
+/**
+ * Apply default design settings (dark theme)
+ * Used when no custom design is set
+ */
+function applyDefaultDesignSettings() {
+    const defaultSettings = {
+        theme_id: 'dark',
+        theme_name: 'Tema Oscuro',
+        background: '#000000',
+        background_type: 'solid',
+        text_color: '#FFFFFF',
+        text_secondary_color: '#A0A0A0',
+        font_family: 'Inter',
+        button_color: 'rgba(255, 255, 255, 0.1)',
+        button_font_color: '#FFFFFF',
+        button_hover_color: 'rgba(255, 255, 255, 0.15)'
+    };
+    
+    applyDesignSettings(defaultSettings);
+}
+
+/**
+ * Inject dynamic CSS styles for design customization
+ * Creates and updates a style element with design-specific rules
+ * @param {Object} settings - Design settings object
+ */
+function injectDynamicDesignStyles(settings) {
+    // Remove existing dynamic styles
+    const existingStyle = document.getElementById('dynamic-design-styles');
+    if (existingStyle) {
+        existingStyle.remove();
+    }
+    
+    // Create new style element
+    const style = document.createElement('style');
+    style.id = 'dynamic-design-styles';
+    
+    // Generate CSS based on design settings
+    const cssRules = `
+        /* Preview content styling with design customization */
+        .preview-content,
+        #previewContent {
+            background: ${settings.background} !important;
+            color: ${settings.text_color} !important;
+            font-family: ${settings.font_family} !important;
+        }
+        
+        /* Preview header styling */
+        .preview-header {
+            background: ${settings.background} !important;
+            color: ${settings.text_color} !important;
+            font-family: ${settings.font_family} !important;
+        }
+        
+        .preview-name {
+            color: ${settings.text_color} !important;
+            font-family: ${settings.font_family} !important;
+        }
+        
+        .preview-username,
+        .preview-bio {
+            color: ${settings.text_secondary_color} !important;
+            font-family: ${settings.font_family} !important;
+        }
+        
+        /* Preview product styling */
+        .preview-product {
+            background: ${settings.button_color} !important;
+            color: ${settings.button_font_color} !important;
+            font-family: ${settings.font_family} !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            transition: all 0.2s ease !important;
+        }
+        
+        .preview-product:hover {
+            background: ${settings.button_hover_color} !important;
+        }
+        
+        .preview-product h4 {
+            color: ${settings.button_font_color} !important;
+            font-family: ${settings.font_family} !important;
+        }
+        
+        .preview-product p {
+            color: ${settings.text_secondary_color} !important;
+            font-family: ${settings.font_family} !important;
+        }
+        
+        .preview-product-price {
+            color: ${settings.button_font_color} !important;
+            font-family: ${settings.font_family} !important;
+        }
+        
+        /* Social icons with design colors */
+        .preview-social-icon {
+            border: 1px solid ${settings.text_secondary_color} !important;
+        }
+        
+        /* For product sales pages in preview */
+        .sales-page-preview {
+            background: ${settings.background} !important;
+            color: ${settings.text_color} !important;
+            font-family: ${settings.font_family} !important;
+        }
+        
+        /* Button styling in sales preview */
+        .sales-preview-button {
+            background: ${settings.button_color} !important;
+            color: ${settings.button_font_color} !important;
+            font-family: ${settings.font_family} !important;
+        }
+        
+        .sales-preview-button:hover {
+            background: ${settings.button_hover_color} !important;
+        }
+        
+        /* Custom CSS for gradient backgrounds */
+        ${settings.background_type === 'gradient' && settings.background.includes('gradient') ? `
+        .preview-content,
+        #previewContent {
+            background: ${settings.background} !important;
+            background-attachment: fixed !important;
+        }
+        ` : ''}
+        
+        /* Responsive design adjustments */
+        @media (max-width: 768px) {
+            .preview-content,
+            #previewContent {
+                font-size: 14px !important;
+            }
+            
+            .preview-name {
+                font-size: 1.2rem !important;
+            }
+        }
+    `;
+    
+    style.textContent = cssRules;
+    document.head.appendChild(style);
+}
+
+/**
+ * Get current design settings
+ * Used by other functions to access current design state
+ * @returns {Object|null} Current design settings or null if not set
+ */
+function getCurrentDesignSettings() {
+    return currentDesignSettings;
+}
+
+/**
+ * Send design update to parent window (for iframe integration)
+ * Used when Mi Tienda is embedded in an iframe
+ * @param {Object} settings - Design settings to send
+ */
+function sendDesignUpdateToParent(settings) {
+    if (window.parent && window.parent !== window) {
+        const message = {
+            type: 'MI_TIENDA_DESIGN_APPLIED',
+            settings: settings,
+            timestamp: Date.now()
+        };
+        window.parent.postMessage(message, '*');
+    }
+}
+
+/**
+ * Handle design reset (back to default)
+ * Resets design to default dark theme
+ */
+function resetDesignToDefault() {
+    const defaultSettings = {
+        theme_id: 'dark',
+        theme_name: 'Tema Oscuro',
+        background: '#000000',
+        background_type: 'solid',
+        text_color: '#FFFFFF',
+        text_secondary_color: '#A0A0A0',
+        font_family: 'Inter',
+        button_color: 'rgba(255, 255, 255, 0.1)',
+        button_font_color: '#FFFFFF',
+        button_hover_color: 'rgba(255, 255, 255, 0.15)'
+    };
+    
+    applyDesignSettings(defaultSettings);
+    showToast('Diseño restablecido al tema por defecto', 'info');
+}
+
+/**
+ * Export design integration functions for Laravel backend
+ * These functions will be available for Laravel Blade integration
+ */
+const MiTiendaDesignIntegration = {
+    /**
+     * Initialize design system with Laravel data
+     * @param {Object} creatorData - Creator data from Laravel
+     */
+    initializeWithLaravelData: function(creatorData) {
+        if (creatorData.design_settings) {
+            applyDesignSettings(creatorData.design_settings);
+        } else {
+            applyDefaultDesignSettings();
+        }
+    },
+    
+    /**
+     * Get current design settings for saving to Laravel
+     * @returns {Object|null} Current design settings
+     */
+    getCurrentSettings: function() {
+        return getCurrentDesignSettings();
+    },
+    
+    /**
+     * Apply design settings from Laravel backend
+     * @param {Object} settings - Design settings from database
+     */
+    applySettings: function(settings) {
+        applyDesignSettings(settings);
+    },
+    
+    /**
+     * Reset to default design
+     */
+    resetToDefault: function() {
+        resetDesignToDefault();
+    },
+    
+    /**
+     * Save current design settings to Laravel backend
+     * @returns {Promise} Promise that resolves when settings are saved
+     */
+    saveToLaravel: async function() {
+        if (!currentDesignSettings) {
+            throw new Error('No design settings to save');
+        }
+        
+        try {
+            const response = await fetch('/api/creators/design-settings', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                },
+                body: JSON.stringify({ design_settings: currentDesignSettings })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            console.log('Design settings saved to Laravel:', result);
+            return result;
+            
+        } catch (error) {
+            console.error('Failed to save design settings to Laravel:', error);
+            throw error;
+        }
+    }
+};
+
+// Export for Laravel Blade integration
+if (typeof window !== 'undefined') {
+    window.MiTiendaDesignIntegration = MiTiendaDesignIntegration;
+    window.applyDesignSettings = applyDesignSettings;
+    window.getCurrentDesignSettings = getCurrentDesignSettings;
+}
+
+/* ========================================
+   END OF DESIGN INTEGRATION
+   ======================================== */
 
 function initializeApp() {
     console.log('Mi Tienda v2.0 - Aplicación inicializada');
