@@ -54,6 +54,11 @@ async def get_status_checks():
     status_checks = await db.status_checks.find().to_list(1000)
     return [StatusCheck(**status_check) for status_check in status_checks]
 
+# Test route to debug API router
+@api_router.get("/test")
+async def test_route():
+    return {"message": "API router is working"}
+
 # Include the router in the main app
 app.include_router(api_router)
 
