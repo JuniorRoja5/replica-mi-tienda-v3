@@ -43,4 +43,14 @@ module.exports = {
       return webpackConfig;
     },
   },
+  devServer: {
+    setupMiddlewares: (middlewares, devServer) => {
+      // Add middleware to serve dashboard.html directly
+      devServer.app.get('/dashboard.html', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'public', 'dashboard.html'));
+      });
+      
+      return middlewares;
+    },
+  },
 };
