@@ -240,9 +240,7 @@ function debounce(func, wait) {
  */
 async function loadStatistics() {
     try {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
+        // QUICK LOADING for better UX - Remove delay for production
         // LARAVEL NOTE: Replace this with actual API call
         // const response = await fetch(`/api/statistics?period=${currentPeriod}`, {
         //     headers: {
@@ -253,7 +251,7 @@ async function loadStatistics() {
         // });
         // statisticsData = await response.json();
         
-        // Mock data for development
+        // Mock data for development - NO DELAY for better UX
         statisticsData = generateMockStatistics();
         
         console.log('Statistics loaded successfully:', statisticsData);
