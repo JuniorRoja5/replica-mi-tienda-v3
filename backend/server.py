@@ -128,6 +128,10 @@ app.mount("/mi-tienda-assets", StaticFiles(directory=Path(__file__).parent.paren
 app.mount("/customers-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="customers-assets")
 app.mount("/statistics-assets", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public"), name="statistics-assets")
 
+# Mount general static files for JS and CSS (for relative path compatibility)
+app.mount("/js", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public" / "js"), name="js")
+app.mount("/css", StaticFiles(directory=Path(__file__).parent.parent / "frontend" / "public" / "css"), name="css")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
