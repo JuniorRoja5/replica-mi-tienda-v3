@@ -224,9 +224,7 @@ function debounce(func, wait) {
  */
 async function loadCustomers() {
     try {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
+        // QUICK LOADING for better UX - Remove delay for production
         // LARAVEL NOTE: Replace this with actual API call
         // const response = await fetch('/api/customers', {
         //     headers: {
@@ -237,7 +235,7 @@ async function loadCustomers() {
         // });
         // customers = await response.json();
         
-        // Mock data for development
+        // Mock data for development - NO DELAY for better UX
         customers = generateMockCustomers();
         filteredCustomers = [...customers];
         
