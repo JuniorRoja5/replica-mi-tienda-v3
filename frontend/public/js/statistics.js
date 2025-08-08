@@ -454,7 +454,25 @@ function updateOverviewCards() {
  * Create activity chart using Chart.js
  */
 function createActivityChart() {
-    const ctx = document.getElementById('activityChart').getContext('2d');
+    // Check if Chart.js is loaded
+    if (typeof Chart === 'undefined') {
+        console.error('Chart.js is not loaded! Make sure Chart.js is included before statistics.js');
+        document.getElementById('activityChart').parentElement.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: #6B7280;">
+                <p><strong>Error:</strong> Chart.js library not loaded.</p>
+                <p>Please check your internet connection or try refreshing the page.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const ctx = document.getElementById('activityChart');
+    if (!ctx) {
+        console.error('Chart canvas element not found!');
+        return;
+    }
+    
+    const context = ctx.getContext('2d');
     
     // Destroy existing chart if it exists
     if (activityChart) {
@@ -569,11 +587,22 @@ function createActivityChart() {
         }
     };
     
-    activityChart = new Chart(ctx, {
-        type: 'line',
-        data: chartData,
-        options: chartOptions
-    });
+    try {
+        activityChart = new Chart(context, {
+            type: 'line',
+            data: chartData,
+            options: chartOptions
+        });
+        console.log('📊 Activity chart created successfully');
+    } catch (error) {
+        console.error('Error creating chart:', error);
+        document.getElementById('activityChart').parentElement.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: #6B7280;">
+                <p><strong>Error:</strong> No se pudo crear la gráfica.</p>
+                <p>Por favor, recarga la página.</p>
+            </div>
+        `;
+    }
 }
 
 /**
