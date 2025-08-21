@@ -1,0 +1,29 @@
+// AGREGAR ANTES DE LA LÍNEA 904 (antes de });) - DENTRO DEL GRUPO DE USER:
+
+        // MI TIENDA STATIC HTML ROUTES - INTEGRATED WITH SIDEBAR
+        Route::get('mi-tienda', function () {
+            return response()->file(public_path('mi-tienda/mi-tienda.html'));
+        })->name('mitienda');
+        
+        Route::get('mi-tienda/dashboard', function () {
+            return response()->file(public_path('mi-tienda/dashboard.html'));
+        })->name('mitienda.dashboard');
+        
+        Route::get('mi-tienda/ingresos', function () {
+            return response()->file(public_path('mi-tienda/ingresos.html'));
+        })->name('mitienda.ingresos');
+        
+        Route::get('mi-tienda/diseno', function () {
+            return response()->file(public_path('mi-tienda/diseno.html'));
+        })->name('mitienda.diseno');
+        
+        Route::get('mi-tienda/customers', function () {
+            return response()->file(public_path('mi-tienda/customers.html'));
+        })->name('mitienda.customers');
+        
+        Route::get('mi-tienda/statistics', function () {
+            return response()->file(public_path('mi-tienda/statistics.html'));
+        })->name('mitienda.statistics');
+
+
+// Y ELIMINAR LAS LÍNEAS 1162-1180 (las rutas que están fuera del grupo user)
