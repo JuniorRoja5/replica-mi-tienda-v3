@@ -293,7 +293,7 @@ test_plan:
   current_focus:
     []
   stuck_tasks:
-    []
+    ["Mi Tienda Public URL System"]
   test_all: false
   test_priority: "high_first"
 
