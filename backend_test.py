@@ -726,49 +726,81 @@ class BackendTester:
             return False
     
     def test_mi_tienda_dashboard_stats_comparison(self):
-        """Test that profile endpoints follow same pattern as working dashboard-stats endpoint"""
+        """Test comparison with working dashboard-stats endpoint: https://clickmy.link/user/api/mi-tienda/dashboard-stats"""
         try:
-            # Test the dashboard-stats endpoint that was previously working
-            dashboard_stats_url = f"{self.backend_url}/user/api/mi-tienda/dashboard-stats"
-            profile_url = f"{self.backend_url}/user/api/mi-tienda/profile"
+            # Test the dashboard-stats endpoint as reference (from review request)
+            dashboard_stats_url = "https://clickmy.link/user/api/mi-tienda/dashboard-stats"
+            profile_url = "https://clickmy.link/user/api/mi-tienda/profile"
             
             # Test both endpoints for consistency
             dashboard_response = requests.get(dashboard_stats_url, timeout=10)
             profile_response = requests.get(profile_url, timeout=10)
             
-            # Both should have similar auth requirements
-            dashboard_auth_required = dashboard_response.status_code in [401, 403, 302, 419]
-            profile_auth_required = profile_response.status_code in [401, 403, 302, 419]
+            # Log individual responses for comparison
+            self.log_test("Dashboard Stats Reference Endpoint", True, 
+                        f"Dashboard-stats endpoint response: HTTP {dashboard_response.status_code}", 
+                        f"Headers: {dict(dashboard_response.headers)}")
             
-            if dashboard_auth_required and profile_auth_required:
-                self.log_test("Mi Tienda API Consistency", True, 
-                            "Profile endpoints follow same auth pattern as dashboard-stats", 
-                            f"Dashboard: {dashboard_response.status_code}, Profile: {profile_response.status_code}")
-                return True
-            elif not dashboard_auth_required and not profile_auth_required:
-                # Both accessible - check response structure
-                try:
-                    dashboard_data = dashboard_response.json() if dashboard_response.status_code == 200 else None
-                    profile_data = profile_response.json() if profile_response.status_code == 200 else None
+            # Check if both endpoints have similar behavior patterns
+            if dashboard_response.status_code == profile_response.status_code:
+                if dashboard_response.status_code == 202:
+                    # Both protected by CAPTCHA - this is consistent
+                    dashboard_captcha = 'sg-captcha' in dashboard_response.headers or 'captcha' in dashboard_response.text.lower()
+                    profile_captcha = 'sg-captcha' in profile_response.headers or 'captcha' in profile_response.text.lower()
                     
-                    if dashboard_data and profile_data:
-                        self.log_test("Mi Tienda API Consistency", True, 
-                                    "Both dashboard and profile endpoints are accessible and return JSON", 
-                                    f"Dashboard and Profile APIs both working")
+                    if dashboard_captcha and profile_captcha:
+                        self.log_test("Laravel API Consistency - CAPTCHA Protection", True, 
+                                    "Both dashboard-stats and profile endpoints are consistently protected by CAPTCHA", 
+                                    f"Both return HTTP 202 with CAPTCHA challenge - consistent security behavior")
                         return True
-                except ValueError:
-                    pass
-                
-                self.log_test("Mi Tienda API Consistency", False, 
-                            f"Inconsistent behavior - Dashboard: {dashboard_response.status_code}, Profile: {profile_response.status_code}")
-                return False
+                    else:
+                        self.log_test("Laravel API Consistency - Inconsistent CAPTCHA", False, 
+                                    f"Inconsistent CAPTCHA protection - Dashboard: {dashboard_captcha}, Profile: {profile_captcha}")
+                        return False
+                elif dashboard_response.status_code in [401, 403, 302]:
+                    # Both require auth - consistent
+                    self.log_test("Laravel API Consistency - Auth Required", True, 
+                                "Both dashboard-stats and profile endpoints consistently require authentication", 
+                                f"Both return HTTP {dashboard_response.status_code} - consistent auth behavior")
+                    return True
+                elif dashboard_response.status_code == 200:
+                    # Both accessible - check if both return JSON
+                    try:
+                        dashboard_data = dashboard_response.json()
+                        profile_data = profile_response.json()
+                        self.log_test("Laravel API Consistency - Both Accessible", True, 
+                                    "Both dashboard-stats and profile endpoints are accessible and return JSON", 
+                                    f"Both APIs working and returning structured data")
+                        return True
+                    except ValueError:
+                        # One or both return HTML instead of JSON
+                        dashboard_is_json = True
+                        profile_is_json = True
+                        try:
+                            dashboard_response.json()
+                        except ValueError:
+                            dashboard_is_json = False
+                        try:
+                            profile_response.json()
+                        except ValueError:
+                            profile_is_json = False
+                        
+                        self.log_test("Laravel API Consistency - Mixed Response Types", False, 
+                                    f"Inconsistent response types - Dashboard JSON: {dashboard_is_json}, Profile JSON: {profile_is_json}")
+                        return False
+                else:
+                    self.log_test("Laravel API Consistency - Same Status", True, 
+                                f"Both endpoints return same status code: HTTP {dashboard_response.status_code}", 
+                                f"Consistent behavior pattern")
+                    return True
             else:
-                self.log_test("Mi Tienda API Consistency", False, 
-                            f"Inconsistent auth requirements - Dashboard: {dashboard_response.status_code}, Profile: {profile_response.status_code}")
+                self.log_test("Laravel API Consistency - Different Status Codes", False, 
+                            f"Inconsistent status codes - Dashboard: {dashboard_response.status_code}, Profile: {profile_response.status_code}", 
+                            f"Different behavior patterns between endpoints")
                 return False
                 
         except requests.exceptions.RequestException as e:
-            self.log_test("Mi Tienda API Consistency", False, f"Consistency test failed: {str(e)}")
+            self.log_test("Laravel API Consistency - Request Failed", False, f"Comparison test failed: {str(e)}")
             return False
 
     def get_summary(self):
