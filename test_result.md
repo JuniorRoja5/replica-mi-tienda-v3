@@ -267,7 +267,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Mi Tienda Products Integration"
+    []
   stuck_tasks:
     []
   test_all: false
