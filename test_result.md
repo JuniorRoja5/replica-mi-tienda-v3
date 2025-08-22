@@ -261,9 +261,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Dashboard Functional Integration" 
+    - "Mi Tienda Profile API Integration"
     - "Mi Tienda Products Integration"
-  stuck_tasks: []
+  stuck_tasks:
+    - "Mi Tienda Profile API Integration"
   test_all: false
   test_priority: "high_first"
 
