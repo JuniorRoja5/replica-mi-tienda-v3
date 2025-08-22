@@ -680,49 +680,63 @@ class BackendTester:
             return False
     
     def test_mi_tienda_profile_api_structure(self):
-        """Test Mi Tienda Profile API endpoint structure and requirements"""
+        """Test Mi Tienda Profile API endpoint structure and accessibility (not 404)"""
         try:
-            # Test that the endpoints follow the expected URL pattern
-            base_url = self.backend_url
-            expected_endpoints = [
-                "/user/api/mi-tienda/profile",  # GET and POST
+            # Test the specific Laravel endpoints from review request
+            endpoints_to_test = [
+                ("GET", "https://clickmy.link/user/api/mi-tienda/profile"),
+                ("POST", "https://clickmy.link/user/api/mi-tienda/profile")
             ]
             
             all_endpoints_accessible = True
-            for endpoint in expected_endpoints:
-                full_url = f"{base_url}{endpoint}"
-                
+            for method, endpoint_url in endpoints_to_test:
                 try:
-                    # Test GET request
-                    get_response = requests.get(full_url, timeout=5)
-                    # Test POST request  
-                    post_response = requests.post(full_url, json={}, timeout=5)
+                    if method == "GET":
+                        response = requests.get(endpoint_url, timeout=10)
+                    else:  # POST
+                        response = requests.post(endpoint_url, json={}, timeout=10)
                     
-                    # We expect auth-related status codes (401, 403, 302, 419)
-                    # or validation errors (422) - these indicate the endpoint exists
-                    valid_status_codes = [200, 302, 401, 403, 419, 422, 500]
-                    
-                    if get_response.status_code in valid_status_codes and post_response.status_code in valid_status_codes:
-                        self.log_test(f"Profile API Endpoint {endpoint}", True, 
-                                    f"Endpoint accessible - GET: {get_response.status_code}, POST: {post_response.status_code}")
-                    else:
-                        self.log_test(f"Profile API Endpoint {endpoint}", False, 
-                                    f"Unexpected status codes - GET: {get_response.status_code}, POST: {post_response.status_code}")
+                    # Check if endpoint is accessible (not 404)
+                    if response.status_code == 404:
+                        self.log_test(f"Laravel {method} Profile Endpoint - Not Found", False, 
+                                    f"{method} {endpoint_url} returns 404 - routing not configured")
                         all_endpoints_accessible = False
+                    elif response.status_code == 500:
+                        self.log_test(f"Laravel {method} Profile Endpoint - Server Error", False, 
+                                    f"{method} {endpoint_url} returns 500 - syntax or configuration error")
+                        all_endpoints_accessible = False
+                    else:
+                        # Any other status code means the endpoint exists and is accessible
+                        status_description = "accessible"
+                        if response.status_code == 202:
+                            status_description = "accessible but CAPTCHA protected"
+                        elif response.status_code in [401, 403, 302, 419]:
+                            status_description = "accessible but requires authentication"
+                        elif response.status_code == 422:
+                            status_description = "accessible with validation"
+                        elif response.status_code == 200:
+                            status_description = "accessible and working"
+                        
+                        self.log_test(f"Laravel {method} Profile Endpoint - Accessible", True, 
+                                    f"{method} {endpoint_url} is {status_description}", 
+                                    f"HTTP {response.status_code} - endpoint exists and routing works")
                         
                 except requests.exceptions.RequestException as e:
-                    self.log_test(f"Profile API Endpoint {endpoint}", False, f"Endpoint not accessible: {str(e)}")
+                    self.log_test(f"Laravel {method} Profile Endpoint - Request Failed", False, 
+                                f"{method} {endpoint_url} request failed: {str(e)}")
                     all_endpoints_accessible = False
             
             if all_endpoints_accessible:
-                self.log_test("Mi Tienda Profile API Structure", True, "All profile API endpoints are properly configured and accessible")
+                self.log_test("Laravel Profile API Routing", True, 
+                            "All Laravel profile API endpoints are properly configured and accessible (not 404)")
             else:
-                self.log_test("Mi Tienda Profile API Structure", False, "Some profile API endpoints are not accessible")
+                self.log_test("Laravel Profile API Routing", False, 
+                            "Some Laravel profile API endpoints are not accessible or have routing issues")
             
             return all_endpoints_accessible
             
         except Exception as e:
-            self.log_test("Mi Tienda Profile API Structure", False, f"Structure test failed: {str(e)}")
+            self.log_test("Laravel Profile API Routing", False, f"Routing test failed: {str(e)}")
             return False
     
     def test_mi_tienda_dashboard_stats_comparison(self):
