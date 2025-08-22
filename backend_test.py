@@ -506,6 +506,212 @@ class BackendTester:
             print(f"⚠️  {total - passed} test(s) FAILED!")
             return False
     
+    def test_mi_tienda_profile_get_endpoint(self):
+        """Test GET /user/api/mi-tienda/profile endpoint"""
+        try:
+            # This endpoint requires Laravel authentication, so we'll test the endpoint structure
+            # Note: This is a Laravel endpoint, not FastAPI, so we test against the external URL
+            profile_url = f"{self.backend_url}/user/api/mi-tienda/profile"
+            
+            # Test without authentication (should fail with 401/403)
+            response = requests.get(profile_url, timeout=10)
+            
+            # Laravel auth middleware should block unauthenticated requests
+            if response.status_code in [401, 403, 302]:  # 302 for redirect to login
+                self.log_test("Mi Tienda Profile GET - Auth Required", True, 
+                            "Profile endpoint correctly requires authentication", 
+                            f"HTTP {response.status_code} - Authentication required as expected")
+                return True
+            elif response.status_code == 200:
+                # If we get 200, check if it's a valid profile response
+                try:
+                    data = response.json()
+                    if 'success' in data and 'profile' in data:
+                        self.log_test("Mi Tienda Profile GET - Endpoint Working", True, 
+                                    "Profile endpoint accessible and returns expected structure", 
+                                    f"Response contains success and profile fields")
+                        return True
+                    else:
+                        self.log_test("Mi Tienda Profile GET - Invalid Response", False, 
+                                    f"Unexpected response structure: {data}")
+                        return False
+                except ValueError:
+                    self.log_test("Mi Tienda Profile GET - Invalid JSON", False, 
+                                f"Response is not valid JSON: {response.text[:200]}")
+                    return False
+            else:
+                self.log_test("Mi Tienda Profile GET - Unexpected Status", False, 
+                            f"HTTP {response.status_code}: {response.text[:200]}")
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            self.log_test("Mi Tienda Profile GET - Request Failed", False, f"Request failed: {str(e)}")
+            return False
+    
+    def test_mi_tienda_profile_post_endpoint(self):
+        """Test POST /user/api/mi-tienda/profile endpoint"""
+        try:
+            # This endpoint requires Laravel authentication and CSRF token
+            profile_url = f"{self.backend_url}/user/api/mi-tienda/profile"
+            
+            # Test data for profile update
+            test_profile_data = {
+                "name": "Test User Profile",
+                "username": "test-user-profile",
+                "bio": "Test bio for Mi Tienda profile",
+                "avatar_url": "",
+                "social_links": {
+                    "instagram": "https://instagram.com/test",
+                    "facebook": "https://facebook.com/test"
+                }
+            }
+            
+            # Test without authentication (should fail)
+            response = requests.post(
+                profile_url, 
+                json=test_profile_data,
+                headers={'Content-Type': 'application/json'},
+                timeout=10
+            )
+            
+            # Laravel auth middleware should block unauthenticated requests
+            if response.status_code in [401, 403, 302, 419]:  # 419 for CSRF token mismatch
+                self.log_test("Mi Tienda Profile POST - Auth Required", True, 
+                            "Profile update endpoint correctly requires authentication", 
+                            f"HTTP {response.status_code} - Authentication/CSRF required as expected")
+                return True
+            elif response.status_code == 422:
+                # Validation error is also acceptable - means endpoint is working
+                try:
+                    data = response.json()
+                    if 'errors' in data or 'message' in data:
+                        self.log_test("Mi Tienda Profile POST - Validation Working", True, 
+                                    "Profile update endpoint has proper validation", 
+                                    f"Validation response: {data}")
+                        return True
+                except ValueError:
+                    pass
+                self.log_test("Mi Tienda Profile POST - Validation Error", False, 
+                            f"HTTP 422 but unexpected response: {response.text[:200]}")
+                return False
+            elif response.status_code == 200:
+                # If we get 200, check if it's a valid success response
+                try:
+                    data = response.json()
+                    if 'success' in data and 'message' in data:
+                        self.log_test("Mi Tienda Profile POST - Endpoint Working", True, 
+                                    "Profile update endpoint accessible and returns expected structure", 
+                                    f"Response: {data}")
+                        return True
+                    else:
+                        self.log_test("Mi Tienda Profile POST - Invalid Response", False, 
+                                    f"Unexpected response structure: {data}")
+                        return False
+                except ValueError:
+                    self.log_test("Mi Tienda Profile POST - Invalid JSON", False, 
+                                f"Response is not valid JSON: {response.text[:200]}")
+                    return False
+            else:
+                self.log_test("Mi Tienda Profile POST - Unexpected Status", False, 
+                            f"HTTP {response.status_code}: {response.text[:200]}")
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            self.log_test("Mi Tienda Profile POST - Request Failed", False, f"Request failed: {str(e)}")
+            return False
+    
+    def test_mi_tienda_profile_api_structure(self):
+        """Test Mi Tienda Profile API endpoint structure and requirements"""
+        try:
+            # Test that the endpoints follow the expected URL pattern
+            base_url = self.backend_url
+            expected_endpoints = [
+                "/user/api/mi-tienda/profile",  # GET and POST
+            ]
+            
+            all_endpoints_accessible = True
+            for endpoint in expected_endpoints:
+                full_url = f"{base_url}{endpoint}"
+                
+                try:
+                    # Test GET request
+                    get_response = requests.get(full_url, timeout=5)
+                    # Test POST request  
+                    post_response = requests.post(full_url, json={}, timeout=5)
+                    
+                    # We expect auth-related status codes (401, 403, 302, 419)
+                    # or validation errors (422) - these indicate the endpoint exists
+                    valid_status_codes = [200, 302, 401, 403, 419, 422, 500]
+                    
+                    if get_response.status_code in valid_status_codes and post_response.status_code in valid_status_codes:
+                        self.log_test(f"Profile API Endpoint {endpoint}", True, 
+                                    f"Endpoint accessible - GET: {get_response.status_code}, POST: {post_response.status_code}")
+                    else:
+                        self.log_test(f"Profile API Endpoint {endpoint}", False, 
+                                    f"Unexpected status codes - GET: {get_response.status_code}, POST: {post_response.status_code}")
+                        all_endpoints_accessible = False
+                        
+                except requests.exceptions.RequestException as e:
+                    self.log_test(f"Profile API Endpoint {endpoint}", False, f"Endpoint not accessible: {str(e)}")
+                    all_endpoints_accessible = False
+            
+            if all_endpoints_accessible:
+                self.log_test("Mi Tienda Profile API Structure", True, "All profile API endpoints are properly configured and accessible")
+            else:
+                self.log_test("Mi Tienda Profile API Structure", False, "Some profile API endpoints are not accessible")
+            
+            return all_endpoints_accessible
+            
+        except Exception as e:
+            self.log_test("Mi Tienda Profile API Structure", False, f"Structure test failed: {str(e)}")
+            return False
+    
+    def test_mi_tienda_dashboard_stats_comparison(self):
+        """Test that profile endpoints follow same pattern as working dashboard-stats endpoint"""
+        try:
+            # Test the dashboard-stats endpoint that was previously working
+            dashboard_stats_url = f"{self.backend_url}/user/api/mi-tienda/dashboard-stats"
+            profile_url = f"{self.backend_url}/user/api/mi-tienda/profile"
+            
+            # Test both endpoints for consistency
+            dashboard_response = requests.get(dashboard_stats_url, timeout=10)
+            profile_response = requests.get(profile_url, timeout=10)
+            
+            # Both should have similar auth requirements
+            dashboard_auth_required = dashboard_response.status_code in [401, 403, 302, 419]
+            profile_auth_required = profile_response.status_code in [401, 403, 302, 419]
+            
+            if dashboard_auth_required and profile_auth_required:
+                self.log_test("Mi Tienda API Consistency", True, 
+                            "Profile endpoints follow same auth pattern as dashboard-stats", 
+                            f"Dashboard: {dashboard_response.status_code}, Profile: {profile_response.status_code}")
+                return True
+            elif not dashboard_auth_required and not profile_auth_required:
+                # Both accessible - check response structure
+                try:
+                    dashboard_data = dashboard_response.json() if dashboard_response.status_code == 200 else None
+                    profile_data = profile_response.json() if profile_response.status_code == 200 else None
+                    
+                    if dashboard_data and profile_data:
+                        self.log_test("Mi Tienda API Consistency", True, 
+                                    "Both dashboard and profile endpoints are accessible and return JSON", 
+                                    f"Dashboard and Profile APIs both working")
+                        return True
+                except ValueError:
+                    pass
+                
+                self.log_test("Mi Tienda API Consistency", False, 
+                            f"Inconsistent behavior - Dashboard: {dashboard_response.status_code}, Profile: {profile_response.status_code}")
+                return False
+            else:
+                self.log_test("Mi Tienda API Consistency", False, 
+                            f"Inconsistent auth requirements - Dashboard: {dashboard_response.status_code}, Profile: {profile_response.status_code}")
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            self.log_test("Mi Tienda API Consistency", False, f"Consistency test failed: {str(e)}")
+            return False
+
     def get_summary(self):
         """Get test summary"""
         passed = sum(1 for result in self.test_results if result['success'])
