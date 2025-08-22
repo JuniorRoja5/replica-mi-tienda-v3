@@ -490,7 +490,13 @@ class BackendTester:
             self.test_mi_tienda_profile_get_endpoint,
             self.test_mi_tienda_profile_post_endpoint,
             self.test_mi_tienda_profile_api_structure,
-            self.test_mi_tienda_dashboard_stats_comparison
+            self.test_mi_tienda_dashboard_stats_comparison,
+            self.test_mi_tienda_products_get_endpoint,
+            self.test_mi_tienda_products_post_endpoint,
+            self.test_mi_tienda_products_put_endpoint,
+            self.test_mi_tienda_products_delete_endpoint,
+            self.test_mi_tienda_products_reorder_endpoint,
+            self.test_mi_tienda_products_api_consistency
         ]
         
         passed = 0
