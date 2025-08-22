@@ -178,35 +178,29 @@ frontend:
         -agent: "testing"
         -comment: "✅ FONT SYSTEM BUG FIXES VERIFIED: Comprehensive testing confirms all font-related bugs are fixed. Key findings: 1) GOOGLE FONTS LOADING: All 10 custom fonts (Inter, Poppins, Roboto, Montserrat, Open Sans, Lato, Quicksand, Nunito, Source Sans Pro, Roboto Mono) are properly loaded across all pages via Google Fonts links, 2) FONT APPLICATION: updatePreviewWithProduct() function verified to use getCurrentDesignSettings() instead of hardcoded CSS - eliminating the CSS conflict bug, 3) CROSS-PAGE CONSISTENCY: Font settings properly applied via CSS custom properties (--design-font-family: Inter) across Mi Tienda and public product pages, 4) DESIGN INTEGRATION: Font changes from Diseño section successfully propagate to all preview contexts through localStorage communication. The font selection system is fully operational and integrated with the design system."
 
-  - task: "Customers Section Implementation"
-    implemented: true
-    working: true
-    file: "/app/frontend/public/customers.html, /app/frontend/public/js/customers.js, /app/backend/server.py"
+  - task: "Dashboard Functional Integration"
+    implemented: false
+    working: false
+    file: "/app/temp_laravel_repo/public/mi-tienda/dashboard.html, /app/temp_laravel_repo/app/Http/Controllers/User/MiTiendaApiController.php"
     stuck_count: 0
-    priority: "high"
-    needs_retesting: false
+    priority: "critical"
+    needs_retesting: true
     status_history:
-        -working: "implemented"
+        -working: "needs_implementation"
         -agent: "main"
-        -comment: "👥 CUSTOMERS SECTION COMPLETED: 1) Created customers.html with comprehensive customer management UI (search, stats cards, customer cards, modals), 2) Implemented customers.js with full functionality (CRUD operations, CSV import/export, pagination, filtering), 3) Added Laravel integration helpers and CSRF support, 4) Included design system integration for real-time theme updates, 5) Added backend route GET /customers and static assets mounting, 6) Features: customer list with avatars, contact info, purchase history, add/edit/delete customers, CSV import/export, search and pagination, Bootstrap 5 modals, responsive design, Laravel Blade compatibility with container/wrapper structure."
-        -working: true
-        -agent: "testing"
-        -comment: "✅ CUSTOMERS SECTION FULLY OPERATIONAL: Comprehensive testing confirms all customer management functionality is working correctly. Key findings: 1) BACKEND ROUTE: GET /customers serves customers.html correctly with all expected elements (Clientes, Gestión de contactos, customers.js, Bootstrap, laravel-blade-wrapper), 2) STATIC ASSETS: customers.js file served correctly by backend with proper JavaScript patterns and comprehensive functionality, 3) HTML STRUCTURE: customers.html contains complete customer management UI with stats cards, search functionality, customer cards with avatars, Bootstrap 5 modals, and Laravel Blade compatibility, 4) JAVASCRIPT FUNCTIONALITY: customers.js includes CRUD operations, CSV import/export, pagination, filtering, design system integration, and Laravel integration helpers with detailed developer documentation, 5) BACKEND INTEGRATION: Static assets mounting (/customers-assets) working correctly. The customers section is ready for Laravel integration with comprehensive documentation for developers."
+        -comment: "🔍 FUNCTIONAL INTEGRATION ISSUE DIAGNOSED: Dashboard currently displays static/mock data instead of real user data from Laravel backend. FINDINGS: 1) API INFRASTRUCTURE EXISTS: MiTiendaApiController has endpoints (/user/api/mi-tienda/ping, state, inventory), 2) FRONTEND ISOLATION: dashboard.html uses mock data generation instead of Laravel API calls, 3) AUTHENTICATION GAP: No Laravel auth context passed to iframe content, 4) JAVASCRIPT STATIC: mi-tienda.js still uses localStorage/mock data instead of real API calls. NEEDS: Replace static data with Laravel API integration for dashboard metrics (revenue, visits, leads, chart data)."
 
-  - task: "Statistics Section Implementation (Selective)"
-    implemented: true
-    working: true
-    file: "/app/frontend/public/statistics.html, /app/frontend/public/js/statistics.js, /app/backend/server.py"
+  - task: "Mi Tienda Products Integration"
+    implemented: false
+    working: false
+    file: "/app/temp_laravel_repo/public/mi-tienda/js/mi-tienda.js, /app/temp_laravel_repo/app/Http/Controllers/User/MiTiendaApiController.php"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        -working: "implemented"
-        -agent: "main"
-        -comment: "📊 STATISTICS SECTION COMPLETED (SELECTIVE IMPLEMENTATION): 1) Created statistics.html with requested features only: Charts (activity daily chart), Product Summary (table connected to Mi Tienda products), and Devices (mobile/desktop/tablet analytics), 2) Implemented statistics.js with Chart.js integration for interactive line charts, 3) Connected Product Summary to Mi Tienda products via localStorage (ready for Laravel Product model integration), 4) Added period selection (7D/14D/month/custom), CSV export, and design system integration, 5) Added backend route GET /statistics and static assets mounting, 6) Features: responsive design, real-time data updates, Chart.js animations, Laravel integration helpers, Bootstrap 5 styling. INTENTIONALLY EXCLUDED: traffic sources, geographical data, full analytics suite (as per user requirements)."
-        -working: true
-        -agent: "testing"
-        -comment: "✅ STATISTICS SECTION FULLY OPERATIONAL: Comprehensive testing confirms all selective statistics features are working correctly. Key findings: 1) BACKEND ROUTE: GET /statistics serves statistics.html correctly with all expected elements (Estadísticas, Analytics y rendimiento, statistics.js, Chart.js, Bootstrap, laravel-blade-wrapper, activityChart), 2) STATIC ASSETS: statistics.js file served correctly by backend with proper JavaScript patterns and Chart.js integration, 3) HTML STRUCTURE: statistics.html contains complete analytics UI with period selector, stats overview cards, Chart.js activity chart, product summary table, and devices analytics with progress bars, 4) JAVASCRIPT FUNCTIONALITY: statistics.js includes Chart.js integration, real-time product statistics from Mi Tienda, device analytics, CSV export, period selection, design system integration, and Laravel integration helpers with detailed developer documentation, 5) SELECTIVE IMPLEMENTATION VERIFIED: Only requested features implemented (Charts, Product Summary, Devices) - intentionally excluded traffic sources and geographical data as per requirements, 6) BACKEND INTEGRATION: Static assets mounting (/statistics-assets) working correctly. The statistics section is ready for Laravel integration with comprehensive documentation for developers."
+        -working: "needs_implementation"
+        -agent: "main" 
+        -comment: "🔍 PRODUCTS DATA ISSUE DIAGNOSED: Mi Tienda shows mock products instead of user's real products from database. FINDINGS: 1) DATABASE STRUCTURE: Card model has relationships to card_products, card_links, etc., 2) STATIC STATE: appState.products contains hardcoded mock data, 3) API EXISTS: MiTiendaApiController.stateGet() returns real card data, 4) JAVASCRIPT DISCONNECT: loadProducts() and saveProduct() functions use localStorage instead of Laravel APIs. NEEDS: Connect frontend JavaScript to Laravel API endpoints for CRUD operations on products/links."
 
   - task: "Laravel Blade Integration - Mi Tienda Sections"
     implemented: true
