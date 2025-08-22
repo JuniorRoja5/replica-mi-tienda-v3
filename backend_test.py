@@ -486,7 +486,11 @@ class BackendTester:
             self.test_frontend_routing_architecture,
             self.test_design_integration_routes,
             self.test_static_file_serving,
-            self.test_data_persistence
+            self.test_data_persistence,
+            self.test_mi_tienda_profile_get_endpoint,
+            self.test_mi_tienda_profile_post_endpoint,
+            self.test_mi_tienda_profile_api_structure,
+            self.test_mi_tienda_dashboard_stats_comparison
         ]
         
         passed = 0
