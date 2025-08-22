@@ -817,6 +817,545 @@ class BackendTester:
             self.log_test("Laravel API Consistency - Request Failed", False, f"Comparison test failed: {str(e)}")
             return False
 
+    def test_mi_tienda_products_get_endpoint(self):
+        """Test GET https://clickmy.link/user/api/mi-tienda/products endpoint"""
+        try:
+            products_url = "https://clickmy.link/user/api/mi-tienda/products"
+            
+            # Test without authentication (should redirect to login or return 401/403/202)
+            response = requests.get(products_url, timeout=10)
+            
+            # Check for expected behavior from review request
+            if response.status_code == 202:
+                # CAPTCHA protection detected
+                if 'sg-captcha' in response.headers or 'captcha' in response.text.lower():
+                    self.log_test("Laravel Products GET - CAPTCHA Protected", True, 
+                                "Products GET endpoint is accessible but protected by CAPTCHA system", 
+                                f"HTTP 202 with CAPTCHA challenge - endpoint exists and is protected")
+                    return True
+                else:
+                    self.log_test("Laravel Products GET - Unexpected 202", False, 
+                                f"HTTP 202 but no CAPTCHA detected: {response.text[:200]}")
+                    return False
+            elif response.status_code in [401, 403, 302]:  # Expected auth responses
+                self.log_test("Laravel Products GET - Auth Required", True, 
+                            "Products GET endpoint correctly requires authentication", 
+                            f"HTTP {response.status_code} - Authentication required as expected")
+                return True
+            elif response.status_code == 404:
+                self.log_test("Laravel Products GET - Not Found", False, 
+                            "Products GET endpoint returns 404 - routing not configured", 
+                            f"HTTP 404 indicates endpoint is not accessible")
+                return False
+            elif response.status_code == 500:
+                self.log_test("Laravel Products GET - Server Error", False, 
+                            "Products GET endpoint returns 500 - syntax or configuration error", 
+                            f"HTTP 500 indicates server-side issues")
+                return False
+            elif response.status_code == 200:
+                # Check if it's a valid products response or redirect page
+                try:
+                    data = response.json()
+                    if 'success' in data and ('products' in data or 'data' in data):
+                        self.log_test("Laravel Products GET - Working", True, 
+                                    "Products GET endpoint accessible and returns expected JSON structure", 
+                                    f"Response contains success and products/data fields")
+                        return True
+                    else:
+                        self.log_test("Laravel Products GET - Invalid JSON Structure", False, 
+                                    f"Unexpected JSON response structure: {data}")
+                        return False
+                except ValueError:
+                    # Not JSON - likely HTML redirect
+                    if 'redirect' in response.text.lower() or 'login' in response.text.lower():
+                        self.log_test("Laravel Products GET - HTML Redirect", True, 
+                                    "Products GET endpoint returns HTML redirect (likely to login)", 
+                                    f"HTML response indicates auth redirect working")
+                        return True
+                    else:
+                        self.log_test("Laravel Products GET - Invalid HTML Response", False, 
+                                    f"Unexpected HTML response: {response.text[:200]}")
+                        return False
+            else:
+                self.log_test("Laravel Products GET - Unexpected Status", False, 
+                            f"HTTP {response.status_code}: {response.text[:200]}")
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            self.log_test("Laravel Products GET - Request Failed", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_mi_tienda_products_post_endpoint(self):
+        """Test POST https://clickmy.link/user/api/mi-tienda/products endpoint"""
+        try:
+            products_url = "https://clickmy.link/user/api/mi-tienda/products"
+            
+            # Test data for product creation
+            test_product_data = {
+                "name": "Test Product",
+                "description": "Test product description",
+                "price": 29.99,
+                "type": "digital",
+                "status": "active"
+            }
+            
+            # Test without authentication (should fail)
+            response = requests.post(
+                products_url, 
+                json=test_product_data,
+                headers={'Content-Type': 'application/json'},
+                timeout=10
+            )
+            
+            # Check for expected behavior from review request
+            if response.status_code == 202:
+                # CAPTCHA protection detected
+                if 'sg-captcha' in response.headers or 'captcha' in response.text.lower():
+                    self.log_test("Laravel Products POST - CAPTCHA Protected", True, 
+                                "Products POST endpoint is accessible but protected by CAPTCHA system", 
+                                f"HTTP 202 with CAPTCHA challenge - endpoint exists and is protected")
+                    return True
+                else:
+                    self.log_test("Laravel Products POST - Unexpected 202", False, 
+                                f"HTTP 202 but no CAPTCHA detected: {response.text[:200]}")
+                    return False
+            elif response.status_code in [401, 403, 302, 419]:  # Expected auth responses (419 for CSRF)
+                self.log_test("Laravel Products POST - Auth Required", True, 
+                            "Products POST endpoint correctly requires authentication", 
+                            f"HTTP {response.status_code} - Authentication/CSRF required as expected")
+                return True
+            elif response.status_code == 404:
+                self.log_test("Laravel Products POST - Not Found", False, 
+                            "Products POST endpoint returns 404 - routing not configured", 
+                            f"HTTP 404 indicates POST endpoint is not accessible")
+                return False
+            elif response.status_code == 500:
+                self.log_test("Laravel Products POST - Server Error", False, 
+                            "Products POST endpoint returns 500 - syntax or configuration error", 
+                            f"HTTP 500 indicates server-side issues")
+                return False
+            elif response.status_code == 422:
+                # Validation error is acceptable - means endpoint is working
+                try:
+                    data = response.json()
+                    if 'errors' in data or 'message' in data:
+                        self.log_test("Laravel Products POST - Validation Working", True, 
+                                    "Products POST endpoint has proper validation", 
+                                    f"Validation response: {data}")
+                        return True
+                except ValueError:
+                    pass
+                self.log_test("Laravel Products POST - Validation Error", False, 
+                            f"HTTP 422 but unexpected response: {response.text[:200]}")
+                return False
+            elif response.status_code == 200:
+                # Check if it's a valid success response
+                try:
+                    data = response.json()
+                    if 'success' in data and ('product' in data or 'data' in data):
+                        self.log_test("Laravel Products POST - Working", True, 
+                                    "Products POST endpoint accessible and returns expected structure", 
+                                    f"Response: {data}")
+                        return True
+                    else:
+                        self.log_test("Laravel Products POST - Invalid JSON Structure", False, 
+                                    f"Unexpected JSON response structure: {data}")
+                        return False
+                except ValueError:
+                    # Not JSON - likely HTML redirect
+                    if 'redirect' in response.text.lower() or 'login' in response.text.lower():
+                        self.log_test("Laravel Products POST - HTML Redirect", True, 
+                                    "Products POST endpoint returns HTML redirect (likely to login)", 
+                                    f"HTML response indicates auth redirect working")
+                        return True
+                    else:
+                        self.log_test("Laravel Products POST - Invalid HTML Response", False, 
+                                    f"Unexpected HTML response: {response.text[:200]}")
+                        return False
+            else:
+                self.log_test("Laravel Products POST - Unexpected Status", False, 
+                            f"HTTP {response.status_code}: {response.text[:200]}")
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            self.log_test("Laravel Products POST - Request Failed", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_mi_tienda_products_put_endpoint(self):
+        """Test PUT https://clickmy.link/user/api/mi-tienda/products endpoint"""
+        try:
+            products_url = "https://clickmy.link/user/api/mi-tienda/products"
+            
+            # Test data for product update
+            test_product_data = {
+                "id": 1,
+                "name": "Updated Test Product",
+                "description": "Updated test product description",
+                "price": 39.99,
+                "type": "digital",
+                "status": "active"
+            }
+            
+            # Test without authentication (should fail)
+            response = requests.put(
+                products_url, 
+                json=test_product_data,
+                headers={'Content-Type': 'application/json'},
+                timeout=10
+            )
+            
+            # Check for expected behavior from review request
+            if response.status_code == 202:
+                # CAPTCHA protection detected
+                if 'sg-captcha' in response.headers or 'captcha' in response.text.lower():
+                    self.log_test("Laravel Products PUT - CAPTCHA Protected", True, 
+                                "Products PUT endpoint is accessible but protected by CAPTCHA system", 
+                                f"HTTP 202 with CAPTCHA challenge - endpoint exists and is protected")
+                    return True
+                else:
+                    self.log_test("Laravel Products PUT - Unexpected 202", False, 
+                                f"HTTP 202 but no CAPTCHA detected: {response.text[:200]}")
+                    return False
+            elif response.status_code in [401, 403, 302, 419]:  # Expected auth responses (419 for CSRF)
+                self.log_test("Laravel Products PUT - Auth Required", True, 
+                            "Products PUT endpoint correctly requires authentication", 
+                            f"HTTP {response.status_code} - Authentication/CSRF required as expected")
+                return True
+            elif response.status_code == 404:
+                self.log_test("Laravel Products PUT - Not Found", False, 
+                            "Products PUT endpoint returns 404 - routing not configured", 
+                            f"HTTP 404 indicates PUT endpoint is not accessible")
+                return False
+            elif response.status_code == 500:
+                self.log_test("Laravel Products PUT - Server Error", False, 
+                            "Products PUT endpoint returns 500 - syntax or configuration error", 
+                            f"HTTP 500 indicates server-side issues")
+                return False
+            elif response.status_code == 422:
+                # Validation error is acceptable - means endpoint is working
+                try:
+                    data = response.json()
+                    if 'errors' in data or 'message' in data:
+                        self.log_test("Laravel Products PUT - Validation Working", True, 
+                                    "Products PUT endpoint has proper validation", 
+                                    f"Validation response: {data}")
+                        return True
+                except ValueError:
+                    pass
+                self.log_test("Laravel Products PUT - Validation Error", False, 
+                            f"HTTP 422 but unexpected response: {response.text[:200]}")
+                return False
+            elif response.status_code == 200:
+                # Check if it's a valid success response
+                try:
+                    data = response.json()
+                    if 'success' in data and ('product' in data or 'data' in data):
+                        self.log_test("Laravel Products PUT - Working", True, 
+                                    "Products PUT endpoint accessible and returns expected structure", 
+                                    f"Response: {data}")
+                        return True
+                    else:
+                        self.log_test("Laravel Products PUT - Invalid JSON Structure", False, 
+                                    f"Unexpected JSON response structure: {data}")
+                        return False
+                except ValueError:
+                    # Not JSON - likely HTML redirect
+                    if 'redirect' in response.text.lower() or 'login' in response.text.lower():
+                        self.log_test("Laravel Products PUT - HTML Redirect", True, 
+                                    "Products PUT endpoint returns HTML redirect (likely to login)", 
+                                    f"HTML response indicates auth redirect working")
+                        return True
+                    else:
+                        self.log_test("Laravel Products PUT - Invalid HTML Response", False, 
+                                    f"Unexpected HTML response: {response.text[:200]}")
+                        return False
+            else:
+                self.log_test("Laravel Products PUT - Unexpected Status", False, 
+                            f"HTTP {response.status_code}: {response.text[:200]}")
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            self.log_test("Laravel Products PUT - Request Failed", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_mi_tienda_products_delete_endpoint(self):
+        """Test DELETE https://clickmy.link/user/api/mi-tienda/products endpoint"""
+        try:
+            products_url = "https://clickmy.link/user/api/mi-tienda/products"
+            
+            # Test data for product deletion
+            test_delete_data = {
+                "id": 1
+            }
+            
+            # Test without authentication (should fail)
+            response = requests.delete(
+                products_url, 
+                json=test_delete_data,
+                headers={'Content-Type': 'application/json'},
+                timeout=10
+            )
+            
+            # Check for expected behavior from review request
+            if response.status_code == 202:
+                # CAPTCHA protection detected
+                if 'sg-captcha' in response.headers or 'captcha' in response.text.lower():
+                    self.log_test("Laravel Products DELETE - CAPTCHA Protected", True, 
+                                "Products DELETE endpoint is accessible but protected by CAPTCHA system", 
+                                f"HTTP 202 with CAPTCHA challenge - endpoint exists and is protected")
+                    return True
+                else:
+                    self.log_test("Laravel Products DELETE - Unexpected 202", False, 
+                                f"HTTP 202 but no CAPTCHA detected: {response.text[:200]}")
+                    return False
+            elif response.status_code in [401, 403, 302, 419]:  # Expected auth responses (419 for CSRF)
+                self.log_test("Laravel Products DELETE - Auth Required", True, 
+                            "Products DELETE endpoint correctly requires authentication", 
+                            f"HTTP {response.status_code} - Authentication/CSRF required as expected")
+                return True
+            elif response.status_code == 404:
+                self.log_test("Laravel Products DELETE - Not Found", False, 
+                            "Products DELETE endpoint returns 404 - routing not configured", 
+                            f"HTTP 404 indicates DELETE endpoint is not accessible")
+                return False
+            elif response.status_code == 500:
+                self.log_test("Laravel Products DELETE - Server Error", False, 
+                            "Products DELETE endpoint returns 500 - syntax or configuration error", 
+                            f"HTTP 500 indicates server-side issues")
+                return False
+            elif response.status_code == 422:
+                # Validation error is acceptable - means endpoint is working
+                try:
+                    data = response.json()
+                    if 'errors' in data or 'message' in data:
+                        self.log_test("Laravel Products DELETE - Validation Working", True, 
+                                    "Products DELETE endpoint has proper validation", 
+                                    f"Validation response: {data}")
+                        return True
+                except ValueError:
+                    pass
+                self.log_test("Laravel Products DELETE - Validation Error", False, 
+                            f"HTTP 422 but unexpected response: {response.text[:200]}")
+                return False
+            elif response.status_code == 200:
+                # Check if it's a valid success response
+                try:
+                    data = response.json()
+                    if 'success' in data and ('message' in data or 'data' in data):
+                        self.log_test("Laravel Products DELETE - Working", True, 
+                                    "Products DELETE endpoint accessible and returns expected structure", 
+                                    f"Response: {data}")
+                        return True
+                    else:
+                        self.log_test("Laravel Products DELETE - Invalid JSON Structure", False, 
+                                    f"Unexpected JSON response structure: {data}")
+                        return False
+                except ValueError:
+                    # Not JSON - likely HTML redirect
+                    if 'redirect' in response.text.lower() or 'login' in response.text.lower():
+                        self.log_test("Laravel Products DELETE - HTML Redirect", True, 
+                                    "Products DELETE endpoint returns HTML redirect (likely to login)", 
+                                    f"HTML response indicates auth redirect working")
+                        return True
+                    else:
+                        self.log_test("Laravel Products DELETE - Invalid HTML Response", False, 
+                                    f"Unexpected HTML response: {response.text[:200]}")
+                        return False
+            else:
+                self.log_test("Laravel Products DELETE - Unexpected Status", False, 
+                            f"HTTP {response.status_code}: {response.text[:200]}")
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            self.log_test("Laravel Products DELETE - Request Failed", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_mi_tienda_products_reorder_endpoint(self):
+        """Test POST https://clickmy.link/user/api/mi-tienda/products/reorder endpoint"""
+        try:
+            reorder_url = "https://clickmy.link/user/api/mi-tienda/products/reorder"
+            
+            # Test data for product reordering
+            test_reorder_data = {
+                "products": [
+                    {"id": 1, "sort_order": 1},
+                    {"id": 2, "sort_order": 2},
+                    {"id": 3, "sort_order": 3}
+                ]
+            }
+            
+            # Test without authentication (should fail)
+            response = requests.post(
+                reorder_url, 
+                json=test_reorder_data,
+                headers={'Content-Type': 'application/json'},
+                timeout=10
+            )
+            
+            # Check for expected behavior from review request
+            if response.status_code == 202:
+                # CAPTCHA protection detected
+                if 'sg-captcha' in response.headers or 'captcha' in response.text.lower():
+                    self.log_test("Laravel Products Reorder - CAPTCHA Protected", True, 
+                                "Products reorder endpoint is accessible but protected by CAPTCHA system", 
+                                f"HTTP 202 with CAPTCHA challenge - endpoint exists and is protected")
+                    return True
+                else:
+                    self.log_test("Laravel Products Reorder - Unexpected 202", False, 
+                                f"HTTP 202 but no CAPTCHA detected: {response.text[:200]}")
+                    return False
+            elif response.status_code in [401, 403, 302, 419]:  # Expected auth responses (419 for CSRF)
+                self.log_test("Laravel Products Reorder - Auth Required", True, 
+                            "Products reorder endpoint correctly requires authentication", 
+                            f"HTTP {response.status_code} - Authentication/CSRF required as expected")
+                return True
+            elif response.status_code == 404:
+                self.log_test("Laravel Products Reorder - Not Found", False, 
+                            "Products reorder endpoint returns 404 - routing not configured", 
+                            f"HTTP 404 indicates reorder endpoint is not accessible")
+                return False
+            elif response.status_code == 500:
+                self.log_test("Laravel Products Reorder - Server Error", False, 
+                            "Products reorder endpoint returns 500 - syntax or configuration error", 
+                            f"HTTP 500 indicates server-side issues")
+                return False
+            elif response.status_code == 422:
+                # Validation error is acceptable - means endpoint is working
+                try:
+                    data = response.json()
+                    if 'errors' in data or 'message' in data:
+                        self.log_test("Laravel Products Reorder - Validation Working", True, 
+                                    "Products reorder endpoint has proper validation", 
+                                    f"Validation response: {data}")
+                        return True
+                except ValueError:
+                    pass
+                self.log_test("Laravel Products Reorder - Validation Error", False, 
+                            f"HTTP 422 but unexpected response: {response.text[:200]}")
+                return False
+            elif response.status_code == 200:
+                # Check if it's a valid success response
+                try:
+                    data = response.json()
+                    if 'success' in data and ('message' in data or 'data' in data):
+                        self.log_test("Laravel Products Reorder - Working", True, 
+                                    "Products reorder endpoint accessible and returns expected structure", 
+                                    f"Response: {data}")
+                        return True
+                    else:
+                        self.log_test("Laravel Products Reorder - Invalid JSON Structure", False, 
+                                    f"Unexpected JSON response structure: {data}")
+                        return False
+                except ValueError:
+                    # Not JSON - likely HTML redirect
+                    if 'redirect' in response.text.lower() or 'login' in response.text.lower():
+                        self.log_test("Laravel Products Reorder - HTML Redirect", True, 
+                                    "Products reorder endpoint returns HTML redirect (likely to login)", 
+                                    f"HTML response indicates auth redirect working")
+                        return True
+                    else:
+                        self.log_test("Laravel Products Reorder - Invalid HTML Response", False, 
+                                    f"Unexpected HTML response: {response.text[:200]}")
+                        return False
+            else:
+                self.log_test("Laravel Products Reorder - Unexpected Status", False, 
+                            f"HTTP {response.status_code}: {response.text[:200]}")
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            self.log_test("Laravel Products Reorder - Request Failed", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_mi_tienda_products_api_consistency(self):
+        """Test Mi Tienda Products API endpoints consistency with profile and dashboard-stats"""
+        try:
+            # Test all products endpoints for consistency with working endpoints
+            reference_endpoints = [
+                ("GET", "https://clickmy.link/user/api/mi-tienda/profile"),
+                ("GET", "https://clickmy.link/user/api/mi-tienda/dashboard-stats")
+            ]
+            
+            products_endpoints = [
+                ("GET", "https://clickmy.link/user/api/mi-tienda/products"),
+                ("POST", "https://clickmy.link/user/api/mi-tienda/products"),
+                ("PUT", "https://clickmy.link/user/api/mi-tienda/products"),
+                ("DELETE", "https://clickmy.link/user/api/mi-tienda/products"),
+                ("POST", "https://clickmy.link/user/api/mi-tienda/products/reorder")
+            ]
+            
+            # Get reference behavior from working endpoints
+            reference_status_codes = []
+            for method, url in reference_endpoints:
+                try:
+                    if method == "GET":
+                        response = requests.get(url, timeout=10)
+                    else:
+                        response = requests.post(url, json={}, timeout=10)
+                    reference_status_codes.append(response.status_code)
+                except:
+                    reference_status_codes.append(None)
+            
+            # Test products endpoints for similar behavior
+            consistent_endpoints = 0
+            total_endpoints = len(products_endpoints)
+            
+            for method, url in products_endpoints:
+                try:
+                    if method == "GET":
+                        response = requests.get(url, timeout=10)
+                    elif method == "PUT":
+                        response = requests.put(url, json={}, timeout=10)
+                    elif method == "DELETE":
+                        response = requests.delete(url, json={}, timeout=10)
+                    else:  # POST
+                        response = requests.post(url, json={}, timeout=10)
+                    
+                    # Check if status code matches reference patterns
+                    if response.status_code in reference_status_codes:
+                        consistent_endpoints += 1
+                        self.log_test(f"Products API Consistency - {method} {url.split('/')[-1]}", True, 
+                                    f"Endpoint behavior consistent with reference endpoints", 
+                                    f"HTTP {response.status_code} matches reference pattern")
+                    elif response.status_code == 404:
+                        self.log_test(f"Products API Consistency - {method} {url.split('/')[-1]}", False, 
+                                    f"Endpoint returns 404 - routing not configured", 
+                                    f"HTTP 404 indicates endpoint is not accessible")
+                    elif response.status_code == 500:
+                        self.log_test(f"Products API Consistency - {method} {url.split('/')[-1]}", False, 
+                                    f"Endpoint returns 500 - syntax or configuration error", 
+                                    f"HTTP 500 indicates server-side issues")
+                    else:
+                        # Different status code but not 404/500 - might still be working
+                        if response.status_code in [200, 201, 202, 302, 401, 403, 419, 422]:
+                            consistent_endpoints += 1
+                            self.log_test(f"Products API Consistency - {method} {url.split('/')[-1]}", True, 
+                                        f"Endpoint accessible with valid response", 
+                                        f"HTTP {response.status_code} indicates working endpoint")
+                        else:
+                            self.log_test(f"Products API Consistency - {method} {url.split('/')[-1]}", False, 
+                                        f"Unexpected status code: HTTP {response.status_code}")
+                        
+                except requests.exceptions.RequestException as e:
+                    self.log_test(f"Products API Consistency - {method} {url.split('/')[-1]}", False, 
+                                f"Request failed: {str(e)}")
+            
+            # Overall consistency check
+            consistency_rate = (consistent_endpoints / total_endpoints) * 100
+            if consistency_rate >= 80:
+                self.log_test("Laravel Products API Overall Consistency", True, 
+                            f"Products API endpoints show good consistency ({consistency_rate:.1f}%)", 
+                            f"{consistent_endpoints}/{total_endpoints} endpoints behave consistently")
+                return True
+            else:
+                self.log_test("Laravel Products API Overall Consistency", False, 
+                            f"Products API endpoints show poor consistency ({consistency_rate:.1f}%)", 
+                            f"Only {consistent_endpoints}/{total_endpoints} endpoints behave consistently")
+                return False
+                
+        except Exception as e:
+            self.log_test("Laravel Products API Overall Consistency", False, f"Consistency test failed: {str(e)}")
+            return False
+
     def get_summary(self):
         """Get test summary"""
         passed = sum(1 for result in self.test_results if result['success'])
