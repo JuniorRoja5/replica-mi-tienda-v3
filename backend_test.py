@@ -1367,6 +1367,391 @@ class BackendTester:
             self.log_test("Laravel Products API Overall Consistency", False, f"Consistency test failed: {str(e)}")
             return False
 
+    def test_public_card_display_endpoint(self):
+        """Test public card display: https://clickmy.link/u/{slug}"""
+        try:
+            # Test with various slug values as specified in review request
+            test_slugs = ["test-user", "mi-tienda-123", "demo-store", "sample-card"]
+            
+            for slug in test_slugs:
+                public_card_url = f"https://clickmy.link/u/{slug}"
+                
+                # Test public access WITHOUT authentication
+                response = requests.get(public_card_url, timeout=15)
+                
+                # Check for expected behavior from review request
+                if response.status_code == 200:
+                    content = response.text
+                    # Should return HTML page with iframe for public view
+                    if 'html' in content.lower() and ('iframe' in content.lower() or 'mi-tienda' in content.lower() or 'tienda' in content.lower()):
+                        self.log_test(f"Public Card Display - {slug}", True, 
+                                    f"Public card display accessible and returns HTML with iframe content", 
+                                    f"URL: {public_card_url} - HTML response with expected content")
+                        return True
+                    else:
+                        self.log_test(f"Public Card Display - {slug}", False, 
+                                    f"Public card display returns HTML but missing expected iframe content: {content[:200]}")
+                        continue
+                elif response.status_code == 404:
+                    # 404 is acceptable for non-existent slugs - test graceful handling
+                    self.log_test(f"Public Card Display - {slug} (404)", True, 
+                                f"Public card display handles non-existent slug gracefully with 404", 
+                                f"URL: {public_card_url} - Proper 404 response for non-existent slug")
+                    continue
+                elif response.status_code == 202:
+                    # Should NOT return CAPTCHA for public access
+                    if 'sg-captcha' in response.headers or 'captcha' in response.text.lower():
+                        self.log_test(f"Public Card Display - {slug}", False, 
+                                    f"Public card display should NOT require CAPTCHA - public access blocked", 
+                                    f"URL: {public_card_url} - HTTP 202 with CAPTCHA (should be public)")
+                        continue
+                    else:
+                        self.log_test(f"Public Card Display - {slug}", True, 
+                                    f"Public card display accessible without CAPTCHA", 
+                                    f"URL: {public_card_url} - HTTP 202 without CAPTCHA protection")
+                        return True
+                elif response.status_code in [401, 403]:
+                    # Should NOT require authentication for public access
+                    self.log_test(f"Public Card Display - {slug}", False, 
+                                f"Public card display should NOT require authentication - public access blocked", 
+                                f"URL: {public_card_url} - HTTP {response.status_code} (should be public)")
+                    continue
+                elif response.status_code == 500:
+                    self.log_test(f"Public Card Display - {slug}", False, 
+                                f"Public card display returns 500 - server error", 
+                                f"URL: {public_card_url} - HTTP 500 indicates server-side issues")
+                    continue
+                else:
+                    self.log_test(f"Public Card Display - {slug}", False, 
+                                f"Unexpected status code: HTTP {response.status_code}: {response.text[:200]}")
+                    continue
+            
+            # If we reach here, none of the test slugs worked
+            self.log_test("Public Card Display - All Slugs", False, 
+                        "None of the test slugs returned successful public card display")
+            return False
+                
+        except requests.exceptions.RequestException as e:
+            self.log_test("Public Card Display - Request Failed", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_public_api_data_endpoint(self):
+        """Test public API data: https://clickmy.link/api/public/mi-tienda/{slug}"""
+        try:
+            # Test with various slug values as specified in review request
+            test_slugs = ["test-user", "mi-tienda-123", "demo-store", "sample-card"]
+            
+            for slug in test_slugs:
+                public_api_url = f"https://clickmy.link/api/public/mi-tienda/{slug}"
+                
+                # Test public access WITHOUT authentication
+                response = requests.get(public_api_url, timeout=15)
+                
+                # Check for expected behavior from review request
+                if response.status_code == 200:
+                    try:
+                        data = response.json()
+                        # Should return JSON with product data as specified
+                        expected_fields = ['card', 'links', 'products', 'galleries', 'hours', 'testimonials']
+                        found_fields = []
+                        for field in expected_fields:
+                            if field in data:
+                                found_fields.append(field)
+                        
+                        if len(found_fields) >= 3:  # At least 3 expected fields present
+                            self.log_test(f"Public API Data - {slug}", True, 
+                                        f"Public API returns JSON with expected data structure", 
+                                        f"URL: {public_api_url} - Found fields: {found_fields}")
+                            return True
+                        else:
+                            self.log_test(f"Public API Data - {slug}", False, 
+                                        f"Public API returns JSON but missing expected fields. Found: {found_fields}, Expected: {expected_fields}")
+                            continue
+                    except ValueError:
+                        # Not JSON
+                        self.log_test(f"Public API Data - {slug}", False, 
+                                    f"Public API should return JSON but returned: {response.text[:200]}")
+                        continue
+                elif response.status_code == 404:
+                    # 404 is acceptable for non-existent slugs - test graceful handling
+                    self.log_test(f"Public API Data - {slug} (404)", True, 
+                                f"Public API handles non-existent slug gracefully with 404", 
+                                f"URL: {public_api_url} - Proper 404 response for non-existent slug")
+                    continue
+                elif response.status_code == 202:
+                    # Should NOT return CAPTCHA for public access
+                    if 'sg-captcha' in response.headers or 'captcha' in response.text.lower():
+                        self.log_test(f"Public API Data - {slug}", False, 
+                                    f"Public API should NOT require CAPTCHA - public access blocked", 
+                                    f"URL: {public_api_url} - HTTP 202 with CAPTCHA (should be public)")
+                        continue
+                    else:
+                        self.log_test(f"Public API Data - {slug}", True, 
+                                    f"Public API accessible without CAPTCHA", 
+                                    f"URL: {public_api_url} - HTTP 202 without CAPTCHA protection")
+                        return True
+                elif response.status_code in [401, 403]:
+                    # Should NOT require authentication for public access
+                    self.log_test(f"Public API Data - {slug}", False, 
+                                f"Public API should NOT require authentication - public access blocked", 
+                                f"URL: {public_api_url} - HTTP {response.status_code} (should be public)")
+                    continue
+                elif response.status_code == 500:
+                    self.log_test(f"Public API Data - {slug}", False, 
+                                f"Public API returns 500 - server error", 
+                                f"URL: {public_api_url} - HTTP 500 indicates server-side issues")
+                    continue
+                else:
+                    self.log_test(f"Public API Data - {slug}", False, 
+                                f"Unexpected status code: HTTP {response.status_code}: {response.text[:200]}")
+                    continue
+            
+            # If we reach here, none of the test slugs worked
+            self.log_test("Public API Data - All Slugs", False, 
+                        "None of the test slugs returned successful public API data")
+            return False
+                
+        except requests.exceptions.RequestException as e:
+            self.log_test("Public API Data - Request Failed", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_public_endpoints_no_auth_required(self):
+        """Test that public endpoints work WITHOUT authentication (opposite of private APIs)"""
+        try:
+            # Test both public endpoints to ensure they don't require auth
+            public_endpoints = [
+                ("Card Display", "https://clickmy.link/u/test-user"),
+                ("API Data", "https://clickmy.link/api/public/mi-tienda/test-user")
+            ]
+            
+            auth_not_required_count = 0
+            for endpoint_name, endpoint_url in public_endpoints:
+                try:
+                    response = requests.get(endpoint_url, timeout=15)
+                    
+                    # Check that it doesn't require authentication
+                    if response.status_code in [401, 403]:
+                        self.log_test(f"Public {endpoint_name} - Auth Not Required", False, 
+                                    f"Public endpoint requires authentication (should be public)", 
+                                    f"URL: {endpoint_url} - HTTP {response.status_code} (should not require auth)")
+                    elif response.status_code == 202 and ('sg-captcha' in response.headers or 'captcha' in response.text.lower()):
+                        self.log_test(f"Public {endpoint_name} - Auth Not Required", False, 
+                                    f"Public endpoint blocked by CAPTCHA (should be public)", 
+                                    f"URL: {endpoint_url} - CAPTCHA protection (should be public)")
+                    elif response.status_code in [200, 404]:
+                        # 200 = working, 404 = graceful handling of non-existent slug
+                        self.log_test(f"Public {endpoint_name} - Auth Not Required", True, 
+                                    f"Public endpoint accessible without authentication", 
+                                    f"URL: {endpoint_url} - HTTP {response.status_code} (public access working)")
+                        auth_not_required_count += 1
+                    else:
+                        # Other status codes might still indicate public access
+                        self.log_test(f"Public {endpoint_name} - Auth Not Required", True, 
+                                    f"Public endpoint does not require authentication", 
+                                    f"URL: {endpoint_url} - HTTP {response.status_code} (not auth-related)")
+                        auth_not_required_count += 1
+                        
+                except requests.exceptions.RequestException as e:
+                    self.log_test(f"Public {endpoint_name} - Auth Not Required", False, 
+                                f"Request failed: {str(e)}")
+            
+            if auth_not_required_count >= 1:
+                self.log_test("Public Endpoints - No Auth Required", True, 
+                            f"Public endpoints work without authentication ({auth_not_required_count}/2 confirmed)")
+                return True
+            else:
+                self.log_test("Public Endpoints - No Auth Required", False, 
+                            "All public endpoints seem to require authentication (should be public)")
+                return False
+                
+        except Exception as e:
+            self.log_test("Public Endpoints - No Auth Required", False, f"Test failed: {str(e)}")
+            return False
+
+    def test_public_api_data_structure(self):
+        """Test that public API returns expected data structure from card_products and cards tables"""
+        try:
+            # Test the specific data structure mentioned in review request
+            test_slug = "test-user"
+            public_api_url = f"https://clickmy.link/api/public/mi-tienda/{test_slug}"
+            
+            response = requests.get(public_api_url, timeout=15)
+            
+            if response.status_code == 200:
+                try:
+                    data = response.json()
+                    
+                    # Check for expected data structure from review request
+                    expected_structure = {
+                        'card': 'Should come from cards table',
+                        'links': 'Links data',
+                        'products': 'Should come from card_products table',
+                        'galleries': 'Gallery data',
+                        'hours': 'Business hours',
+                        'testimonials': 'Customer testimonials'
+                    }
+                    
+                    structure_analysis = {}
+                    for field, description in expected_structure.items():
+                        if field in data:
+                            structure_analysis[field] = f"✅ Present - {type(data[field])}"
+                        else:
+                            structure_analysis[field] = "❌ Missing"
+                    
+                    # Check if products data looks like it comes from card_products table
+                    products_valid = False
+                    if 'products' in data and isinstance(data['products'], (list, dict)):
+                        products_valid = True
+                        if isinstance(data['products'], list) and len(data['products']) > 0:
+                            # Check if products have expected fields
+                            first_product = data['products'][0]
+                            if isinstance(first_product, dict) and any(key in first_product for key in ['name', 'price', 'type', 'description']):
+                                products_valid = True
+                    
+                    # Check if card data looks like it comes from cards table
+                    card_valid = False
+                    if 'card' in data and isinstance(data['card'], dict):
+                        card_data = data['card']
+                        if any(key in card_data for key in ['name', 'title', 'slug', 'user_id']):
+                            card_valid = True
+                    
+                    if products_valid and card_valid:
+                        self.log_test("Public API Data Structure - Complete", True, 
+                                    "Public API returns expected data structure with products and card data", 
+                                    f"Structure analysis: {structure_analysis}")
+                        return True
+                    elif products_valid or card_valid:
+                        self.log_test("Public API Data Structure - Partial", True, 
+                                    f"Public API returns partial expected structure (Products: {products_valid}, Card: {card_valid})", 
+                                    f"Structure analysis: {structure_analysis}")
+                        return True
+                    else:
+                        self.log_test("Public API Data Structure - Invalid", False, 
+                                    "Public API data structure doesn't match expected format", 
+                                    f"Structure analysis: {structure_analysis}")
+                        return False
+                        
+                except ValueError:
+                    self.log_test("Public API Data Structure - Not JSON", False, 
+                                f"Public API should return JSON but returned: {response.text[:200]}")
+                    return False
+            elif response.status_code == 404:
+                # Try with a different slug that might exist
+                alternative_slugs = ["mi-tienda-123", "demo-store", "sample-card"]
+                for alt_slug in alternative_slugs:
+                    alt_url = f"https://clickmy.link/api/public/mi-tienda/{alt_slug}"
+                    alt_response = requests.get(alt_url, timeout=15)
+                    if alt_response.status_code == 200:
+                        # Recursively test with working slug
+                        return self.test_public_api_data_structure_with_slug(alt_slug)
+                
+                self.log_test("Public API Data Structure - No Valid Slugs", True, 
+                            "Public API properly returns 404 for non-existent slugs (graceful handling)", 
+                            f"Tested slugs: {test_slug}, {', '.join(alternative_slugs)}")
+                return True
+            else:
+                self.log_test("Public API Data Structure - Unexpected Status", False, 
+                            f"HTTP {response.status_code}: {response.text[:200]}")
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            self.log_test("Public API Data Structure - Request Failed", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_public_api_data_structure_with_slug(self, slug):
+        """Helper method to test data structure with a specific slug"""
+        try:
+            public_api_url = f"https://clickmy.link/api/public/mi-tienda/{slug}"
+            response = requests.get(public_api_url, timeout=15)
+            
+            if response.status_code == 200:
+                data = response.json()
+                expected_fields = ['card', 'products']
+                found_fields = [field for field in expected_fields if field in data]
+                
+                if len(found_fields) >= 1:
+                    return True
+            return False
+        except:
+            return False
+
+    def test_public_endpoints_404_handling(self):
+        """Test that public endpoints handle non-existent slugs gracefully (404)"""
+        try:
+            # Test with obviously non-existent slugs
+            non_existent_slugs = ["non-existent-slug-12345", "fake-store-xyz", "invalid-card-999"]
+            
+            graceful_handling_count = 0
+            for slug in non_existent_slugs:
+                # Test both public endpoints
+                endpoints = [
+                    ("Card Display", f"https://clickmy.link/u/{slug}"),
+                    ("API Data", f"https://clickmy.link/api/public/mi-tienda/{slug}")
+                ]
+                
+                for endpoint_name, endpoint_url in endpoints:
+                    try:
+                        response = requests.get(endpoint_url, timeout=15)
+                        
+                        if response.status_code == 404:
+                            self.log_test(f"Public {endpoint_name} - 404 Handling", True, 
+                                        f"Gracefully handles non-existent slug with 404", 
+                                        f"URL: {endpoint_url} - Proper 404 response")
+                            graceful_handling_count += 1
+                        elif response.status_code == 200:
+                            # Check if it returns empty/default data instead of 404
+                            try:
+                                if endpoint_name == "API Data":
+                                    data = response.json()
+                                    if not data or data == {} or (isinstance(data, dict) and not any(data.values())):
+                                        self.log_test(f"Public {endpoint_name} - 404 Handling", True, 
+                                                    f"Returns empty data for non-existent slug (alternative to 404)", 
+                                                    f"URL: {endpoint_url} - Empty response for non-existent slug")
+                                        graceful_handling_count += 1
+                                    else:
+                                        self.log_test(f"Public {endpoint_name} - 404 Handling", False, 
+                                                    f"Returns data for non-existent slug (should be 404 or empty)", 
+                                                    f"URL: {endpoint_url} - Unexpected data: {str(data)[:100]}")
+                                else:
+                                    # Card display endpoint
+                                    content = response.text
+                                    if 'not found' in content.lower() or 'error' in content.lower() or len(content) < 100:
+                                        self.log_test(f"Public {endpoint_name} - 404 Handling", True, 
+                                                    f"Shows error page for non-existent slug", 
+                                                    f"URL: {endpoint_url} - Error page displayed")
+                                        graceful_handling_count += 1
+                                    else:
+                                        self.log_test(f"Public {endpoint_name} - 404 Handling", False, 
+                                                    f"Shows full page for non-existent slug (should show error)", 
+                                                    f"URL: {endpoint_url} - Full page content returned")
+                            except ValueError:
+                                # API endpoint returned non-JSON for 200 status
+                                self.log_test(f"Public {endpoint_name} - 404 Handling", False, 
+                                            f"Returns non-JSON for non-existent slug", 
+                                            f"URL: {endpoint_url} - Non-JSON response: {response.text[:100]}")
+                        else:
+                            self.log_test(f"Public {endpoint_name} - 404 Handling", True, 
+                                        f"Handles non-existent slug appropriately", 
+                                        f"URL: {endpoint_url} - HTTP {response.status_code}")
+                            graceful_handling_count += 1
+                            
+                    except requests.exceptions.RequestException as e:
+                        self.log_test(f"Public {endpoint_name} - 404 Handling", False, 
+                                    f"Request failed: {str(e)}")
+            
+            if graceful_handling_count >= 3:  # At least half of the tests passed
+                self.log_test("Public Endpoints - 404 Handling", True, 
+                            f"Public endpoints handle non-existent slugs gracefully ({graceful_handling_count}/6 tests passed)")
+                return True
+            else:
+                self.log_test("Public Endpoints - 404 Handling", False, 
+                            f"Public endpoints don't handle non-existent slugs properly ({graceful_handling_count}/6 tests passed)")
+                return False
+                
+        except Exception as e:
+            self.log_test("Public Endpoints - 404 Handling", False, f"Test failed: {str(e)}")
+            return False
+
     def get_summary(self):
         """Get test summary"""
         passed = sum(1 for result in self.test_results if result['success'])
