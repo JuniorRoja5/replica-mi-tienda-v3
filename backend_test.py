@@ -501,7 +501,12 @@ class BackendTester:
             self.test_public_api_data_endpoint,
             self.test_public_endpoints_no_auth_required,
             self.test_public_api_data_structure,
-            self.test_public_endpoints_404_handling
+            self.test_public_endpoints_404_handling,
+            self.test_laravel_mi_tienda_js_file_accessibility,
+            self.test_laravel_mi_tienda_js_syntax_validation,
+            self.test_laravel_mi_tienda_js_functions_integrity,
+            self.test_laravel_blade_csrf_integration,
+            self.test_laravel_mi_tienda_api_endpoints_review_request
         ]
         
         passed = 0
