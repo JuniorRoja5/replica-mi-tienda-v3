@@ -506,6 +506,7 @@ class BackendTester:
             self.test_laravel_mi_tienda_js_syntax_validation,
             self.test_laravel_mi_tienda_js_functions_integrity,
             self.test_laravel_blade_csrf_integration,
+            self.test_mi_tienda_profile_avatar_processing_fix,
             self.test_laravel_mi_tienda_api_endpoints_review_request
         ]
         
