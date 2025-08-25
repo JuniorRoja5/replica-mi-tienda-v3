@@ -2307,6 +2307,263 @@ class BackendTester:
             self.log_test("Laravel Mi Tienda API Endpoints - Review Request", False, f"Review request test failed: {str(e)}")
             return False
 
+    def test_mi_tienda_javascript_dom_error_fix(self):
+        """Test Mi Tienda JavaScript DOM Error Fix as specified in review request"""
+        try:
+            # Test the production Mi Tienda URL as specified in review request
+            mi_tienda_url = "https://clickmy.link/user/mi-tienda"
+            
+            # Get the Mi Tienda page
+            response = requests.get(mi_tienda_url, timeout=15)
+            
+            if response.status_code == 202:
+                # CAPTCHA protection - expected for production
+                if 'sg-captcha' in response.headers or 'captcha' in response.text.lower():
+                    self.log_test("Mi Tienda Page Access - CAPTCHA Protected", True, 
+                                "Mi Tienda page is accessible but protected by CAPTCHA system", 
+                                f"HTTP 202 with CAPTCHA challenge - page exists and is protected")
+                    
+                    # Since we can't bypass CAPTCHA, test the local files for DOM structure
+                    return self._test_local_mi_tienda_dom_structure()
+                else:
+                    self.log_test("Mi Tienda Page Access - Unexpected 202", False, 
+                                f"HTTP 202 but no CAPTCHA detected: {response.text[:200]}")
+                    return False
+            elif response.status_code == 200:
+                # Page accessible - test DOM structure
+                return self._test_mi_tienda_dom_structure_from_response(response.text)
+            elif response.status_code in [401, 403, 302]:
+                # Auth required - test local files instead
+                self.log_test("Mi Tienda Page Access - Auth Required", True, 
+                            "Mi Tienda page requires authentication - testing local DOM structure", 
+                            f"HTTP {response.status_code} - will test local files")
+                return self._test_local_mi_tienda_dom_structure()
+            else:
+                self.log_test("Mi Tienda Page Access - Unexpected Status", False, 
+                            f"HTTP {response.status_code}: {response.text[:200]}")
+                return False
+                
+        except requests.exceptions.RequestException as e:
+            self.log_test("Mi Tienda Page Access - Request Failed", False, f"Request failed: {str(e)}")
+            # Fallback to testing local files
+            return self._test_local_mi_tienda_dom_structure()
+
+    def _test_local_mi_tienda_dom_structure(self):
+        """Test local Mi Tienda DOM structure for required elements"""
+        try:
+            # Test the local HTML file structure
+            html_file_path = "/app/temp_laravel_repo/public/mi-tienda/mi-tienda.html"
+            js_file_path = "/app/temp_laravel_repo/public/mi-tienda/js/mi-tienda.js"
+            
+            # Check if files exist
+            if not os.path.exists(html_file_path):
+                self.log_test("Mi Tienda HTML File - Not Found", False, 
+                            f"HTML file not found at {html_file_path}")
+                return False
+            
+            if not os.path.exists(js_file_path):
+                self.log_test("Mi Tienda JS File - Not Found", False, 
+                            f"JavaScript file not found at {js_file_path}")
+                return False
+            
+            # Read HTML content
+            with open(html_file_path, 'r', encoding='utf-8') as f:
+                html_content = f.read()
+            
+            # Read JavaScript content
+            with open(js_file_path, 'r', encoding='utf-8') as f:
+                js_content = f.read()
+            
+            return self._test_mi_tienda_dom_structure_from_content(html_content, js_content)
+            
+        except Exception as e:
+            self.log_test("Local Mi Tienda DOM Structure Test", False, f"Local file test failed: {str(e)}")
+            return False
+
+    def _test_mi_tienda_dom_structure_from_response(self, html_content):
+        """Test Mi Tienda DOM structure from HTTP response"""
+        try:
+            # For production response, we can only test HTML structure
+            return self._test_mi_tienda_dom_structure_from_content(html_content, None)
+        except Exception as e:
+            self.log_test("Mi Tienda DOM Structure from Response", False, f"DOM structure test failed: {str(e)}")
+            return False
+
+    def _test_mi_tienda_dom_structure_from_content(self, html_content, js_content):
+        """Test Mi Tienda DOM structure and JavaScript functions"""
+        try:
+            dom_tests_passed = 0
+            total_dom_tests = 0
+            
+            # Test 1: Profile Overlay DOM Elements (Critical for DOM error fix)
+            total_dom_tests += 1
+            required_overlay_elements = [
+                'overlayNameInput',
+                'overlayUsernameInput', 
+                'overlayBioInput',
+                'overlayTiktok',
+                'overlayInstagram',
+                'overlayYoutube',
+                'overlayTwitter',
+                'overlayFacebook',
+                'overlayLinkedin',
+                'overlayDiscord',
+                'overlaySpotify',
+                'overlayAvatarInput',
+                'avatarPreviewOverlay',
+                'overlayBioCounter'
+            ]
+            
+            missing_overlay_elements = []
+            for element_id in required_overlay_elements:
+                if f'id="{element_id}"' not in html_content:
+                    missing_overlay_elements.append(element_id)
+            
+            if not missing_overlay_elements:
+                self.log_test("Profile Overlay DOM Elements", True, 
+                            "All required profile overlay DOM elements found in HTML", 
+                            f"Found all {len(required_overlay_elements)} overlay elements")
+                dom_tests_passed += 1
+            else:
+                self.log_test("Profile Overlay DOM Elements", False, 
+                            f"Missing {len(missing_overlay_elements)} overlay elements", 
+                            f"Missing: {missing_overlay_elements}")
+            
+            # Test 2: Modal System DOM Elements
+            total_dom_tests += 1
+            required_modal_elements = [
+                'productTypeModal',
+                'linkFormModal',
+                'profileOverlay'
+            ]
+            
+            missing_modal_elements = []
+            for element_id in required_modal_elements:
+                if f'id="{element_id}"' not in html_content:
+                    missing_modal_elements.append(element_id)
+            
+            if not missing_modal_elements:
+                self.log_test("Modal System DOM Elements", True, 
+                            "All required modal system DOM elements found in HTML", 
+                            f"Found all {len(required_modal_elements)} modal elements")
+                dom_tests_passed += 1
+            else:
+                self.log_test("Modal System DOM Elements", False, 
+                            f"Missing {len(missing_modal_elements)} modal elements", 
+                            f"Missing: {missing_modal_elements}")
+            
+            # Test 3: Interactive Button Elements
+            total_dom_tests += 1
+            required_interactive_elements = [
+                'onclick="showProfileModal()"',
+                'onclick="showCreateModal()"',
+                'onclick="closeCreateModal()"',
+                'onclick="closeLinkFormOverlay()"'
+            ]
+            
+            missing_interactive_elements = []
+            for element in required_interactive_elements:
+                if element not in html_content:
+                    missing_interactive_elements.append(element)
+            
+            if not missing_interactive_elements:
+                self.log_test("Interactive Button Elements", True, 
+                            "All required interactive button elements found in HTML", 
+                            f"Found all {len(required_interactive_elements)} interactive elements")
+                dom_tests_passed += 1
+            else:
+                self.log_test("Interactive Button Elements", False, 
+                            f"Missing {len(missing_interactive_elements)} interactive elements", 
+                            f"Missing: {missing_interactive_elements}")
+            
+            # Test 4: JavaScript Functions (if JS content available)
+            if js_content:
+                total_dom_tests += 1
+                required_js_functions = [
+                    'function showProfileModal(',
+                    'function showProfileOverlay(',
+                    'function closeProfileOverlay(',
+                    'function showCreateModal(',
+                    'function closeCreateModal(',
+                    'function closeLinkFormOverlay(',
+                    'function setupOverlayListeners(',
+                    'function updateAvatarPreview('
+                ]
+                
+                missing_js_functions = []
+                for func in required_js_functions:
+                    if func not in js_content:
+                        missing_js_functions.append(func)
+                
+                if not missing_js_functions:
+                    self.log_test("JavaScript Functions", True, 
+                                "All required JavaScript functions found in JS file", 
+                                f"Found all {len(required_js_functions)} functions")
+                    dom_tests_passed += 1
+                else:
+                    self.log_test("JavaScript Functions", False, 
+                                f"Missing {len(missing_js_functions)} JavaScript functions", 
+                                f"Missing: {missing_js_functions}")
+            
+            # Test 5: Avatar Upload System
+            total_dom_tests += 1
+            avatar_upload_elements = [
+                'overlayAvatarInput',
+                'avatarPreviewOverlay',
+                'accept="image/*"'
+            ]
+            
+            missing_avatar_elements = []
+            for element in avatar_upload_elements:
+                if element not in html_content:
+                    missing_avatar_elements.append(element)
+            
+            if not missing_avatar_elements:
+                self.log_test("Avatar Upload System", True, 
+                            "Avatar upload system DOM elements found in HTML", 
+                            f"Found all {len(avatar_upload_elements)} avatar elements")
+                dom_tests_passed += 1
+            else:
+                self.log_test("Avatar Upload System", False, 
+                            f"Missing {len(missing_avatar_elements)} avatar upload elements", 
+                            f"Missing: {missing_avatar_elements}")
+            
+            # Test 6: Social Media Input Fields
+            total_dom_tests += 1
+            social_media_platforms = ['Tiktok', 'Instagram', 'Youtube', 'Twitter', 'Facebook', 'Linkedin', 'Discord', 'Spotify']
+            missing_social_inputs = []
+            
+            for platform in social_media_platforms:
+                if f'id="overlay{platform}"' not in html_content:
+                    missing_social_inputs.append(platform)
+            
+            if not missing_social_inputs:
+                self.log_test("Social Media Input Fields", True, 
+                            "All social media input fields found in HTML", 
+                            f"Found all {len(social_media_platforms)} social media inputs")
+                dom_tests_passed += 1
+            else:
+                self.log_test("Social Media Input Fields", False, 
+                            f"Missing {len(missing_social_inputs)} social media inputs", 
+                            f"Missing: {missing_social_inputs}")
+            
+            # Calculate success rate
+            success_rate = (dom_tests_passed / total_dom_tests) * 100
+            
+            if dom_tests_passed == total_dom_tests:
+                self.log_test("Mi Tienda JavaScript DOM Error Fix - Complete", True, 
+                            f"All DOM structure tests passed - JavaScript DOM errors should be resolved", 
+                            f"Success rate: {success_rate:.1f}% ({dom_tests_passed}/{total_dom_tests} tests passed)")
+                return True
+            else:
+                self.log_test("Mi Tienda JavaScript DOM Error Fix - Partial", False, 
+                            f"Some DOM structure issues remain - may still have JavaScript errors", 
+                            f"Success rate: {success_rate:.1f}% ({dom_tests_passed}/{total_dom_tests} tests passed)")
+                return False
+            
+        except Exception as e:
+            self.log_test("Mi Tienda DOM Structure Analysis", False, f"DOM analysis failed: {str(e)}")
+
     def get_summary(self):
         """Get test summary"""
         passed = sum(1 for result in self.test_results if result['success'])
