@@ -125,6 +125,7 @@
 | `Medias.php` | ✅ Funcionando | 25 | Modelo para media storage |
 | `mi-tienda.html` | ✅ Funcionando | 2946 | Frontend principal |
 | `mi-tienda.js` | ✅ Funcionando | 5654 | Lógica frontend completa |
+| `public-product.html` | ✅ Funcionando | 926 | Vista pública de productos |
 | `web.php` | ✅ Funcionando | 1149 | Routing completo |
 | `.htaccess` | ✅ Funcionando | 35 | Server configuration |
 
