@@ -107,6 +107,7 @@
 ├── public/mi-tienda/
 │   ├── mi-tienda.html                          ✅ (2946 lines)
 │   ├── js/mi-tienda.js                         ✅ (5654 lines)
+│   ├── public-product.html                     ✅ (926 lines) - Vista pública de productos
 │   ├── dashboard.html                          ✅ (Existe)
 │   ├── ingresos.html                           ✅ (Existe)
 │   ├── diseno.html                             ✅ (Existe)
