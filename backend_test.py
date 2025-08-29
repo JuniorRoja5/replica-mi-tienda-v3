@@ -508,7 +508,12 @@ class BackendTester:
             self.test_laravel_blade_csrf_integration,
             self.test_mi_tienda_profile_avatar_processing_fix,
             self.test_laravel_mi_tienda_api_endpoints_review_request,
-            self.test_mi_tienda_javascript_dom_error_fix
+            self.test_mi_tienda_javascript_dom_error_fix,
+            self.test_membership_crud_backend_validation,
+            self.test_membership_data_structure_support,
+            self.test_membership_api_integration_consistency,
+            self.test_membership_validation_rules,
+            self.test_membership_image_handling
         ]
         
         passed = 0
