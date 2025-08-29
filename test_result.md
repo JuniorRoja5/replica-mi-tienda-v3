@@ -325,7 +325,7 @@ metadata:
 
 test_plan:
   current_focus:
-    []
+    - "Membership CRUD Integration"
   stuck_tasks:
     ["Mi Tienda Public URL System"]
   test_all: false
