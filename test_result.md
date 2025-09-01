@@ -372,11 +372,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Membership CRUD Integration"
+    - "Product/Link Reordering Persistence"
   stuck_tasks:
-    ["Mi Tienda Public URL System"]
+    []
   test_all: false
-  test_priority: "high_first"
+  test_priority: "completed"
 
 agent_communication:
     -agent: "main"
