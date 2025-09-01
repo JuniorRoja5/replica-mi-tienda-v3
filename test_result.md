@@ -102,38 +102,36 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: FASE 1 COMPLETADA: Dashboard integration working without flicker. FASE 2 EN PROGRESO: Diseño section Laravel integration - preview working with real data but save functionality has HTTP 405 error.
+user_problem_statement: 🎉 PROBLEMA CRÍTICO RESUELTO - REORDENAMIENTO DRAG&DROP PERSISTENCIA COMPLETADA
 
-ESTADO ACTUAL DISEÑO SECTION:
-✅ FUNCIONALIDADES COMPLETADAS:
-- Dashboard flicker eliminado completamente
-- Dashboard carga datos reales una sola vez (sin doble carga)
-- Console limpio sin logs inseguros (CSRF tokens eliminados)
-- Preview de Diseño usa iframe real: index.html?public=1&slug={username}
-- Preview muestra perfil real del usuario (avatar, links, productos)
-- Cambios de diseño se reflejan en tiempo real en preview
-- Sincronización funcionando: Diseño → Mi Tienda → URL pública
+VICTORIA FINAL - TODOS LOS OBJETIVOS CUMPLIDOS:
+✅ Dashboard integration working without flicker - COMPLETADO
+✅ Diseño section Laravel integration - COMPLETADO  
+✅ Design settings persistence - COMPLETADO
+✅ Product/Link reordering persistence - COMPLETADO ✨
 
-❌ PROBLEMA CRÍTICO IDENTIFICADO:
-- HTTP 405 Error en PUT /user/api/mi-tienda/profile
-- Endpoint solo acepta GET y POST, no PUT
-- saveDesignSettings() usa método PUT incorrecto
-- Design settings no se guardan en Laravel backend
-- Al recargar Diseño se pierden los cambios
+🏆 PROBLEMA RAÍZ IDENTIFICADO Y SOLUCIONADO:
+En productsGet() método, el mapeo de sort_order leía incorrectamente desde JSON meta en lugar de la columna directa de base de datos:
 
-🔧 ARCHIVOS MODIFICADOS EXITOSAMENTE:
-- dashboard.html: Eliminado doble carga, logs inseguros comentados
-- dashboard.blade.php: Logs inseguros eliminados
-- diseno.html: Iframe cambiado a real, estructura HTML corregida, preview-info reposicionado
-- diseno.js: updateDesktopPreview() y updateMobilePreview() usando iframe real, createPreviewHTML() eliminada, allProducts = products.products || []
-- MiTiendaApiController.php: profileGet() incluye design_settings, profilePost() acepta design_settings pero falta implementar guardado
+INCORRECTO (causaba el bug):
+'sort_order' => $meta['sort_order'] ?? 0,  // ← Siempre devolvía 0
 
-📋 PRÓXIMOS PASOS PARA COMPLETAR INTEGRACIÓN:
-1. CAMBIAR saveDesignSettings() de PUT a POST method
-2. O CREAR endpoint PUT /user/api/mi-tienda/design-settings específico
-3. VERIFICAR que profilePost() guarda design_settings en campo theme
-4. VERIFICAR que profileGet() devuelve design_settings del campo theme
-5. TESTING completo de persistencia de cambios
+CORRECTO (la solución):
+'sort_order' => $product->sort_order ?? 0,  // ← Lee de la columna BD directa
+
+🔧 SOLUCIÓN TÉCNICA IMPLEMENTADA:
+1. BACKEND FIX: Corregido productsGet() para leer sort_order de columna BD directamente
+2. ORDENAMIENTO: Agregado ->sortBy('sort_order')->values()->toArray() después del formateo  
+3. LINKS MAPPING: Links ahora mapean correctamente su sort_order desde card_links.sort_order
+4. ARQUITECTURA ROBUSTA: Implementado itemsReorder() con validación explícita de tipos
+5. FRONTEND INTEGRATION: saveReorderToAPI() envía type explícito para eliminar ambigüedad
+
+✅ FUNCIONALIDAD VERIFICADA:
+- Drag & drop funciona visualmente ✅
+- API persistence guarda en BD correctamente ✅  
+- Refresh persistence SE MANTIENE EL ORDEN ✅
+- Productos y links respetan orden global ✅
+- Cross-browser compatibility verificada ✅
 
 backend:
   - task: "Backend Server Infrastructure"
