@@ -384,7 +384,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Product/Link Reordering Persistence"
+    - "Mi Tienda Upload Editor Image Endpoint"
   stuck_tasks:
     []
   test_all: false
