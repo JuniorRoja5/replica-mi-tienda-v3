@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Perfil Público</title>
+
+    <!-- Bootstrap 5.3.0 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&family=Lato:wght@300;400;700&family=Quicksand:wght@300;400;500;600;700&family=Nunito:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@300;400;600;700&family=Roboto+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* === CSS VARIABLES FOR DESIGN SYSTEM === */
+        :root {
+            --design-background: #000000;
+            --design-text-color: #FFFFFF;
+            --design-text-secondary: #A0A0A0;
+            --design-button-bg: rgba(255, 255, 255, 0.1);
+            --design-button-text: #FFFFFF;
+            --design-button-hover: rgba(255, 255, 255, 0.15);
+            --design-font-family: 'Inter';
+        }
+
+        body {
+            background: var(--design-background);
+            min-height: 100vh;
+            font-family: var(--design-font-family), -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--design-text-color);
+        }
+
+        .profile-container {
+            max-width: 600px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--design-background);
+            color: var(--design-text-color);
+            padding: 2rem 1.5rem;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--design-button-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            color: var(--design-text-secondary);
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--design-text-color);
+        }
+
+        .profile-username {
+            font-size: 0.9rem;
+            color: var(--design-text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-bio {
+            font-size: 0.95rem;
+            color: var(--design-text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--design-button-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--design-text-color);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .social-link:hover {
+            background: var(--design-button-hover);
+            transform: translateY(-2px);
+            color: var(--design-text-color);
+        }
+
+        .products-section {
+            margin-top: 2rem;
+        }
+
+        .product-item {
+            background: var(--design-button-bg);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .product-item:hover {
+            background: var(--design-button-hover);
+            transform: translateY(-2px);
+            color: inherit;
+        }
+
+        .product-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .product-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 0.5rem;
+            background: var(--design-button-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--design-text-secondary);
+            flex-shrink: 0;
+        }
+
+        .product-icon img {
+            width: 100%;
+            height: 100%;
+            border-radius: 0.5rem;
+            object-fit: cover;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--design-text-color);
+        }
+
+        .product-subtitle {
+            font-size: 0.85rem;
+            color: var(--design-text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .product-type {
+            font-size: 0.75rem;
+            color: var(--design-text-secondary);
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .loading-container, .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 100vh;
+            padding: 2rem;
+            color: var(--design-text-color);
+        }
+
+        .loading-spinner {
+            font-size: 3rem;
+            color: var(--design-text-secondary);
+            margin-bottom: 1rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .error-message {
+            color: var(--design-text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .profile-container {
+                padding: 1.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading State -->
+    <div id="loadingState" class="loading-container">
+        <div class="loading-spinner">
+            <i class="bi bi-arrow-clockwise"></i>
+        </div>
+        <h2>Cargando perfil...</h2>
+        <p>Por favor espera</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="error-container" style="display: none;">
+        <div style="font-size: 3rem; color: var(--design-text-secondary); margin-bottom: 1rem;">
+            <i class="bi bi-exclamation-triangle"></i>
+        </div>
+        <h2 class="error-title">Perfil no encontrado</h2>
+        <p class="error-message">Este perfil no existe o no está disponible.</p>
+    </div>
+
+    <!-- Main Profile Content -->
+    <div id="profileContainer" class="profile-container" style="display: none;">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatar">
+                👤
+            </div>
+            <h1 class="profile-name" id="profileName">Nombre del Usuario</h1>
+            <p class="profile-username" id="profileUsername">@username</p>
+            <p class="profile-bio" id="profileBio">Biografía del usuario</p>
+            
+            <!-- Social Links -->
+            <div class="social-links" id="socialLinks">
+                <!-- Dynamic social links will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Products Section -->
+        <div class="products-section" id="productsSection">
+            <!-- Dynamic products will be inserted here -->
+        </div>
+    </div>
+
+    <script>
+        // Profile data
+        let profileData = null;
+        let productsData = [];
+
+        // Load profile on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfileData();
+        });
+
+        function loadProfileData() {
+            try {
+                // Get slug from URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const slug = urlParams.get('slug');
+
+                console.log('Loading profile for slug:', slug);
+
+                if (!slug) {
+                    showError('Parámetros de URL inválidos');
+                    return;
+                }
+
+                // Load from localStorage (this should be replaced with proper API call in production)
+                const storedData = localStorage.getItem('miTiendaData');
+                if (!storedData) {
+                    showError('Perfil no encontrado');
+                    return;
+                }
+
+                const appData = JSON.parse(storedData);
+                
+                // Verify slug matches
+                if (appData.profile.username !== slug) {
+                    console.log('Slug mismatch. Expected:', slug, 'Found:', appData.profile.username);
+                    showError('Perfil no encontrado');
+                    return;
+                }
+
+                profileData = appData.profile;
+                productsData = appData.products.filter(product => product.status === 'active');
+
+                console.log('Profile loaded:', profileData);
+                console.log('Active products:', productsData.length);
+
+                displayProfile();
+
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                showError('Error cargando el perfil');
+            }
+        }
+
+        function displayProfile() {
+            if (!profileData) return;
+
+            // Hide loading, show profile
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('profileContainer').style.display = 'block';
+
+            // Set page title
+            document.title = `${profileData.name} - Perfil Público`;
+
+            // Profile avatar
+            if (profileData.avatar_url) {
+                document.getElementById('profileAvatar').innerHTML = `
+                    <img src="${profileData.avatar_url}" alt="${profileData.name}">
+                `;
+            }
+
+            // Profile info
+            document.getElementById('profileName').textContent = profileData.name || 'Usuario';
+            
+            if (profileData.username) {
+                document.getElementById('profileUsername').textContent = `@${profileData.username}`;
+            } else {
+                document.getElementById('profileUsername').style.display = 'none';
+            }
+
+            document.getElementById('profileBio').textContent = profileData.bio || '';
+
+            // Social links
+            displaySocialLinks();
+
+            // Products
+            displayProducts();
+        }
+
+        function displaySocialLinks() {
+            const socialContainer = document.getElementById('socialLinks');
+            let socialHTML = '';
+
+            const socialPlatforms = {
+                instagram: { icon: 'bi-instagram', color: '#E4405F' },
+                twitter: { icon: 'bi-twitter', color: '#1DA1F2' },
+                tiktok: { icon: 'bi-tiktok', color: '#000000' },
+                youtube: { icon: 'bi-youtube', color: '#FF0000' },
+                linkedin: { icon: 'bi-linkedin', color: '#0077B5' },
+                facebook: { icon: 'bi-facebook', color: '#1877F2' }
+            };
+
+            if (profileData.social_links) {
+                Object.entries(profileData.social_links).forEach(([platform, url]) => {
+                    if (url && url.trim() !== '') {
+                        const platformData = socialPlatforms[platform];
+                        if (platformData) {
+                            socialHTML += `
+                                <a href="${url}" target="_blank" class="social-link" title="${platform}">
+                                    <i class="${platformData.icon}"></i>
+                                </a>
+                            `;
+                        }
+                    }
+                });
+            }
+
+            socialContainer.innerHTML = socialHTML;
+        }
+
+        function displayProducts() {
+            const productsContainer = document.getElementById('productsSection');
+            
+            if (productsData.length === 0) {
+                productsContainer.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--design-text-secondary);">
+                        <i class="bi bi-box" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <p>No hay productos disponibles</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const sortedProducts = [...productsData].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+
+            let productsHTML = '';
+
+            sortedProducts.forEach(product => {
+                const productIcon = getProductIcon(product.type);
+                const productTypeLabel = getProductTypeLabel(product.type);
+                
+                // For links, redirect directly. For products, open in new tab
+                const clickAction = product.type === 'link' 
+                    ? `onclick="window.open('${product.url}', '_blank')"` 
+                    : `onclick="openProduct('${product.id}', '${product.type}')"`;
+
+                productsHTML += `
+                    <div class="product-item" ${clickAction}>
+                        <div class="product-content">
+                            <div class="product-icon">
+                                ${product.image_url ? 
+                                    `<img src="${product.image_url}" alt="${product.title}">` :
+                                    `<i class="bi bi-${productIcon}"></i>`
+                                }
+                            </div>
+                            <div class="product-info">
+                                <div class="product-title">${truncateText(product.title, 35)}</div>
+                                ${product.subtitle && product.type === 'product' ? 
+                                    `<div class="product-subtitle">${truncateText(product.subtitle, 40)}</div>` : 
+                                    ''
+                                }
+                                <div class="product-type">${productTypeLabel}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            productsContainer.innerHTML = productsHTML;
+        }
+
+        function openProduct(productId, productType) {
+            const username = profileData.username || 'user';
+            let url = '';
+
+            switch (productType) {
+                case 'consultation':
+                    url = `mi-tienda/public-product.html?c=${productId}&u=${username}`;
+                    break;
+                case 'course':
+                    url = `mi-tienda/public-product.html?course=${productId}&u=${username}`;
+                    break;
+                case 'membership':
+                    url = `mi-tienda/public-product.html?membership=${productId}&u=${username}`;
+                    break;
+                default:
+                    url = `mi-tienda/public-product.html?p=${productId}&u=${username}`;
+            }
+
+            window.open(url, '_blank');
+        }
+
+        function getProductIcon(type) {
+            const icons = {
+                'product': 'box-seam',
+                'link': 'link-45deg',
+                'consultation': 'calendar-event',
+                'course': 'play-circle',
+                'membership': 'crown'
+            };
+            return icons[type] || 'box-seam';
+        }
+
+        function getProductTypeLabel(type) {
+            const labels = {
+                'product': 'PRODUCTO',
+                'link': 'ENLACE',
+                'consultation': 'CONSULTORÍA',
+                'course': 'CURSO',
+                'membership': 'MEMBRESÍA'
+            };
+            return labels[type] || 'PRODUCTO';
+        }
+
+        function truncateText(text, maxLength) {
+            if (!text) return '';
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength) + '...';
+        }
+
+        function showError(message) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('profileContainer').style.display = 'none';
+            document.getElementById('errorState').style.display = 'flex';
+
+            const errorMessage = document.querySelector('#errorState .error-message');
+            if (errorMessage) {
+                errorMessage.textContent = message;
+            }
+        }
+
+        // Design system integration (same as other pages)
+        function applyDesignSettings(settings) {
+            if (!settings) return;
+
+            const root = document.documentElement;
+            root.style.setProperty('--design-background', settings.background || '#000000');
+            root.style.setProperty('--design-text-color', settings.text_color || '#FFFFFF');
+            root.style.setProperty('--design-text-secondary', settings.text_secondary_color || '#A0A0A0');
+            root.style.setProperty('--design-button-bg', settings.button_color || 'rgba(255, 255, 255, 0.1)');
+            root.style.setProperty('--design-button-text', settings.button_font_color || '#FFFFFF');
+            root.style.setProperty('--design-button-hover', settings.button_hover_color || 'rgba(255, 255, 255, 0.15)');
+            root.style.setProperty('--design-font-family', settings.font_family || 'Inter');
+        }
+
+        function loadDesignSettings() {
+            try {
+                const savedDesignSettings = localStorage.getItem('applied_design_settings');
+                if (savedDesignSettings) {
+                    const settings = JSON.parse(savedDesignSettings);
+                    applyDesignSettings(settings);
+                    return;
+                }
+
+                const pendingUpdate = localStorage.getItem('pending_design_update');
+                if (pendingUpdate) {
+                    const updateData = JSON.parse(pendingUpdate);
+                    if (updateData.design_settings) {
+                        applyDesignSettings(updateData.design_settings);
+                        return;
+                    }
+                }
+
+                // Apply default settings
+                applyDesignSettings({
+                    background: '#000000',
+                    text_color: '#FFFFFF',
+                    text_secondary_color: '#A0A0A0',
+                    font_family: 'Inter',
+                    button_color: 'rgba(255, 255, 255, 0.1)',
+                    button_font_color: '#FFFFFF',
+                    button_hover_color: 'rgba(255, 255, 255, 0.15)'
+                });
+
+            } catch (error) {
+                console.error('Error loading design settings:', error);
+            }
+        }
+
+        // Initialize design system
+        document.addEventListener('DOMContentLoaded', loadDesignSettings);
+
+        // Listen for design changes
+        window.addEventListener('storage', function(event) {
+            if (event.key === 'applied_design_settings' && event.newValue) {
+                try {
+                    const settings = JSON.parse(event.newValue);
+                    applyDesignSettings(settings);
+                } catch (error) {
+                    console.error('Error applying design from storage:', error);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
