@@ -513,7 +513,8 @@ class BackendTester:
             self.test_membership_data_structure_support,
             self.test_membership_api_integration_consistency,
             self.test_membership_validation_rules,
-            self.test_membership_image_handling
+            self.test_membership_image_handling,
+            self.test_mi_tienda_upload_editor_image_endpoint
         ]
         
         passed = 0
