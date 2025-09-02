@@ -396,11 +396,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Mi Tienda Upload Editor Image Endpoint"
+    - "Digital Product Fields Complete Data Persistence"
   stuck_tasks:
     []
   test_all: false
-  test_priority: "completed"
+  test_priority: "critical_first"
 
 agent_communication:
     -agent: "main"
