@@ -1,1 +1,1291 @@
-Creando archivo temporal...
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Digital Product</title>
+    
+    <!-- JavaScript Stripe -->
+    <script src="https://js.stripe.com/v3/"></script> 
+
+    <!-- Bootstrap 5.3.0 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- Google Fonts - Load all fonts used in themes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&family=Lato:wght@300;400;700&family=Quicksand:wght@300;400;500;600;700&family=Nunito:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@300;400;600;700&family=Roboto+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Responsive Fixes -->
+    <link href="css/responsive-fixes.css" rel="stylesheet">
+    
+    <!-- Enhanced Visual Design -->
+    <link href="css/enhanced-design.css" rel="stylesheet">
+
+    <!-- Quill.js Editor -->
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+    
+    <style>
+        /* === CSS VARIABLES FOR DESIGN SYSTEM === */
+        :root {
+            --design-background: #000000;
+            --design-text-color: #FFFFFF;
+            --design-text-secondary: #A0A0A0;
+            --design-button-bg: rgba(255, 255, 255, 0.1);
+            --design-button-text: #FFFFFF;
+            --design-button-hover: rgba(255, 255, 255, 0.15);
+            --design-font-family: 'Inter';
+        }
+        
+        body {
+            background: var(--design-background);
+            min-height: 100vh;
+            font-family: var(--design-font-family), -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--design-text-color);
+        }
+
+        .product-container {
+            max-width: 600px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--design-background);
+            color: var(--design-text-color);
+            position: relative;
+        }
+
+        .header-bar {
+            position: sticky;
+            top: 0;
+            background: var(--design-background)CC;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--design-text-secondary)40;
+            z-index: 100;
+            padding: 1rem;
+        }
+
+        .back-button {
+            background: none;
+            border: none;
+            color: var(--design-text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+            text-decoration: none;
+            font-family: var(--design-font-family);
+        }
+
+        .back-button:hover {
+            color: var(--design-text-color);
+        }
+
+        .product-content {
+            padding: 2rem 1.5rem;
+            padding-bottom: 120px; /* Space for fixed purchase button */
+        }
+
+        .product-image {
+            width: 100%;
+            height: 250px;
+            border-radius: 1rem;
+            object-fit: cover;
+            margin-bottom: 2rem;
+            background: var(--design-button-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-image-placeholder {
+            color: var(--design-text-secondary);
+            font-size: 3rem;
+        }
+
+        .product-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+            color: var(--design-text-color);
+            font-family: var(--design-font-family);
+        }
+
+        .product-subtitle {
+            font-size: 1.1rem;
+            color: var(--design-text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+            font-family: var(--design-font-family);
+        }
+
+        .price-section {
+            margin-bottom: 2rem;
+        }
+
+        .current-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--design-text-color);
+            display: inline-block;
+            font-family: var(--design-font-family);
+        }
+
+        .original-price {
+            font-size: 1.2rem;
+            color: var(--design-text-secondary);
+            text-decoration: line-through;
+            margin-left: 1rem;
+            vertical-align: top;
+            margin-top: 0.5rem;
+            display: inline-block;
+            font-family: var(--design-font-family);
+        }
+
+        .discount-badge {
+            background: #dc2626;
+            color: white;
+            font-size: 0.85rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            margin-left: 1rem;
+            vertical-align: top;
+            margin-top: 0.75rem;
+            display: inline-block;
+            font-family: var(--design-font-family);
+        }
+
+        .product-description {
+            line-height: 1.6;
+            color: var(--design-text-secondary);
+            margin-bottom: 2rem;
+            white-space: pre-line;
+            font-family: var(--design-font-family);
+        }
+
+        .reviews-section {
+            margin-bottom: 2rem;
+        }
+
+        .reviews-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--design-text-color);
+            font-family: var(--design-font-family);
+        }
+
+        .review-item {
+            background: var(--design-button-bg);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--design-text-secondary)40;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--design-text-color);
+            font-family: var(--design-font-family);
+        }
+
+        .review-stars {
+            color: #fbbf24;
+            font-size: 0.85rem;
+        }
+
+        .review-comment {
+            color: var(--design-text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.4;
+            font-family: var(--design-font-family);
+        }
+        }
+
+        .purchase-section {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 600px;
+            width: 100%;
+            background: var(--design-background)F0;
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--design-text-secondary)40;
+            padding: 1.5rem;
+            z-index: 100;
+        }
+
+        .purchase-button {
+            width: 100%;
+            background: var(--design-button-bg);
+            border: 1px solid var(--design-text-secondary)40;
+            color: var(--design-button-text);
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-family: var(--design-font-family);
+            cursor: pointer;
+        }
+
+        .purchase-button:hover {
+            background: var(--design-button-hover);
+            transform: translateY(-2px);
+        }
+
+        .purchase-button:active {
+            transform: translateY(0);
+        }
+
+        .error-container, .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 100vh;
+            padding: 2rem;
+            color: var(--design-text-color);
+            background: var(--design-background);
+        }
+
+        .error-icon, .loading-spinner {
+            font-size: 4rem;
+            color: var(--design-text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--design-text-color);
+            font-family: var(--design-font-family);
+        }
+
+        .error-message {
+            color: var(--design-text-secondary);
+            margin-bottom: 2rem;
+            font-family: var(--design-font-family);
+        }
+            margin-bottom: 0.5rem;
+        }
+
+        .error-message {
+            color: #a0a0a0;
+            margin-bottom: 1.5rem;
+        }
+
+        .error-button {
+            background: #8b5cf6;
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: background 0.2s ease;
+        }
+
+        .error-button:hover {
+            background: #7c3aed;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .product-content {
+                padding: 1.5rem 1rem;
+                padding-bottom: 120px;
+            }
+            
+            .product-title {
+                font-size: 1.75rem;
+            }
+            
+            .current-price {
+                font-size: 2rem;
+            }
+        }
+    </style>
+
+    <style>
+    /* Estilos para contenido Quill.js en página pública */
+    .product-description .ql-editor {
+    padding: 0;
+    border: none;
+    color: inherit;
+    font-family: inherit;
+    line-height: inherit;
+    }
+
+    .product-description img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+    }
+
+    .product-description p {
+    margin-bottom: 1rem;
+    }
+
+    .product-description strong {
+    font-weight: 600;
+    }
+
+    .product-description em {
+    font-style: italic;
+    }
+    </style>
+</head>
+<body>
+    <!-- Loading State -->
+    <div id="loadingState" class="loading-container">
+        <div class="loading-spinner">
+            <i class="bi bi-arrow-clockwise"></i>
+        </div>
+        <h2>Cargando producto...</h2>
+        <p style="color: #a0a0a0;">Por favor, espera</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="error-container" style="display: none;">
+        <div class="error-icon">
+            <i class="bi bi-exclamation-triangle"></i>
+        </div>
+        <h2 class="error-title">Producto no encontrado</h2>
+        <p class="error-message">Este producto no existe o no está disponible.</p>
+        <button class="error-button" onclick="goBack()">
+            <i class="bi bi-arrow-left"></i> Volver al inicio
+        </button>
+    </div>
+
+    <!-- Main Product Content -->
+    <div id="productContainer" class="product-container" style="display: none;">
+        <!-- Header -->
+        <div class="header-bar">
+            <a href="#" class="back-button" id="backButton">
+                <i class="bi bi-arrow-left"></i>
+                <span>Volver al inicio</span>
+            </a>
+        </div>
+
+        <!-- Product Content -->
+        <div class="product-content">
+            <!-- Product Image -->
+            <div id="productImageContainer">
+                <div class="product-image" id="productImage">
+                    <div class="product-image-placeholder">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="product-info">
+                <h1 class="product-title" id="productTitle">Título del Producto</h1>
+                <p class="product-subtitle" id="productSubtitle" style="display: none;">Subtítulo del producto</p>
+                
+                <!-- Price Section -->
+                <div class="price-section" id="priceSection" style="display: none;">
+                    <span class="current-price" id="currentPrice">$0</span>
+                    <span class="original-price" id="originalPrice" style="display: none;">$0</span>
+                    <span class="discount-badge" id="discountBadge" style="display: none;">¡Oferta!</span>
+                </div>
+
+                <!-- Description -->
+                <div class="product-description" id="productDescription">
+                    Descripción del producto...
+                </div>
+
+                <!-- Download Section -->
+                <div class="download-section" id="downloadSection" style="display: none;">
+                    <div style="background: var(--design-button-bg); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 2rem; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center;">
+                        <div style="color: var(--design-text-color); font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                            <i class="bi bi-download" style="font-size: 1.25rem;"></i>
+                            <span>Archivo incluido</span>
+                        </div>
+                        <p style="color: var(--design-text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">
+                            Este producto incluye un archivo descargable que recibirás inmediatamente después de la compra.
+                        </p>
+                        <div style="background: rgba(255, 255, 255, 0.05); border-radius: 0.5rem; padding: 1rem; display: flex; align-items: center; gap: 1rem;">
+                            <div style="color: var(--design-text-secondary); font-size: 2rem;">
+                                <i class="bi bi-file-earmark-arrow-down"></i>
+                            </div>
+                        <div style="flex: 1; text-align: left;">
+                            <div style="color: var(--design-text-color); font-weight: 600; margin-bottom: 0.25rem;" id="fileName">
+                                Archivo digital
+                            </div>
+                            <div style="color: var(--design-text-secondary); font-size: 0.85rem;">
+                                Descarga instantánea después del pago
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                <!-- Custom Fields Section -->
+                <div class="custom-fields-section" id="customFieldsSection" style="display: none;">
+                    <div style="background: var(--design-button-bg); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 2rem; border: 1px solid rgba(255, 255, 255, 0.1);">
+                        <div style="color: var(--design-text-color); font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-list-ul" style="font-size: 1.25rem;"></i>
+                            <span>Información adicional</span>
+                        </div>
+                        <div id="customFieldsList">
+                            <!-- Dynamic custom fields will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Section -->
+                <div class="faq-section" id="faqSection" style="display: none;">
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: var(--design-text-color); font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-question-circle" style="color: #fbbf24;"></i>
+                            Preguntas Frecuentes
+                        </h3>
+                        <div id="faqList">
+                            <!-- Dynamic FAQ will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reviews -->
+                <div class="reviews-section" id="reviewsSection" style="display: none;">
+                    <h3 class="reviews-title">
+                        <i class="bi bi-star-fill" style="color: #fbbf24;"></i>
+                        Reseñas de clientes
+                    </h3>
+                    <div id="reviewsList"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Purchase Section -->
+        <div class="purchase-section">
+            <button class="purchase-button" id="purchaseButton" onclick="handlePurchase()">
+                <i class="bi bi-cart-plus"></i>
+                <span id="purchaseButtonText">Comprar ahora</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5.3.0 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Product data (will be loaded from localStorage or URL params)
+        let productData = null;
+        let profileData = null;
+
+        // Load product on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProductData();
+        });
+
+        async function loadProductData() {
+            try {
+                // Get product ID from URL parameters (supports 'p' for product, 'c' for consultation, 'course' for course, 'membership' for membership)
+                const urlParams = new URLSearchParams(window.location.search);
+                const productId = urlParams.get('p') || urlParams.get('c') || urlParams.get('course') || urlParams.get('membership');
+                const isConsultation = !!urlParams.get('c');
+                const isCourse = !!urlParams.get('course');
+                const isMembership = !!urlParams.get('membership');
+                const username = urlParams.get('u');
+                const isPreview = urlParams.get('preview') === 'true';
+
+                const productType = isConsultation ? 'consultation' : (isCourse ? 'course' : (isMembership ? 'membership' : 'product'));
+                console.log('Loading', productType, ':', productId, 'for user:', username, 'preview:', isPreview);
+
+                if (!productId) {
+                    showError('Parámetros de URL inválidos');
+                    return;
+                }
+
+                // If it's a preview, try to load from temporary storage first
+                let appData = null;
+                if (isPreview) {
+                    const tempData = localStorage.getItem('tempProductPreview');
+                    if (tempData) {
+                        appData = JSON.parse(tempData);
+                        console.log('Loading from temporary preview data');
+                    }
+                }
+
+                // If no preview data or not preview mode, load from API
+                if (!appData) {
+                    try {
+                        const response = await fetch(`/api/public/mi-tienda/${username}`);
+                        if (!response.ok) {
+                            showError('Datos no encontrados');
+                            return;
+                        }
+                        const apiData = await response.json();
+                        console.log('🔥 FULL API RESPONSE:', apiData);
+
+                        // Map API data to expected format
+                        appData = {
+                            profile: {
+                                name: apiData.card.name,
+                                username: apiData.card.slug,
+                                bio: apiData.card.bio,
+                                avatar_url: apiData.card.avatar_path ? `https://clickmy.link/${apiData.card.avatar_path}` : null
+                            },
+                            products: apiData.products.map(product => {
+                                const meta = JSON.parse(product.meta || '{}');
+                                return {
+                                    id: product.id,
+                                    type: meta.type || 'product',
+                                    title: product.name,
+                                    subtitle: meta.subtitle || '',
+                                    description: product.description,
+                                    price: parseFloat(product.price) || 0,
+                                    discount_price: parseFloat(meta.discount_price) || 0,
+                                    has_discount: (parseFloat(meta.discount_price) || 0) > 0,
+                                    image_url: product.image_path ? (
+                                        product.image_path.startsWith('http') ? product.image_path : `https://clickmy.link/${product.image_path}`
+                                    ) : null,
+                                    file_url: meta.file_url || null,
+                                    button_text: meta.button_text || null,
+                                    reviews: meta.reviews || [],
+                                    custom_fields: meta.custom_fields || [],  // ✅ CORREGIDO: form_data → custom_fields
+                                    faq: meta.faq || []
+                                };
+                            })
+                        };
+                    } catch (apiError) {
+                        console.error('Error loading from API:', apiError);
+                        showError('Error cargando los datos');
+                        return;
+                    }
+                }
+
+                profileData = appData.profile;
+
+                // Find the product - convert both to string for comparison
+                const product = appData.products.find(p => p.id.toString() === productId.toString());
+                if (!product) {
+                    console.log('Product/Consultation/Course not found. Available products:', appData.products.map(p => ({id: p.id, title: p.title, type: p.type})));
+                    const errorMessage = isConsultation ? 'Consultoría no encontrada' : (isCourse ? 'Curso no encontrado' : 'Producto no encontrado');
+                    showError(errorMessage);
+                    return;
+                }
+
+                // Verify product type matches URL parameter
+                if (isConsultation && product.type !== 'consultation') {
+                    console.log('URL expects consultation but product type is:', product.type);
+                    showError('Tipo de producto incorrecto');
+                    return;
+                } else if (isCourse && product.type !== 'course') {
+                    console.log('URL expects course but product type is:', product.type);
+                    showError('Tipo de producto incorrecto');
+                    return;
+                } else if (!isConsultation && !isCourse && (product.type === 'consultation' || product.type === 'course')) {
+                    console.log('URL expects product but found:', product.type);
+                    showError('Tipo de producto incorrecto');
+                    return;
+                }
+
+                console.log(productType + ' found:', product);
+                productData = product;
+                displayProduct();
+
+            } catch (error) {
+                console.error('Error loading product:', error);
+                showError('Error cargando el producto');
+            }
+        }
+
+        function displayProduct() {
+            if (!productData) return;
+
+            // Hide loading, show product
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('productContainer').style.display = 'block';
+
+            // Set page title
+            let pageTitle = productData.title;
+            if (productData.type === 'consultation') {
+                pageTitle += ' - Consultoría';
+            } else if (productData.type === 'course') {
+                pageTitle += ' - Curso Digital';
+            } else if (productData.type === 'membership') {
+                pageTitle += ' - Membresía';
+            }
+            document.getElementById('pageTitle').textContent = pageTitle;
+            document.title = pageTitle;
+
+            // Back button
+            const username = profileData.username || 'user';
+            document.getElementById('backButton').href = `https://clickmy.link/u/${username}`;
+
+            // Product image
+            let productHtml = ''; // Definir la variable
+
+            if (productData.image_url) {
+                // Corregir URLs con prefijo duplicado
+                let imageUrl = productData.image_url;
+                if (imageUrl.includes('https://clickmy.link/https://')) {
+                    imageUrl = imageUrl.replace('https://clickmy.link/https://', 'https://');
+                }
+                
+                productHtml = `
+                    <img src="${imageUrl}" alt="${productData.title}" class="product-image">
+                `;
+            }
+
+            // Añadir el HTML generado al contenedor
+            document.querySelector('.product-image').innerHTML = productHtml;
+
+            // Product title and subtitle
+            document.getElementById('productTitle').textContent = productData.title;
+            
+            if (productData.subtitle) {
+                document.getElementById('productSubtitle').textContent = productData.subtitle;
+                document.getElementById('productSubtitle').style.display = 'block';
+            }
+
+            // Price section
+            if (productData.price && productData.price > 0) {
+                const priceSection = document.getElementById('priceSection');
+                const currentPriceEl = document.getElementById('currentPrice');
+                const originalPriceEl = document.getElementById('originalPrice');
+                const discountBadge = document.getElementById('discountBadge');
+
+                let frequencyText = '';
+                if (productData.type === 'membership' && productData.billing_settings) {
+                    const frequencies = {
+                        'daily': ' / día',
+                        'weekly': ' / semana', 
+                        'monthly': ' / mes',
+                        'quarterly': ' / trimestre',
+                        'semi_annually': ' / semestre',
+                        'annually': ' / año'
+                    };
+                    frequencyText = frequencies[productData.billing_settings.frequency] || ' / mes';
+                }
+
+                if (productData.has_discount && productData.discount_price > 0) {
+                    // Show discounted price
+                    currentPriceEl.textContent = `$${productData.discount_price}${frequencyText}`;
+                    originalPriceEl.textContent = `$${productData.price}${frequencyText}`;
+                    originalPriceEl.style.display = 'inline-block';
+                    
+                    // Calculate discount percentage
+                    const discountPercent = Math.round(((productData.price - productData.discount_price) / productData.price) * 100);
+                    discountBadge.textContent = `-${discountPercent}%`;
+                    discountBadge.style.display = 'inline-block';
+                } else {
+                    // Show regular price
+                    currentPriceEl.textContent = `$${productData.price}${frequencyText}`;
+                }
+
+                priceSection.style.display = 'block';
+            }
+
+            // Description
+            document.getElementById('productDescription').innerHTML = productData.description || 'Sin descripción disponible.';
+
+            // Reviews
+            if (productData.reviews && productData.reviews.length > 0) {
+                displayReviews(productData.reviews);
+            }
+
+            // Download file section
+            if (productData.file_url) {
+                document.getElementById('downloadSection').style.display = 'block';
+                const fileName = productData.file_url.split('/').pop() || 'Archivo digital';
+                document.getElementById('fileName').textContent = fileName;
+            }
+
+            // Custom fields section
+            if (productData.custom_fields && productData.custom_fields.length > 0) {
+                document.getElementById('customFieldsSection').style.display = 'block';
+    
+                const customFieldsHTML = productData.custom_fields.map(field => `
+                    <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                        <div style="color: var(--design-text-color); font-weight: 600; margin-bottom: 0.5rem;">
+                            ${field.label}${field.required ? ' *' : ''}
+                    </div>
+                    <div style="color: var(--design-text-secondary); font-size: 0.9rem;">
+                        ${getFieldTypeDescription(field.type)}
+                    </div>
+                </div>
+            `).join('');
+    
+            document.getElementById('customFieldsList').innerHTML = customFieldsHTML;
+            }
+
+            // FAQ section
+            if (productData.faq && productData.faq.length > 0) {
+                document.getElementById('faqSection').style.display = 'block';
+    
+                const faqHTML = productData.faq.map((item, index) => `
+                    <div style="background: var(--design-button-bg); border-radius: 0.5rem; margin-bottom: 1rem; border: 1px solid rgba(255, 255, 255, 0.1); overflow: hidden;">
+                        <button onclick="toggleFAQ(${index})" style="width: 100%; background: none; border: none; color: var(--design-text-color); padding: 1rem; text-align: left; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                            <span style="font-weight: 600;">${item.question}</span>
+                            <i class="bi bi-chevron-down" id="faq-icon-${index}" style="transition: transform 0.2s ease;"></i>
+                        </button>
+                        <div id="faq-answer-${index}" style="display: none; padding: 0 1rem 1rem 1rem; color: var(--design-text-secondary); line-height: 1.5;">
+                            ${item.answer}
+                    </div>
+                </div>
+            `).join('');
+    
+            document.getElementById('faqList').innerHTML = faqHTML;
+        }
+
+function toggleFAQ(index) {
+    const answer = document.getElementById(`faq-answer-${index}`);
+    const icon = document.getElementById(`faq-icon-${index}`);
+    
+    if (answer.style.display === 'none') {
+        answer.style.display = 'block';
+        icon.style.transform = 'rotate(180deg)';
+    } else {
+        answer.style.display = 'none';
+        icon.style.transform = 'rotate(0deg)';
+    }
+}
+
+            // Purchase button
+            const purchaseBtn = document.getElementById('purchaseButtonText');
+            const purchaseButton = document.getElementById('purchaseButton');
+            
+            if (productData.type === 'consultation') {
+                // For consultations, update button text and icon
+                if (productData.button_text) {
+                    purchaseBtn.textContent = productData.button_text;
+                } else {
+                    purchaseBtn.textContent = 'Agendar llamada';
+                }
+                purchaseButton.innerHTML = `
+                    <i class="bi bi-calendar-plus"></i>
+                    <span id="purchaseButtonText">${purchaseBtn.textContent}</span>
+                `;
+            } else if (productData.type === 'course') {
+                // For courses, update button text and icon
+                if (productData.button_text) {
+                    purchaseBtn.textContent = productData.button_text;
+                } else {
+                    purchaseBtn.textContent = 'Empezar curso';
+                }
+                purchaseButton.innerHTML = `
+                    <i class="bi bi-play-circle"></i>
+                    <span id="purchaseButtonText">${purchaseBtn.textContent}</span>
+                `;
+            } else if (productData.type === 'membership') {
+                // For memberships, update button text and icon
+                if (productData.button_text) {
+                    purchaseBtn.textContent = productData.button_text;
+                } else if (productData.price > 0) {
+                    const displayPrice = productData.has_discount && productData.discount_price > 0 
+                        ? productData.discount_price 
+                        : productData.price;
+                    
+                    // Get frequency text
+                    const getFrequencyText = (frequency) => {
+                        const frequencies = {
+                            'daily': 'día',
+                            'weekly': 'semana', 
+                            'monthly': 'mes',
+                            'quarterly': 'trimestre',
+                            'semi_annually': 'semestre',
+                            'annually': 'año'
+                        };
+                        return frequencies[frequency] || 'mes';
+                    };
+                    
+                    const frequencyText = productData.billing_settings ? 
+                        getFrequencyText(productData.billing_settings.frequency) : 'mes';
+                    
+                    purchaseBtn.textContent = `Subscribirse por $${displayPrice}/${frequencyText}`;
+                } else {
+                    purchaseBtn.textContent = 'Subscribirse Gratis';
+                }
+                purchaseButton.innerHTML = `
+                    <i class="bi bi-crown"></i>
+                    <span id="purchaseButtonText">${purchaseBtn.textContent}</span>
+                `;
+            } else {
+                // For regular products
+                if (productData.button_text) {
+                    purchaseBtn.textContent = productData.button_text;
+                } else if (productData.price > 0) {
+                    const displayPrice = productData.has_discount && productData.discount_price > 0 
+                        ? productData.discount_price 
+                        : productData.price;
+                    purchaseBtn.textContent = `Comprar por $${displayPrice}`;
+                } else {
+                    purchaseBtn.textContent = 'Obtener Gratis';
+                }
+                purchaseButton.innerHTML = `
+                    <i class="bi bi-cart-plus"></i>
+                    <span id="purchaseButtonText">${purchaseBtn.textContent}</span>
+                `;
+            }
+        }
+
+        function displayReviews(reviews) {
+            const validReviews = reviews.filter(review => 
+                review.customer_name && review.customer_name.trim() !== '' && 
+                review.comment && review.comment.trim() !== ''
+            );
+
+            if (validReviews.length === 0) return;
+
+            document.getElementById('reviewsSection').style.display = 'block';
+            
+            const reviewsList = document.getElementById('reviewsList');
+            reviewsList.innerHTML = validReviews.map(review => {
+                const stars = Array.from({length: 5}, (_, i) => 
+                    `<i class="bi bi-star${i < review.rating ? '-fill' : ''}"></i>`
+                ).join('');
+
+                return `
+                    <div class="review-item">
+                        <div class="review-header">
+                            <span class="review-name">${review.customer_name}</span>
+                            <div class="review-stars">${stars}</div>
+                        </div>
+                        <p class="review-comment">${review.comment}</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ============================================
+        // MI TIENDA SECURE PURCHASE SYSTEM - ALL PRODUCT TYPES
+        // ============================================
+
+        // Global variables for Stripe
+        let stripe = null;
+        let elements = null;
+        let paymentElement = null;
+        let currentPaymentIntent = null;
+        let stripePublicKey = null;
+
+        // Securely initialize Stripe with backend key
+        async function initializeStripe() {
+            try {
+                if (stripePublicKey) {
+                    stripe = Stripe(stripePublicKey);
+                    return;
+                }
+
+                const response = await fetch('/mi-tienda/stripe/public-key');
+                const keyData = await response.json();
+                
+                if (!keyData.success) {
+                    throw new Error('Error obteniendo configuración de pago');
+                }
+                
+                stripePublicKey = keyData.public_key;
+                stripe = Stripe(stripePublicKey);
+                console.log('✅ Stripe inicializado de forma segura');
+                
+            } catch (error) {
+                console.error('❌ Error inicializando Stripe:', error);
+                throw error;
+            }
+        }
+
+        // Main purchase handler with product-specific logic
+        async function handlePurchase() {
+            if (!productData) {
+                alert('Error: Datos del producto no disponibles');
+                return;
+            }
+
+            console.log('🛒 Iniciando compra:', productData);
+
+            // Route based on product type
+            switch (productData.type) {
+                case 'consultation':
+                    handleConsultationBooking();
+                    break;
+                case 'course':
+                    handleCourseEnrollment();
+                    break;
+                case 'membership':
+                case 'digital_product':
+                default:
+                    await showStripePurchaseModal();
+                    break;
+            }
+        }
+
+        function handleConsultationBooking() {
+            alert('Sistema de agendamiento en desarrollo. Pronto podrás reservar tu consultoría directamente aquí.');
+        }
+
+        function handleCourseEnrollment() {
+            alert('Plataforma de cursos en desarrollo. Pronto podrás inscribirte y acceder a todo el contenido.');
+        }
+
+        async function showStripePurchaseModal() {
+            try {
+                // Initialize Stripe securely first
+                await initializeStripe();
+                
+                const displayPrice = productData.has_discount && productData.discount_price > 0 
+                    ? productData.discount_price : productData.price;
+
+                const productTypeText = {
+                    'digital_product': 'producto digital',
+                    'membership': 'membresía',
+                    'course': 'curso',
+                    'consultation': 'consultoría'
+                };
+
+                const modalHtml = `
+                    <div id="purchaseModal" style="
+                        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                        background: rgba(0,0,0,0.9); z-index: 10000; display: flex;
+                        align-items: center; justify-content: center; padding: 1rem;
+                        font-family: var(--design-font-family, 'Inter');
+                    ">
+                        <div style="
+                            background: white; border-radius: 1rem; padding: 2rem;
+                            max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto;
+                            color: #333; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                        ">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                                <h3 style="margin: 0; color: #333; font-size: 1.25rem;">
+                                    Comprar ${productTypeText[productData.type] || 'producto'}
+                                </h3>
+                                <button onclick="closePurchaseModal()" style="
+                                    background: none; border: none; font-size: 1.5rem; cursor: pointer;
+                                    color: #666; width: 30px; height: 30px; display: flex;
+                                    align-items: center; justify-content: center;
+                                ">&times;</button>
+                            </div>
+
+                            <div style="
+                                background: #f8f9fa; padding: 1rem; border-radius: 0.75rem;
+                                margin-bottom: 1.5rem; border: 1px solid #e9ecef;
+                            ">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <img src="${productData.image_url || '/placeholder.jpg'}" alt="Producto" style="
+                                        width: 60px; height: 60px; object-fit: cover; border-radius: 0.5rem;
+                                    ">
+                                    <div style="flex: 1;">
+                                        <h4 style="margin: 0; font-size: 1rem; color: #333; font-weight: 600;">${productData.title}</h4>
+                                        ${productData.subtitle ? `<p style="margin: 0.25rem 0; color: #666; font-size: 0.9rem;">${productData.subtitle}</p>` : ''}
+                                        <p style="margin: 0; font-weight: 700; color: #28a745; font-size: 1.1rem;">$${displayPrice}</p>
+                                        ${productData.type === 'membership' && productData.billing_settings ? 
+                                            `<small style="color: #666; font-size: 0.8rem;">Facturación ${
+                                                productData.billing_settings.frequency === 'monthly' ? 'mensual' : 
+                                                productData.billing_settings.frequency === 'yearly' ? 'anual' : 
+                                                productData.billing_settings.frequency
+                                            }</small>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <form id="customerForm" style="margin-bottom: 1.5rem;">
+                                <div style="margin-bottom: 1rem;">
+                                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333; font-size: 0.9rem;">Nombre completo *</label>
+                                    <input type="text" id="customerName" required style="
+                                        width: 100%; padding: 0.75rem; border: 1px solid #ddd;
+                                        border-radius: 0.5rem; font-size: 1rem; box-sizing: border-box;
+                                        transition: border-color 0.2s;
+                                    ">
+                                </div>
+                                <div style="margin-bottom: 1rem;">
+                                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333; font-size: 0.9rem;">Email *</label>
+                                    <input type="email" id="customerEmail" required style="
+                                        width: 100%; padding: 0.75rem; border: 1px solid #ddd;
+                                        border-radius: 0.5rem; font-size: 1rem; box-sizing: border-box;
+                                        transition: border-color 0.2s;
+                                    ">
+                                </div>
+                            </form>
+
+                            <div id="paymentElementContainer" style="margin-bottom: 1.5rem;">
+                                <div style="margin-bottom: 1rem;">
+                                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333; font-size: 0.9rem;">Método de pago</label>
+                                    <div id="payment-element" style="
+                                        border: 1px solid #ddd; border-radius: 0.5rem; padding: 0.5rem;
+                                    "></div>
+                                </div>
+                                <div id="payment-message" style="color: #dc3545; font-size: 0.9rem; margin-top: 0.5rem;"></div>
+                            </div>
+
+                            <button id="submitPayment" onclick="processStripePayment()" disabled style="
+                                width: 100%; background: #6c757d; color: white; border: none;
+                                padding: 1rem; border-radius: 0.5rem; font-size: 1rem; font-weight: 600;
+                                cursor: not-allowed; transition: all 0.2s; display: flex;
+                                align-items: center; justify-content: center; gap: 0.5rem;
+                            ">
+                                <span id="buttonText">Procesar pago - $${displayPrice}</span>
+                                <span id="spinner" style="display: none;">
+                                    <svg style="width: 20px; height: 20px; animation: spin 1s linear infinite;" viewBox="0 0 24 24" fill="none">
+                                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" opacity="0.25"></circle>
+                                        <path fill="currentColor" opacity="0.75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                await initializeStripePaymentForm();
+                
+            } catch (error) {
+                console.error('❌ Error mostrando modal de compra:', error);
+                alert('Error inicializando el sistema de pagos. Por favor, intenta nuevamente.');
+            }
+        }
+
+        async function initializeStripePaymentForm() {
+            try {
+                const customerData = {
+                    name: document.getElementById('customerName').value || 'Cliente',
+                    email: document.getElementById('customerEmail').value || 'cliente@ejemplo.com'
+                };
+
+                // Create payment intent using our secure endpoint
+                const response = await fetch('/mi-tienda/stripe/create-payment-intent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify({
+                        product_id: productData.id,
+                        product_type: productData.type,
+                        customer_data: customerData,
+                        custom_fields: []
+                    })
+                });
+
+                const paymentData = await response.json();
+
+                if (!paymentData.success) {
+                    throw new Error(paymentData.error || 'Error creando intención de pago');
+                }
+
+                currentPaymentIntent = paymentData;
+                console.log('✅ Payment Intent creado:', paymentData);
+
+                // Initialize Stripe Elements
+                elements = stripe.elements({ clientSecret: paymentData.client_secret });
+                paymentElement = elements.create('payment');
+                paymentElement.mount('#payment-element');
+
+                // Handle payment element changes
+                paymentElement.on('change', (event) => {
+                    const submitButton = document.getElementById('submitPayment');
+                    if (event.complete) {
+                        submitButton.disabled = false;
+                        submitButton.style.background = 'var(--design-button-bg, #007bff)';
+                        submitButton.style.cursor = 'pointer';
+                    } else {
+                        submitButton.disabled = true;
+                        submitButton.style.background = '#6c757d';
+                        submitButton.style.cursor = 'not-allowed';
+                    }
+                });
+
+                console.log('✅ Stripe Elements inicializado correctamente');
+
+            } catch (error) {
+                console.error('❌ Error inicializando formulario de pago:', error);
+                document.getElementById('payment-message').textContent = 'Error inicializando el formulario de pago: ' + error.message;
+            }
+        }
+
+        async function processStripePayment() {
+            if (!stripe || !elements) {
+                alert('Error: Sistema de pagos no inicializado');
+                return;
+            }
+
+            const submitButton = document.getElementById('submitPayment');
+            const buttonText = document.getElementById('buttonText');
+            const spinner = document.getElementById('spinner');
+
+            // Disable button and show loading
+            submitButton.disabled = true;
+            buttonText.style.display = 'none';
+            spinner.style.display = 'inline-flex';
+
+            try {
+                const customerName = document.getElementById('customerName').value.trim();
+                const customerEmail = document.getElementById('customerEmail').value.trim();
+
+                if (!customerName || !customerEmail) {
+                    throw new Error('Por favor complete todos los campos requeridos');
+                }
+
+                // Confirm payment with Stripe
+                const { error, paymentIntent } = await stripe.confirmPayment({
+                    elements,
+                    confirmParams: {
+                        return_url: window.location.origin + '/mi-tienda/payment-success',
+                        payment_method_data: {
+                            billing_details: { 
+                                name: customerName, 
+                                email: customerEmail 
+                            }
+                        }
+                    },
+                    redirect: 'if_required'
+                });
+
+                if (error) {
+                    throw new Error(error.message);
+                }
+
+                if (paymentIntent.status === 'succeeded') {
+                    // Payment successful - our webhook will handle product delivery
+                    showPaymentSuccess();
+                } else {
+                    throw new Error('El pago no se completó correctamente');
+                }
+
+            } catch (error) {
+                console.error('❌ Error procesando pago:', error);
+                document.getElementById('payment-message').textContent = error.message;
+            } finally {
+                // Re-enable button
+                submitButton.disabled = false;
+                buttonText.style.display = 'inline';
+                spinner.style.display = 'none';
+            }
+        }
+
+        function showPaymentSuccess() {
+            closePurchaseModal();
+            
+            const productTypeMessages = {
+                'digital_product': {
+                    title: '¡Compra exitosa!',
+                    message: 'Recibirás un email con el enlace de descarga de tu producto digital.'
+                },
+                'membership': {
+                    title: '¡Membresía activada!',
+                    message: 'Tu membresía está activa. Recibirás un email con los detalles de acceso.'
+                },
+                'course': {
+                    title: '¡Inscripción exitosa!',
+                    message: 'Recibirás un email con el acceso completo a tu curso.'
+                },
+                'consultation': {
+                    title: '¡Consultoría confirmada!',
+                    message: 'Recibirás un email con el enlace para agendar tu consultoría.'
+                }
+            };
+
+            const msgData = productTypeMessages[productData.type] || productTypeMessages['digital_product'];
+            
+            const successHtml = `
+                <div id="successModal" style="
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background: rgba(0,0,0,0.9); z-index: 10001; display: flex;
+                    align-items: center; justify-content: center; padding: 1rem;
+                ">
+                    <div style="
+                        background: white; border-radius: 1rem; padding: 3rem; max-width: 400px;
+                        width: 100%; text-align: center; position: relative; overflow: hidden;
+                        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                    ">
+                        <div id="confetti"></div>
+                        <div style="font-size: 4rem; margin-bottom: 1rem; animation: bounce 1s infinite;">🎉</div>
+                        <h3 style="color: #28a745; margin-bottom: 1rem; font-size: 1.5rem;">${msgData.title}</h3>
+                        <p style="color: #666; margin-bottom: 1.5rem; line-height: 1.5;">
+                            ${msgData.message}
+                        </p>
+                        <button onclick="closeSuccessModal()" style="
+                            background: #28a745; color: white; border: none; padding: 0.75rem 2rem;
+                            border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: background 0.2s;
+                        ">Perfecto</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', successHtml);
+            createConfetti();
+        }
+
+        function createConfetti() {
+            const confettiContainer = document.getElementById('confetti');
+            const colors = ['#f39c12', '#e74c3c', '#9b59b6', '#3498db', '#2ecc71', '#e67e22'];
+            
+            for (let i = 0; i < 100; i++) {
+                const confettiPiece = document.createElement('div');
+                confettiPiece.style.cssText = `
+                    position: absolute; width: ${Math.random() * 10 + 5}px; height: ${Math.random() * 10 + 5}px;
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                    top: -20px; left: ${Math.random() * 100}%;
+                    animation: confettiFall ${2 + Math.random() * 3}s linear infinite;
+                    opacity: 0.9; border-radius: 50%;
+                `;
+                confettiContainer.appendChild(confettiPiece);
+            }
+            
+            if (!document.getElementById('confettiStyle')) {
+                const style = document.createElement('style');
+                style.id = 'confettiStyle';
+                style.textContent = `
+                    @keyframes confettiFall { to { transform: translateY(500px) rotate(720deg); opacity: 0; } }
+                    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+                    @keyframes spin { to { transform: rotate(360deg); } }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        function closePurchaseModal() {
+            const modal = document.getElementById('purchaseModal');
+            if (modal) modal.remove();
+        }
+
+        function closeSuccessModal() {
+            const modal = document.getElementById('successModal');
+            if (modal) modal.remove();
+        }
+
+        // Initialize Stripe securely when page loads
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                await initializeStripe();
+            } catch (error) {
+                console.error('Error inicializando Stripe en carga de página:', error);
+            }
+        });
+    </script>
+</body>
+</html>
