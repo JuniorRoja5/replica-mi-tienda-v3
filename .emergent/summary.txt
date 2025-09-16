@@ -1,29 +1,38 @@
 <analysis>
-The trajectory details a comprehensive debugging and feature implementation process for the Mi Tienda application, focusing primarily on Stripe payments and digital product delivery. The initial problem involved a non-functional digital product file upload and download system, leading to a critical Digital product file not found error. The AI engineer, guided by the user's detailed documentation and real-time server investigations via  commands, systematically identified and resolved multiple issues across the frontend (JavaScript, HTML DOM) and backend (Laravel controller, routes).
-
-Key resolutions included implementing a robust file upload mechanism using FormData (instead of an initial, problematic base64 approach), restructuring HTML to correctly display upload progress and delete buttons, fixing JavaScript DOM manipulation errors, and ensuring the Stripe payment modal closes properly after successful transactions. The process involved several iterative debugging steps, addressing syntax errors, and correcting logical flaws in how UI elements were updated and how data flowed between frontend and backend. The latest efforts are focused on correcting price discounting inconsistencies in Stripe payments and enhancing custom field management for product creation.
+The trajectory details a comprehensive bug-fixing and feature expansion effort for the Mi Tienda application. Initially, the focus was on resolving a critical Stripe discount pricing bug after an architectural migration of pricing-related fields from a JSON  field to dedicated database columns. This involved iterative debugging across frontend data submission (), backend CRUD operations ( , ), data retrieval for both admin and public interfaces (, ), and finally the Stripe payment intent calculation logic. Once the discount bug was fully resolved across all four product types (digital product, consultation, course, membership), the user requested to implement the Consultation product's scheduling system, starting with a basic custom link approach, leveraging existing  data structure.
 </analysis>
 
 <product_requirements>
-The Mi Tienda application aims to facilitate the sale of various product types (digital products, consultations, courses, memberships) through public profiles with extensive customization and robust media uploads. The core objective is Fase 2: Integración de Stripe, enabling secure payments using Stripe Elements, providing a confetti animation on success, and automating content delivery (e.g., email with download links).
+The Mi Tienda application facilitates selling various product types (digital products, consultations, courses, memberships) via public profiles, with Stripe payments and automated content delivery.
 
-**Implemented functionality includes:**
-- Secure Stripe payment intent creation and webhook handling.
-- A digital product download system with unique, expiring, and limited-use tokens stored in a  table.
-- Frontend payment modal with Stripe Elements and dynamic Descargar ahora button for digital products.
-- Backend endpoints for product CRUD, Stripe public key retrieval, and digital product delivery/download.
-- Functionality to upload and delete digital product files physically on the server, with correct UI feedback in the product creation/edit modal.
-- Correct closing of both the Stripe payment modal and the success modal post-transaction.
+**Custom Fields:**
+*   Users can create, edit, and delete custom fields for all product types.
+*   Customizable attributes include label, type (text, email, tel, number), placeholder, and 'required' status.
+*   End-users can edit these fields on the public product page.
+*   Hardcoded Nombre completo and Correo electrónico fields were removed.
 
-The system still needs to resolve price inconsistencies in discounted products and improve the flexibility and functionality of custom fields for all product types.
+**Stripe Discount Pricing (Initially Buggy, Now Fixed):**
+*   **Problem:** Discounted prices were displayed in UI but not applied in Stripe transactions. New products saved  and  in the DB.
+*   **Architectural Change:** Migrated , , ,  from JSON  to dedicated  table columns.
+*   **Implementation:**
+    *   Laravel migrations created columns and migrated existing data, correcting inconsistencies (e.g.,  implying ).
+    *   Backend , ,  methods updated to read/write these fields to/from dedicated columns, removing them from .
+    *   Backend  and  updated to prioritize reading from dedicated columns.
+    *   Frontend  updated to send  at the root level for all product types.
+    *   Frontend  updated to correctly display and send discounted prices to Stripe.
+*   **Current Status:** Discount pricing is fully functional end-to-end for all product types.
+
+**Consultation Product - Scheduling (In Progress):**
+*   **Requirement:** Implement a scheduling system for consultation products.
+*   **Initial Step:** Start with a basic version using a user-provided custom call link.
+*   **Existing Components:** Frontend admin UI (mi-tienda.html) and JavaScript () already support configuring  including  (Google Meet, Zoom, custom), , , , and  (days, intervals). The public page () currently has a placeholder for booking.
 </product_requirements>
 
 <key_technical_concepts>
-- **Frontend**: Vanilla JavaScript (Fetch API, DOM manipulation, , ), HTML, CSS.
-- **Backend**: Laravel (Controllers, API routes,  facade,  helper,  validation, ), MySQL.
-- **Payments**: Stripe Elements (PaymentIntent API), Webhooks.
-- **File Management**: Server-side file storage, unique naming, deletion.
-- **Security**: CSRF token handling for API calls, secure token generation.
+-   **Frontend**: Vanilla JavaScript (Fetch API, DOM manipulation, FormData), HTML, CSS, Quill.js.
+-   **Backend**: Laravel (Controllers, API routes, Database Migrations, Eloquent ORM, DB facade, Str helper, Request validation, Auth), MySQL, Stripe API.
+-   **Debugging**: , ,  for server-side, browser console for frontend.
+-   **Data Management**: JSON field manipulation, dedicated database columns.
 </key_technical_concepts>
 
 <code_architecture>
@@ -31,54 +40,63 @@ The system still needs to resolve price inconsistencies in discounted products a
 
 
 -   ****
-    -   **Importance**: Central backend for Mi Tienda products, payments, and file handling.
+    -   **Importance**: Handles authenticated API operations for Mi Tienda (product CRUD, payment intents, file uploads).
     -   **Changes**:
-        -   : **NEW METHOD** (added after line 982). Handles POST requests for digital product file uploads. Validates  (max 50MB), generates a unique filename (), stores it in , and returns the relative path ().
-        -   : **NEW METHOD** (added after ). Handles DELETE requests to remove a physical file from the server based on .
-        -   : Modified (lines 1107-1113) to correctly calculate  by robustly checking  and  from both product root and meta data.
-        -   : Optimized to also serve download URLs for digital products using .
-        -   : Generates unique 64-character download tokens, stores them in  with expiration (7 days) and download limits (3), and logs the token creation.
-        -   : Validates the token, checks download limits, and serves either local files (from ) or redirects to remote URLs.
+        -    (lines 737-738): Modified to explicitly cast  to  or  and  to  if no discount, ensuring correct saving of boolean/decimal values to dedicated columns.
+        -    (lines 855-856): Same type casting logic applied for updating products.
+        -    (lines 585, 591, 592): Modified to prioritize reading , , and  directly from  (database columns) and use  only as a fallback for  values.
+        -    (line ~1101): Simplified the discount condition from  to  (truthy evaluation) to correctly process boolean  and integer  from the database.
+
 -   ****
-    -   **Importance**: Defines all web and API routes.
+    -   **Importance**: Handles public-facing API data retrieval for Mi Tienda.
     -   **Changes**:
-        -   : **NEW ROUTE** (added after line 641). Maps to  for handling digital product file uploads.
-        -   : **NEW ROUTE** (added after ). Maps to .
-        -   : Route for  to serve digital products.
+        -    method (lines 21, 26, 27): Modified , , and  to prioritize reading from  (database columns) and use  only as a fallback.
+
+-   **** (NEW)
+    -   **Importance**: Adds dedicated columns , , ,  to  table.
+
+-   **** (NEW)
+    -   **Importance**: Migrates existing discount data from the  JSON field to the new dedicated columns, with corrected logic for  based on .
+
 -   ****
-    -   **Importance**: Frontend JavaScript for product creation/editing and UI interactions.
-    -   **Changes**:
-        -   : **Completely rewritten** (around line 2067). Now uses  for actual file uploads (instead of simulation). Correctly updates UI (shows spinner, then filename and delete button) and handles errors. Fixed  by ensuring DOM elements are updated correctly and the  block is syntactically sound.
-        -   : **Modified** (around line 2125). Now sends a  request to the backend to physically remove the file, then resets the UI. Fixed  by adding the correct  block structure.
-        -   : **NEW FUNCTION** (added after line 2130). Handles image uploads for product images, reusing  backend. This was added to resolve .
-        -   **UI Update Logic**: Added logic in product edit/load functions (e.g., around lines 3711 and 4968) to correctly display the uploaded  by extracting just the filename.
-        -   **Custom Fields (Initial State)**:  array initialized with default Nombre completo and Correo electrónico for all product types, but user intends to remove these and make them fully user-definable.
+    -   **Importance**: Frontend logic for product creation, editing, and UI interactions in the admin panel.
+    -   **Changes**: In 12 locations across , , , , , , , , , ,  (for all 4 product types),  was added at the root level of the  object sent to the backend.
+
 -   ****
-    -   **Importance**: Frontend page for public product display and purchase.
+    -   **Importance**: Public-facing product display page.
     -   **Changes**:
-        -   : **Modified** (around line 1222). Now explicitly calls  to ensure the Stripe payment modal closes completely after a successful transaction. The  ID was also confirmed to be  to match  logic.
-        -   **HTML Structure**:  div was moved outside  (around lines 2932-2952) to be a sibling, not a child, ensuring it is visible when  is hidden.
+        -   Lines 573-574: Modified to read  and  directly from  and  (from the API response) instead of .
+        -   Line ~1000 (within ): Ensures  correctly accounts for  and  before initiating Stripe payment.
+        -   Contains a placeholder  function () for consultation products.
+
+-   ****
+    -   **Importance**: Admin interface for creating and editing products.
+    -   **Changes**: Contains UI elements for configuring  (call method, duration, timezone, weekly availability) for consultation products.
 </code_architecture>
 
 <pending_tasks>
--   Correct price discounting inconsistencies where the frontend UI shows a discounted price, but Stripe charges the original price.
--   Remove default Nombre completo and Correo electrónico custom fields from product creation/edit forms and allow users to create/delete custom fields freely.
--   Make custom fields in the public product page editable by the end-user for data collection.
--   Create missing email view templates for , , , and .
+-   Implement the Consultation product's scheduling system on the public page, starting with the basic custom link approach.
+-   Adapt existing  and related logic from  to .
+-   Create a new backend component/table () for managing scheduled appointments.
+-   Integrate the booking system with Stripe payments.
+-   Develop functionality to send email confirmations with the .
+-   (Future) Implement integrations with Google Meet/Zoom APIs.
+-   Create missing email view templates for various product types.
 -   Implement specific content unlocking logic for Consultation, Course, and Membership products.
 -   Implement Stripe subscriptions for recurring membership payments.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary, the AI engineer was working on the Precio con Descuento No Sincronizado (Price with Discount Not Synchronized) bug and Custom Fields issues.
+Immediately before this summary request, the AI engineer successfully resolved a critical regression in the Stripe discount pricing functionality, which affected all four product types. This involved a multi-faceted approach:
+1.  **Frontend Data Submission ():** Ensured  was explicitly sent at the root level of product data for all create/update operations, addressing a prior issue where it was only within the  JSON.
+2.  **Backend Data Persistence ( /):** Corrected type handling for  and  to ensure  was saved as  (integer) and  values were handled correctly in the dedicated database columns.
+3.  **Backend Data Retrieval (  and  ):** Updated both the authenticated and public API endpoints to prioritize reading , , and  from their dedicated database columns, with the  JSON serving only as a fallback.
+4.  **Frontend Public Display ():** Modified JavaScript to correctly read and display the  and  values from the API response.
+5.  **Stripe Payment Intent ( ):** Refined the conditional logic () to robustly check for discounts, correctly interpreting boolean and integer  values from the database, ensuring Stripe charges the correct discounted amount.
 
-For the **discount price issue**, it was identified that the frontend  correctly displays the discounted price, but the  endpoint in the backend was not correctly using this discounted price for the Stripe transaction. The  method in  (lines 1107-1113) was updated. The previous logic () was too permissive and could fail if the discounted price was . The fix involved a more robust check:
-
-This ensures the  sent to Stripe correctly reflects the discounted amount if  is true and  is greater than zero, drawing from both the product's root properties and its  data for compatibility.
-
-The next issue, **Custom Fields**, was just initiated. The user reported that Nombre completo and Correo electrónico fields are pre-filled and uneditable in the admin product creation/edit form () and also not editable by the end-user on the public page (). The AI engineer's analysis confirmed the hardcoded default fields in , , , and  and that  prevents their deletion. The current task is to address these custom field behaviors.
+All temporary debug logs have been removed. The discount system is now fully functional across all product types, from admin creation/editing to public display and Stripe payment processing. The next task is to begin implementing the booking system for Consultation products, specifically starting with the custom link functionality, leveraging the already existing  data structure.
 </current_work>
 
 <optional_next_step>
-The next step is to implement the removal of default custom fields and enable their editability in  and .
+Implement the basic custom link booking system for Consultation products on the public page by adapting existing UI and logic.
 </optional_next_step>
